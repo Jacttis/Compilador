@@ -8,7 +8,7 @@ public class TestFileManager {
 
     public static void main(String[] args) throws IOException {
         File archivo=new File("D:\\Compilador\\Compilador\\src\\AnalizadorLexico\\test.txt");
-        FileManager fileManager;
+         FileManager fileManager;
         try {
             fileManager=new FileManager(archivo);
         } catch (FileNotFoundException e) {
@@ -18,18 +18,23 @@ public class TestFileManager {
         try {
             Token ultimo=lexical.nextToken();
             System.out.println(ultimo.toString());
-
-            Token ultimo2=lexical.nextToken();
-            System.out.println(ultimo2.toString());
-
-            Token ultimo3=lexical.nextToken();
-            System.out.println(ultimo3.toString());
-
-            Token ultimo4=lexical.nextToken();
-            System.out.println(ultimo4.toString());
+            while (!ultimo.description.equals("EOF")) {
+                ultimo=lexical.nextToken();
+                System.out.println(ultimo.toString());
+            }
+            System.out.println("[Sin Errores]");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+
+
+
+
+
+
+
+
+
         /*while(!fileManager.isEOF()){
             try {
                 System.out.print(fileManager.getNextChar());
