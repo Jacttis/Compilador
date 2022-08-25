@@ -8,6 +8,9 @@ public class LexicalAnalyzer {
     protected char actualChar;
     protected FileManager fileManager;
     protected HashMap<String,Token> reservedKeywords;
+
+    protected int lineaComentario=1,columna=0;
+    protected String comentario=null;
     
     public LexicalAnalyzer(FileManager fileManager) throws IOException {
         this.fileManager=fileManager;
@@ -57,6 +60,8 @@ public class LexicalAnalyzer {
         } else if (actualChar==('/')) {
             refreshlexeme();
             refreshActualCharacter();
+            lineaComentario=fileManager.getLineNumber();
+            columna=fileManager.getActualColumnNumber()-1;
             return e14();
         } else if (actualChar=='"') {
             refreshlexeme();
@@ -120,7 +125,7 @@ public class LexicalAnalyzer {
             return e38();
         }else {
             refreshlexeme();
-            throw new Exception(lexeme+" linea "+fileManager.getLineNumber());
+            throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"Caracter no valido");
         }
     }
 
@@ -132,7 +137,8 @@ public class LexicalAnalyzer {
             refreshActualCharacter();
             return e1(numberOfDigits+1);
         } else if (Character.isDigit(actualChar )&& numberOfDigits>=9) {
-            throw new Exception(lexeme+" linea "+fileManager.getLineNumber());
+            refreshlexeme();
+            throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"Entero de mas de 9 digitos");
         } else {
             return new Token("intLiteral",lexeme,fileManager.getLineNumber());
         }
@@ -196,8 +202,8 @@ public class LexicalAnalyzer {
         return new Token("Distinto",lexeme,fileManager.getLineNumber());
     }
 
-    private Token e10() throws IOException {
-        if (actualChar!='\\'&& actualChar!='\''){
+    private Token e10() throws IOException, LexicalException {
+        if (actualChar!='\\'&& actualChar!='\''&& actualChar!='\n' && actualChar!='\r'){
             refreshlexeme();
             refreshActualCharacter();
             return e11();
@@ -205,20 +211,24 @@ public class LexicalAnalyzer {
             refreshlexeme();
             refreshActualCharacter();
             return e13();
-        } else {
+        }  else if (actualChar=='\n' || actualChar=='\r') {
+            throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"No se permite Salto de linea en un Character ");
+        }else {
             refreshlexeme();
             refreshActualCharacter();
             return e12();
         }
     }
-    private Token e11() throws IOException {
+    private Token e11() throws IOException, LexicalException {
         if(actualChar=='\'') {
             refreshlexeme();
             refreshActualCharacter();
             return e12();
         }
         else {
-            throw new IOException(lexeme+" linea "+fileManager.getLineNumber());
+            refreshlexeme();
+            throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"No es un caracter Valido");
+
         }
     }
 
@@ -226,7 +236,7 @@ public class LexicalAnalyzer {
         return new Token("charLiteral",lexeme, fileManager.getLineNumber());
     }
 
-    private Token e13() throws IOException {
+    private Token e13() throws IOException, LexicalException {
         refreshlexeme();
         refreshActualCharacter();
         return e11();
@@ -238,7 +248,7 @@ public class LexicalAnalyzer {
             return e15();
         }
         else if (actualChar==('*')){
-            deleteLexeme();
+            refreshlexeme();
             refreshActualCharacter();
             return e16();
         }
@@ -263,17 +273,30 @@ public class LexicalAnalyzer {
             refreshActualCharacter();
             return e17();
         } else if (!fileManager.isEOF()) {
+            if(actualChar!='\r'&& actualChar!='\n' ) {
+                refreshlexeme();
+            }
+            if(actualChar=='\n' && comentario==null){
+                comentario=""+lexeme;
+            }
             refreshActualCharacter();
             return e16();
         }
         else {
-            throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"Comentario multilinea sin cerrar se llego al final del archivo");
+            if(comentario==null){
+                comentario=""+lexeme;
+            }
+            throw new LexicalException(comentario, lineaComentario, comentario, columna,"Comentario multilinea sin cerrar se llego al final del archivo");
         }
     }
 
     private Token e17() throws Exception {
         if(actualChar=='/'){
             refreshActualCharacter();
+            comentario=null;
+            lineaComentario=1;
+            columna=0;
+            deleteLexeme();
             return e0();
         }
         else {
@@ -295,21 +318,26 @@ public class LexicalAnalyzer {
         }
     }
     private Token e19() throws LexicalException, IOException {
-        if (actualChar=='\\'){
-            refreshlexeme();
-            refreshActualCharacter();
-            return e20();
-        } else if (actualChar=='"') {
-            refreshlexeme();
-            refreshActualCharacter();
-            return e21();
-        } else if (actualChar!='\n'&& actualChar!='\r') {
-            refreshlexeme();
-            refreshActualCharacter();
-            return e19();
+        if(!fileManager.EOF) {
+            if (actualChar=='\\'){
+                refreshlexeme();
+                refreshActualCharacter();
+                return e20();
+            } else if (actualChar=='"') {
+                refreshlexeme();
+                refreshActualCharacter();
+                return e21();
+            } else if (actualChar!='\n'&& actualChar!='\r') {
+                refreshlexeme();
+                refreshActualCharacter();
+                return e19();
+            }
+            else {
+                throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"No se permite Salto de linea en String ");
+            }
         }
         else {
-            throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"No se permite Salto de linea en String ");
+            throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"Se llego al EOF String sin cerrar");
         }
     }
 

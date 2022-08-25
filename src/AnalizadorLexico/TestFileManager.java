@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class TestFileManager {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         File archivo=new File("D:\\Compilador\\Compilador\\src\\AnalizadorLexico\\test.txt");
          FileManager fileManager;
         try {
@@ -14,7 +14,12 @@ public class TestFileManager {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        LexicalAnalyzer lexical=new LexicalAnalyzer(fileManager);
+        LexicalAnalyzer lexical= null;
+        try {
+            lexical = new LexicalAnalyzer(fileManager);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         try {
             Token ultimo=lexical.nextToken();
             System.out.println(ultimo.toString());
@@ -22,7 +27,7 @@ public class TestFileManager {
                 ultimo=lexical.nextToken();
                 System.out.println(ultimo.toString());
             }
-            System.out.println("[Sin Errores]");
+            System.out.println("[SinErrores]");
         } catch (Exception e) {
             e.printStackTrace();
         }

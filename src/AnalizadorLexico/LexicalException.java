@@ -14,7 +14,7 @@ public class LexicalException extends Exception{
     }
 
     public void printStackTrace(){
-        System.out.println("Error Lexico en linea "+numberLine+" , columna "+ columnActual +" : "+ lexeme +" -> "+ error);
+        System.out.println("Error Lexico en linea "+numberLine+" , columna "+ columnActual +" : "+ lexeme +" "+ error);
         System.out.println("Detalle : " + this.actualLine);
         for (int i = 0; i < columnErrorforMessage(); i++){
             System.out.print(" ");
