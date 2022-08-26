@@ -1,5 +1,3 @@
-package AnalizadorLexico;
-
 import java.io.*;
 import java.util.ArrayList;
 

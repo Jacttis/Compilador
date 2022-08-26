@@ -9,8 +9,8 @@ public class LexicalAnalyzer {
     protected FileManager fileManager;
     protected HashMap<String,Token> reservedKeywords;
 
-    protected int lineaComentario=1,columna=0;
-    protected String comentario=null;
+    protected int commentLineNumber =1, commentColumnNumber =0;
+    protected String firstLineComment =null, lexemeComment =null;
     
     public LexicalAnalyzer(FileManager fileManager) throws IOException {
         this.fileManager=fileManager;
@@ -18,12 +18,12 @@ public class LexicalAnalyzer {
         reservedKeywords=new HashMap<>();
         fillhashMap();
     }
-    public Token nextToken() throws Exception {
+    public Token nextToken() throws LexicalException, IOException {
         lexeme ="";
         return e0();
     }
 
-    private Token e0() throws Exception {
+    private Token e0() throws LexicalException, IOException {
         if (fileManager.isEOF()){
             return e5();
         } else if(Character.isDigit(actualChar)){
@@ -60,8 +60,8 @@ public class LexicalAnalyzer {
         } else if (actualChar==('/')) {
             refreshlexeme();
             refreshActualCharacter();
-            lineaComentario=fileManager.getLineNumber();
-            columna=fileManager.getActualColumnNumber()-1;
+            commentLineNumber =fileManager.getLineNumber();
+            commentColumnNumber =fileManager.getActualColumnNumber()-1;
             return e14();
         } else if (actualChar=='"') {
             refreshlexeme();
@@ -131,7 +131,7 @@ public class LexicalAnalyzer {
 
 
 
-    private Token e1(int numberOfDigits) throws Exception {
+    private Token e1(int numberOfDigits) throws IOException, LexicalException {
         if (Character.isDigit(actualChar) && numberOfDigits<9){
             refreshlexeme();
             refreshActualCharacter();
@@ -241,7 +241,7 @@ public class LexicalAnalyzer {
         refreshActualCharacter();
         return e11();
     }
-    private Token e14() throws Exception {
+    private Token e14() throws IOException, LexicalException {
         if (actualChar==('/')) {
             deleteLexeme();
             refreshActualCharacter();
@@ -256,7 +256,7 @@ public class LexicalAnalyzer {
             return new Token("op/",lexeme, fileManager.getLineNumber());
         }
     }
-    private Token e15() throws Exception {
+    private Token e15() throws IOException, LexicalException {
         if(actualChar =='\n'){
             refreshActualCharacter();
             return e0();
@@ -268,7 +268,7 @@ public class LexicalAnalyzer {
     }
 
 
-    private Token e16() throws Exception {
+    private Token e16() throws IOException, LexicalException {
         if(actualChar=='*'){
             refreshActualCharacter();
             return e17();
@@ -276,26 +276,28 @@ public class LexicalAnalyzer {
             if(actualChar!='\r'&& actualChar!='\n' ) {
                 refreshlexeme();
             }
-            if(actualChar=='\n' && comentario==null){
-                comentario=""+lexeme;
+            if(actualChar=='\r' && firstLineComment ==null){
+                firstLineComment =""+fileManager.getActualLine();
+                lexemeComment =lexeme;
             }
             refreshActualCharacter();
             return e16();
         }
         else {
-            if(comentario==null){
-                comentario=""+lexeme;
+            if(firstLineComment ==null){
+                firstLineComment =""+fileManager.getActualLine();
+                lexemeComment =lexeme;
             }
-            throw new LexicalException(comentario, lineaComentario, comentario, columna,"Comentario multilinea sin cerrar se llego al final del archivo");
+            throw new LexicalException(lexemeComment, commentLineNumber, firstLineComment, commentColumnNumber,"Comentario multilinea sin cerrar se llego al final del archivo");
         }
     }
 
-    private Token e17() throws Exception {
+    private Token e17() throws IOException, LexicalException {
         if(actualChar=='/'){
             refreshActualCharacter();
-            comentario=null;
-            lineaComentario=1;
-            columna=0;
+            firstLineComment =null;
+            commentLineNumber =1;
+            commentColumnNumber =0;
             deleteLexeme();
             return e0();
         }
@@ -466,28 +468,27 @@ public class LexicalAnalyzer {
 
     private void fillhashMap(){
         reservedKeywords.put("class",new Token("pr_class","class",0));
+        reservedKeywords.put("interface",new Token("pr_interface","interface",0));
         reservedKeywords.put("extends",new Token("pr_extends","extends",0));
+        reservedKeywords.put("implements",new Token("pr_implements","implements",0));
+        reservedKeywords.put("public",new Token("pr_public","public",0));
+        reservedKeywords.put("private",new Token("pr_private","private",0));
         reservedKeywords.put("static",new Token("pr_static","static",0));
         reservedKeywords.put("dynamic",new Token("pr_dynamic","dynamic",0));
         reservedKeywords.put("void",new Token("pr_void","void",0));
         reservedKeywords.put("boolean",new Token("pr_boolean","boolean",0));
         reservedKeywords.put("char",new Token("pr_char","char",0));
         reservedKeywords.put("int",new Token("pr_int","int",0));
-        reservedKeywords.put("public",new Token("pr_public","public",0));
-        reservedKeywords.put("private",new Token("pr_private","private",0));
         reservedKeywords.put("if",new Token("pr_if","if",0));
         reservedKeywords.put("else",new Token("pr_else","else",0));
-        reservedKeywords.put("for",new Token("pr_for","for",0));
+        reservedKeywords.put("while",new Token("pr_while","while",0));
         reservedKeywords.put("return",new Token("pr_return","return",0));
+        reservedKeywords.put("var",new Token("pr_var","var",0));
         reservedKeywords.put("this",new Token("pr_this","this",0));
         reservedKeywords.put("new",new Token("pr_new","new",0));
         reservedKeywords.put("null",new Token("pr_null","null",0));
         reservedKeywords.put("true",new Token("pr_true","true",0));
         reservedKeywords.put("false",new Token("pr_false","false",0));
-        reservedKeywords.put("interface",new Token("pr_interface","interface",0));
-        reservedKeywords.put("var",new Token("pr_var","var",0));
-        reservedKeywords.put("implements",new Token("pr_implements","implements",0));
-        reservedKeywords.put("while",new Token("pr_while","while",0));
     }
 
 }

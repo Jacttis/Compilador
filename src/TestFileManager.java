@@ -1,4 +1,6 @@
-package AnalizadorLexico;
+import AnalizadorLexico.FileManager;
+import AnalizadorLexico.LexicalAnalyzer;
+import AnalizadorLexico.Token;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,7 +25,7 @@ public class TestFileManager {
         try {
             Token ultimo=lexical.nextToken();
             System.out.println(ultimo.toString());
-            while (!ultimo.description.equals("EOF")) {
+            while (!ultimo.getDescription().equals("EOF")) {
                 ultimo=lexical.nextToken();
                 System.out.println(ultimo.toString());
             }

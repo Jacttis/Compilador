@@ -14,17 +14,15 @@ public class LexicalException extends Exception{
     }
 
     public void printStackTrace(){
-        System.out.println("Error Lexico en linea "+numberLine+" , columna "+ columnActual +" : "+ lexeme +" "+ error);
-        System.out.println("Detalle : " + this.actualLine);
-        for (int i = 0; i < columnErrorforMessage(); i++){
-            System.out.print(" ");
-        }
-        System.out.println("^");
+        System.out.println("Error Lexico en linea: "+numberLine+" ,columna: "+ columnActual +" : "+ lexeme +" "+ error);
+        System.out.println("Detalle: " + this.actualLine);
+        String spaces = String.format("%"+(columnErrorforMessage())+"s", "");
+        System.out.println(spaces+"^");
         System.out.println("[Error:"+ lexeme +"|"+ numberLine +"]");
     }
 
     private int columnErrorforMessage(){
-        int letterInMessageDetalle=10;
+        int letterInMessageDetalle=9;
         return columnActual-1+letterInMessageDetalle;
     }
 }
