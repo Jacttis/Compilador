@@ -215,8 +215,7 @@ public class LexicalAnalyzer {
             throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"No se permite Salto de linea en un Character ");
         }else {
             refreshlexeme();
-            refreshActualCharacter();
-            return e12();
+            throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"LiteralChar vacio no valido");
         }
     }
     private Token e11() throws IOException, LexicalException {
@@ -236,10 +235,37 @@ public class LexicalAnalyzer {
         return new Token("charLiteral",lexeme, fileManager.getLineNumber());
     }
 
+    private Token e39(int numbersInHexa) throws IOException, LexicalException {
+        if ((actualChar>='0' && actualChar<='9' || actualChar>='a' && actualChar<='f' || actualChar>='A' && actualChar<='F') && numbersInHexa<=4){
+            refreshlexeme();
+            refreshActualCharacter();
+            return e39(numbersInHexa+1);
+        } else if ((actualChar>='0' && actualChar<='9' || actualChar>='a' && actualChar<='f' || actualChar>='A' && actualChar<='F') && numbersInHexa>4){
+            refreshlexeme();
+            throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"Char Unicode de mas de 4 digitos hexa");
+        } else if (actualChar=='\'') {
+            refreshlexeme();
+            refreshActualCharacter();
+            return e12();
+        } else{
+            refreshlexeme();
+            throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"Char Unicode incorrecto");
+        }
+    }
+
     private Token e13() throws IOException, LexicalException {
-        refreshlexeme();
-        refreshActualCharacter();
-        return e11();
+        System.out.println("e13");
+        if(actualChar=='u') {
+            refreshlexeme();
+            refreshActualCharacter();
+            return e39(1);
+        }
+        else {
+            refreshlexeme();
+            refreshActualCharacter();
+            return e11();
+        }
+
     }
     private Token e14() throws IOException, LexicalException {
         if (actualChar==('/')) {
