@@ -9,7 +9,7 @@ import java.io.IOException;
 public class TestFileManager {
 
     public static void main(String[] args) {
-        File archivo=new File("D:\\Compilador\\Compilador\\src\\AnalizadorLexico\\test.txt");
+        File archivo=new File(args[0]);
          FileManager fileManager;
         try {
             fileManager=new FileManager(archivo);
