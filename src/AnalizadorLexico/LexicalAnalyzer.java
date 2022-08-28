@@ -225,7 +225,9 @@ public class LexicalAnalyzer {
             return e12();
         }
         else {
-            refreshlexeme();
+            if (actualChar!='\n' && actualChar!='\r'){
+                refreshlexeme();
+            }
             throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"No es un caracter Valido");
 
         }
@@ -248,7 +250,9 @@ public class LexicalAnalyzer {
             refreshActualCharacter();
             return e12();
         } else{
-            refreshlexeme();
+            if (actualChar!='\n' && actualChar!='\r'){
+                refreshlexeme();
+            }
             throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"Char Unicode incorrecto");
         }
     }
