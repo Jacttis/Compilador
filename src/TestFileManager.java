@@ -9,12 +9,22 @@ import java.io.IOException;
 public class TestFileManager {
 
     public static void main(String[] args) {
-        File archivo=new File(args[0]);
-         FileManager fileManager;
+        File archivo=null;
+         FileManager fileManager = null;
         try {
+            if(args.length>0) {
+                archivo = new File(args[0]);
+            }
+            else{
+                System.out.println("No hay ningun archivo seleccionado");
+                System.exit(0);
+            }
             fileManager=new FileManager(archivo);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            if(args[0]!=null) {
+                System.out.println(args[0] + " archivo no encontrado");
+            }
+            System.exit(0);
         }
         LexicalAnalyzer lexical= null;
         try {
