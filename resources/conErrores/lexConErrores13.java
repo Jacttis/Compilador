@@ -1,3 +1,3 @@
-///[Error:'\uAF34 |3]
+///[Error:'\uAF34|3]
 
 '\uAF34

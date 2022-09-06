@@ -11,6 +11,8 @@ public class LexicalAnalyzer {
 
     protected int commentLineNumber =1, commentColumnNumber =0;
     protected String firstLineComment =null, lexemeComment =null;
+
+    private boolean e0ThrowExcepcion =false;
     
     public LexicalAnalyzer(FileManager fileManager) throws IOException {
         this.fileManager=fileManager;
@@ -19,9 +21,14 @@ public class LexicalAnalyzer {
         fillhashMap();
     }
     public Token nextToken() throws LexicalException, IOException {
+        if(e0ThrowExcepcion){
+            actualChar=fileManager.getNextChar();
+            e0ThrowExcepcion =false;
+        }
         lexeme ="";
         return e0();
     }
+
 
     private Token e0() throws LexicalException, IOException {
         if (fileManager.isEOF()){
@@ -125,6 +132,7 @@ public class LexicalAnalyzer {
             return e38();
         }else {
             refreshlexeme();
+            e0ThrowExcepcion =true;
             throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"Caracter no valido");
         }
     }
@@ -138,7 +146,8 @@ public class LexicalAnalyzer {
             return e1(numberOfDigits+1);
         } else if (Character.isDigit(actualChar )&& numberOfDigits>=9) {
             refreshlexeme();
-            throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"Entero de mas de 9 digitos");
+            refreshActualCharacter();
+            throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber()-1,"Entero de mas de 9 digitos");
         } else {
             return new Token("intLiteral",lexeme,fileManager.getLineNumber());
         }
@@ -225,7 +234,7 @@ public class LexicalAnalyzer {
             return e12();
         }
         else {
-            if (actualChar!='\n' && actualChar!='\r'){
+            if (!fileManager.EOF && actualChar!='\n' && actualChar!='\r'){
                 refreshlexeme();
             }
             throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"No es un caracter Valido");
@@ -250,7 +259,7 @@ public class LexicalAnalyzer {
             refreshActualCharacter();
             return e12();
         } else{
-            if (actualChar!='\n' && actualChar!='\r'){
+            if (!fileManager.EOF && actualChar!='\n' && actualChar!='\r'){
                 refreshlexeme();
             }
             throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"Char Unicode incorrecto");
@@ -258,7 +267,6 @@ public class LexicalAnalyzer {
     }
 
     private Token e13() throws IOException, LexicalException {
-        System.out.println("e13");
         if(actualChar=='u') {
             refreshlexeme();
             refreshActualCharacter();
