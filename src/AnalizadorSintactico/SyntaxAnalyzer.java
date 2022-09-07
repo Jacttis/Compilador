@@ -36,9 +36,27 @@ public class SyntaxAnalyzer {
             clase();
             listaClases();
         }
+        else{
+            
+        }
             
     }
 
-    private void clase() {
+    private void clase() throws LexicalException, SyntaxException, IOException {
+        if(actualToken.getDescription().equals("pr_class")){
+            claseConcreta();
+            
+        } else if (actualToken.getDescription().equals("pr_interface") ) {
+            interfaz();
+        }
+    }
+
+    private void interfaz() {
+    }
+
+    private void claseConcreta() throws LexicalException, SyntaxException, IOException {
+        match("pr_class");
+        match("idClase");
+
     }
 }
