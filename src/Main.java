@@ -18,6 +18,7 @@ public class Main {
         ArrayList<Exception> exceptions=new ArrayList<>();
         LexicalAnalyzer lexical;
         SyntaxAnalyzer syntaxAnalyzer;
+        boolean errores=false;
         try {
             if(args.length>0) {
                 file = new File(args[0]);
@@ -40,10 +41,11 @@ public class Main {
             syntaxAnalyzer.inicial();
         } catch (LexicalException | IOException | SyntaxException e) {
             e.printStackTrace();
+            errores=true;
 
         }
-
-        System.out.println("[SinErrores]");
+        if (!errores)
+            System.out.println("[SinErrores]");
 
 
     }
