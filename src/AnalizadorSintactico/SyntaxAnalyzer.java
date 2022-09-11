@@ -510,7 +510,7 @@ public class SyntaxAnalyzer {
     }
 
     private void tipo() throws LexicalException, SyntaxException, IOException {
-        if (Arrays.asList("pr_boolean,pr_char,pr_int").contains(actualToken.getDescription())) {
+        if (Arrays.asList("pr_boolean","pr_char","pr_int").contains(actualToken.getDescription())) {
             tipoPrimitivo();
         }
         else if(Arrays.asList("idClase").contains(actualToken.getDescription())){
