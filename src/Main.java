@@ -1,6 +1,9 @@
 import AnalizadorLexico.FileManager;
 import AnalizadorLexico.LexicalAnalyzer;
+import AnalizadorLexico.LexicalException;
 import AnalizadorLexico.Token;
+import AnalizadorSintactico.SyntaxAnalyzer;
+import AnalizadorSintactico.SyntaxException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,6 +17,7 @@ public class Main {
         FileManager fileManager = null;
         ArrayList<Exception> exceptions=new ArrayList<>();
         LexicalAnalyzer lexical;
+        SyntaxAnalyzer syntaxAnalyzer;
         try {
             if(args.length>0) {
                 file = new File(args[0]);
@@ -32,33 +36,15 @@ public class Main {
 
         try {
             lexical = new LexicalAnalyzer(fileManager);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            syntaxAnalyzer= new SyntaxAnalyzer(lexical);
+            syntaxAnalyzer.inicial();
+        } catch (LexicalException | IOException | SyntaxException e) {
+            e.printStackTrace();
+
         }
-        Token lastTokenReceived = null;
-        while(lastTokenReceived==null) {
-            try {
-                lastTokenReceived = lexical.nextToken();
-                System.out.println(lastTokenReceived.toString());
-            } catch (Exception e) {
-                exceptions.add(e);
-            }
-        }
-            while (!lastTokenReceived.getDescription().equals("EOF")) {
-                try {
-                    lastTokenReceived = lexical.nextToken();
-                    System.out.println(lastTokenReceived.toString());
-                }
-                catch (Exception e){
-                    exceptions.add(e);
-                }
-            }
-            for (Exception erroresLexicos:exceptions) {
-                erroresLexicos.printStackTrace();
-            }
-            if(exceptions.isEmpty()){
-                System.out.println("[SinErrores]");
-            }
+
+        System.out.println("[SinErrores]");
+
 
     }
 }

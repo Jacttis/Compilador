@@ -170,12 +170,12 @@ public class LexicalAnalyzer {
             return e4();
         }
         else {
-            return new Token("Mayor",lexeme,fileManager.getLineNumber());
+            return new Token(">",lexeme,fileManager.getLineNumber());
         }
     }
 
     private Token e4() {
-        return new Token("MayorIgual",lexeme,fileManager.getLineNumber());
+        return new Token(">=",lexeme,fileManager.getLineNumber());
     }
 
     private Token e5() {
@@ -189,12 +189,12 @@ public class LexicalAnalyzer {
             return e7();
         }
         else {
-            return new Token("Menor",lexeme,fileManager.getLineNumber());
+            return new Token("<",lexeme,fileManager.getLineNumber());
         }
     }
 
     private Token e7() {
-        return new Token("MenorIgual",lexeme,fileManager.getLineNumber());
+        return new Token("<=",lexeme,fileManager.getLineNumber());
     }
     private Token e8() throws IOException {
         if (actualChar == '='){
@@ -203,12 +203,12 @@ public class LexicalAnalyzer {
             return e9();
         }
         else {
-            return new Token("Negado",lexeme,fileManager.getLineNumber());
+            return new Token("!",lexeme,fileManager.getLineNumber());
         }
     }
 
     private Token e9() {
-        return new Token("Distinto",lexeme,fileManager.getLineNumber());
+        return new Token("!=",lexeme,fileManager.getLineNumber());
     }
 
     private Token e10() throws IOException, LexicalException {
@@ -254,7 +254,7 @@ public class LexicalAnalyzer {
         } else if ((actualChar>='0' && actualChar<='9' || actualChar>='a' && actualChar<='f' || actualChar>='A' && actualChar<='F') && numbersInHexa>4){
             refreshlexeme();
             throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"Char Unicode de mas de 4 digitos hexa");
-        } else if (actualChar=='\'') {
+        } else if (actualChar=='\'' && numbersInHexa==5) {
             refreshlexeme();
             refreshActualCharacter();
             return e12();
@@ -291,7 +291,7 @@ public class LexicalAnalyzer {
             return e16();
         }
         else{
-            return new Token("op/",lexeme, fileManager.getLineNumber());
+            return new Token("/",lexeme, fileManager.getLineNumber());
         }
     }
     private Token e15() throws IOException, LexicalException {
@@ -403,12 +403,12 @@ public class LexicalAnalyzer {
             return e23();
         }
         else {
-            return new Token("Asignacion",lexeme, fileManager.getLineNumber());
+            return new Token("=",lexeme, fileManager.getLineNumber());
         }
     }
 
     private Token e23() {
-        return new Token("Igual",lexeme, fileManager.getLineNumber());
+        return new Token("==",lexeme, fileManager.getLineNumber());
     }
     private Token e24() throws IOException {
         if(actualChar=='='){
@@ -417,12 +417,12 @@ public class LexicalAnalyzer {
             return e25();
         }
         else {
-            return new Token("Suma",lexeme, fileManager.getLineNumber());
+            return new Token("+",lexeme, fileManager.getLineNumber());
         }
     }
 
     private Token e25() {
-        return new Token("SumaAsignacion",lexeme, fileManager.getLineNumber());
+        return new Token("+=",lexeme, fileManager.getLineNumber());
     }
 
     private Token e26() throws IOException {
@@ -432,22 +432,22 @@ public class LexicalAnalyzer {
             return e27();
         }
         else {
-            return new Token("Resta",lexeme, fileManager.getLineNumber());
+            return new Token("-",lexeme, fileManager.getLineNumber());
         }
     }
 
     private Token e27() {
-        return new Token("RestaAsignacion",lexeme, fileManager.getLineNumber());
+        return new Token("-=",lexeme, fileManager.getLineNumber());
     }
 
     private Token e28() {
-        return new Token("op*",lexeme,fileManager.getLineNumber());
+        return new Token("*",lexeme,fileManager.getLineNumber());
     }
     private Token e29() throws LexicalException, IOException {
         if (actualChar=='&') {
             refreshlexeme();
             refreshActualCharacter();
-            return new Token("op&&",lexeme,fileManager.getLineNumber());
+            return new Token("&&",lexeme,fileManager.getLineNumber());
         }
         else {
             throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"Se esperaba otro &");
@@ -458,7 +458,7 @@ public class LexicalAnalyzer {
         if (actualChar=='|') {
             refreshlexeme();
             refreshActualCharacter();
-            return new Token("op||",lexeme,fileManager.getLineNumber());
+            return new Token("||",lexeme,fileManager.getLineNumber());
         }
         else {
             throw new LexicalException(lexeme, fileManager.getLineNumber(), fileManager.getActualLine(), fileManager.getActualColumnNumber(),"Se esperaba otro |");
@@ -466,7 +466,7 @@ public class LexicalAnalyzer {
     }
 
     private Token e31() {
-        return new Token("op%",lexeme,fileManager.getLineNumber());
+        return new Token("%",lexeme,fileManager.getLineNumber());
     }
 
     private Token e32() {
@@ -512,7 +512,6 @@ public class LexicalAnalyzer {
         reservedKeywords.put("public",new Token("pr_public","public",0));
         reservedKeywords.put("private",new Token("pr_private","private",0));
         reservedKeywords.put("static",new Token("pr_static","static",0));
-        reservedKeywords.put("dynamic",new Token("pr_dynamic","dynamic",0));
         reservedKeywords.put("void",new Token("pr_void","void",0));
         reservedKeywords.put("boolean",new Token("pr_boolean","boolean",0));
         reservedKeywords.put("char",new Token("pr_char","char",0));
