@@ -168,13 +168,54 @@ public class SyntaxAnalyzer {
         if (Arrays.asList("pr_public","pr_private").contains(actualToken.getDescription())) {
             atributo();
         }
-        else if(Arrays.asList("pr_static","pr_void","pr_boolean","pr_char","pr_int","idClase").contains(actualToken.getDescription())){
+        else if(Arrays.asList("pr_static","pr_void").contains(actualToken.getDescription())){
             metodo();
-        }
-        else {
-            //Error?
+        } else if (Arrays.asList("pr_boolean","pr_char","pr_int","idClase").contains(actualToken.getDescription())) {
+            constructor_atributo_metodo();
         }
 
+    }
+
+    private void  constructor_atributo_metodo() throws LexicalException, SyntaxException, IOException {
+        if (Arrays.asList("idClase").contains(actualToken.getDescription())) {
+            match("idClase");
+            if (Arrays.asList("idMetVar").contains(actualToken.getDescription())) {
+                metodo_atributoSinVisibilidad();
+            }
+            else {
+                if (Arrays.asList("abreParentesis").contains(actualToken.getDescription())) {
+                    argsFormales();
+                    bloque();
+                }
+            }
+        }
+        else{
+            tipo();
+            metodo_atributoSinVisibilidad();
+        }
+    }
+
+    private void metodo_atributoSinVisibilidad() throws LexicalException, SyntaxException, IOException {
+
+
+        match("idMetVar");
+        if (Arrays.asList("abreParentesis").contains(actualToken.getDescription())) {
+            argsFormales();
+            bloque();
+        }
+        else{
+            listaDecAtrsSinVisibilidad();
+            match("puntoComa");
+        }
+
+
+    }
+
+    private void listaDecAtrsSinVisibilidad() throws LexicalException, SyntaxException, IOException {
+        if (Arrays.asList("coma").contains(actualToken.getDescription())) {
+            match("coma");
+            listaDecAtrs();
+        }
     }
 
     private void metodo() throws LexicalException, SyntaxException, IOException {
@@ -481,6 +522,7 @@ public class SyntaxAnalyzer {
         match("pr_new");
         match("idClase");
         match("abreParentesis");
+        listaDecAtrs();
         match("cierraParentesis");
     }
     

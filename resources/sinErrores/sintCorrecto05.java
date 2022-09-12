@@ -1,17 +1,18 @@
 class Prueba extends Object {
 
-    public String text;
-    public AA hola ;
-    private int x;
-    private ClaseA a;
+    String text;
+    AA hola ;
+    int x;
+     ClaseA a;
 
-    Prueba hh(int f,char j){
+    Prueba (int f,char j){
         x = this.hola + 4;
         Prueba.metodoPrueba(true);
 
     }
 
     static int metodoPrueba(boolean a){
+        var nuevo= new Prueba(f,j);
         var f=0;
         if(a) {
             f = 1;

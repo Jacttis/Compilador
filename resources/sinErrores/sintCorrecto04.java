@@ -2,7 +2,7 @@
 
 class Prueba_1{
 
-    static  int prueba1(int a) 
+    static  int prueba1(int a)
     {
         this.b().a = 5;
     
