@@ -621,5 +621,36 @@ public class SyntaxAnalyzer {
 
         }
     }
+
+    private void listaClaseGenerica() throws LexicalException, SyntaxException, IOException {
+        claseGenerica();
+        listaClaseGenericaPrima();
+    }
+
+    private void claseGenerica() throws LexicalException, SyntaxException, IOException {
+        match("idClase");
+        pico();
+    }
+
+    private void pico() throws LexicalException, SyntaxException, IOException {
+        if (Arrays.asList("<").contains(actualToken.getDescription())) {
+            match("<");
+            claseGenerica();
+            match(">");
+        }
+        else {
+            
+        }
+    }
+
+    private void listaClaseGenericaPrima() throws LexicalException, SyntaxException, IOException {
+        if (Arrays.asList("coma").contains(actualToken.getDescription())) {
+            match("coma");
+            listaClaseGenerica();
+        }
+        else {
+
+        }
+    }
     
 }
