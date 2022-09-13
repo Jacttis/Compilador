@@ -1,5 +1,5 @@
 // Prueba una Clase vacia
 
-class Prueba1 implements Hola,Args{
-     int hola;
+interface Prueba1<E,V<T<Y>>> extends Hola,Args{
+     int hola();
 }

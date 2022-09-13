@@ -6,6 +6,7 @@ import AnalizadorLexico.Token;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Stack;
 
 public class SyntaxAnalyzer {
 
@@ -54,7 +55,7 @@ public class SyntaxAnalyzer {
 
     private void interfaz() throws LexicalException, SyntaxException, IOException {
         match("pr_interface");
-        match("idClase");
+        listaClaseGenerica();
         extiendeA();
         match("abreCorchete");
         listaEncabezado();
@@ -62,7 +63,7 @@ public class SyntaxAnalyzer {
     }
 
     private void listaEncabezado() throws LexicalException, SyntaxException, IOException {
-        if (Arrays.asList("pr_static").contains(actualToken.getDescription())) {
+        if (Arrays.asList("pr_static","pr_boolean","pr_int","pr_char","idClase","pr_void").contains(actualToken.getDescription())) {
            encabezadoMetodo();
            match("puntoComa");
            listaEncabezado();
@@ -146,7 +147,7 @@ public class SyntaxAnalyzer {
 
     private void claseConcreta() throws LexicalException, SyntaxException, IOException {
         match("pr_class");
-        match("idClase");
+        listaClaseGenerica();
         heredaDe();
         implementaA();
         match("abreCorchete");
@@ -178,7 +179,7 @@ public class SyntaxAnalyzer {
 
     private void  constructor_atributo_metodo() throws LexicalException, SyntaxException, IOException {
         if (Arrays.asList("idClase").contains(actualToken.getDescription())) {
-            match("idClase");
+            listaClaseGenerica();
             if (Arrays.asList("idMetVar").contains(actualToken.getDescription())) {
                 metodo_atributoSinVisibilidad();
             }
@@ -635,11 +636,11 @@ public class SyntaxAnalyzer {
     private void pico() throws LexicalException, SyntaxException, IOException {
         if (Arrays.asList("<").contains(actualToken.getDescription())) {
             match("<");
-            claseGenerica();
+            listaClaseGenerica();
             match(">");
         }
         else {
-            
+
         }
     }
 

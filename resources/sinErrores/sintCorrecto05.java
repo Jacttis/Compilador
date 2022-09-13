@@ -1,7 +1,7 @@
 class Prueba extends Object {
 
     String text;
-    AA hola ;
+    AA<E> hola ;
     int x;
      ClaseA a;
 
