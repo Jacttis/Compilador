@@ -28,7 +28,7 @@ public class SyntaxAnalyzer {
     }
     public void inicial() throws LexicalException, SyntaxException, IOException {
         listaClases();
-        match("EOF"); // PReguntar si se puede asi
+        match("EOF");
 
     }
 
@@ -196,8 +196,6 @@ public class SyntaxAnalyzer {
     }
 
     private void metodo_atributoSinVisibilidad() throws LexicalException, SyntaxException, IOException {
-
-
         match("idMetVar");
         if (Arrays.asList("abreParentesis").contains(actualToken.getDescription())) {
             argsFormales();
@@ -521,9 +519,7 @@ public class SyntaxAnalyzer {
     private void accesoConstructor() throws LexicalException, SyntaxException, IOException {
         match("pr_new");
         match("idClase");
-        match("abreParentesis");
-        listaDecAtrs();
-        match("cierraParentesis");
+        argsActuales();
     }
     
     private void accesoThis() throws LexicalException, SyntaxException, IOException {

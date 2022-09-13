@@ -12,7 +12,10 @@ class Prueba extends Object {
     }
 
     static int metodoPrueba(boolean a){
-        var nuevo= new Prueba(f,j);
+        var nuevo= new Prueba(f,3+5);
+        var hola=new Hola();
+        var string="String";
+        var chara='c';
         var f=0;
         if(a) {
             f = 1;
