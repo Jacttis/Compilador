@@ -153,7 +153,7 @@ public class LexicalAnalyzer {
         }
     }
     private Token e2() throws IOException {
-        if (Character.isLetterOrDigit(actualChar) || actualChar=='_'){
+        if (Character.isLetterOrDigit(actualChar)){
             refreshlexeme();
             refreshActualCharacter();
             return e2();
@@ -345,7 +345,7 @@ public class LexicalAnalyzer {
         }
     }
     private Token e18() throws IOException {
-        if (Character.isLetterOrDigit(actualChar) || actualChar=='_'){
+        if (Character.isLetterOrDigit(actualChar)){
             refreshlexeme();
             refreshActualCharacter();
             return e18();

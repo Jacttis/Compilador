@@ -3,7 +3,7 @@
 
 class Prueba1{
 
-    int metodo_1() {
+    int metodo1() {
         
     }
 }

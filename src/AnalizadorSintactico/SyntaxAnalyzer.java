@@ -111,7 +111,7 @@ public class SyntaxAnalyzer {
     }
 
     private void listaArgsFormalesPrima() throws LexicalException, SyntaxException, IOException {
-        if (Arrays.asList("coma").contains(actualToken.getDescription())) {
+        if (Arrays.asList("pr_boolean","pr_char","pr_int","idClase").contains(actualToken.getDescription())) {
             match("coma");
             listaArgsFormales();
         }
@@ -173,7 +173,7 @@ public class SyntaxAnalyzer {
         } else if (Arrays.asList("pr_boolean","pr_char","pr_int","idClase").contains(actualToken.getDescription())) {
             constructor_atributo_metodo();
         }
-
+        
     }
 
     private void  constructor_atributo_metodo() throws LexicalException, SyntaxException, IOException {
@@ -298,7 +298,8 @@ public class SyntaxAnalyzer {
 
     private void expresionOpt() throws LexicalException, SyntaxException, IOException {
         if (Arrays.asList("+","-","!"," pr_null", "pr_true", "pr_false", "intLiteral", "charLiteral", "stringLiteral", "pr_this", "idMetVar", "pr_new", "idClase").contains(actualToken.getDescription())) {
-            expresion();
+            sentencia();
+            listaSentencias();
         }
         else{
             //vacio
@@ -446,11 +447,10 @@ public class SyntaxAnalyzer {
     private void encadenadoOptPrima() throws LexicalException, SyntaxException, IOException {
         if (Arrays.asList("punto").contains(actualToken.getDescription())) {
             encadenadoOpt();
-        } else if (Arrays.asList("abreParentesis").contains(actualToken.getDescription())) {
+        }
+        else{
             argsActuales();
             encadenadoOpt();
-        } else{
-
         }
     }
 
@@ -530,7 +530,6 @@ public class SyntaxAnalyzer {
         visibilidad();
         tipo();
         listaDecAtrs();
-        match("puntoComa");
     }
 
     private void listaDecAtrs() throws LexicalException, SyntaxException, IOException {
