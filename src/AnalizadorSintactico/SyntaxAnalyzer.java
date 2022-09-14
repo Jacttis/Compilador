@@ -26,6 +26,7 @@ public class SyntaxAnalyzer {
             throw new SyntaxException(actualToken,tokenDescription);
         }
 
+
     }
     public void inicial() throws LexicalException, SyntaxException, IOException {
         listaClases();
@@ -50,6 +51,9 @@ public class SyntaxAnalyzer {
             
         } else if (actualToken.getDescription().equals("pr_interface") ) {
             interfaz();
+        }
+        else {
+            throw new SyntaxException(actualToken,"se esperaba un class o interface");
         }
     }
 
@@ -174,6 +178,9 @@ public class SyntaxAnalyzer {
         } else if (Arrays.asList("pr_boolean","pr_char","pr_int","idClase").contains(actualToken.getDescription())) {
             constructor_atributo_metodo();
         }
+        else {
+            throw new SyntaxException(actualToken,"se esperaba un miembro");
+        }
 
     }
 
@@ -234,7 +241,7 @@ public class SyntaxAnalyzer {
     }
 
     private void listaSentencias() throws LexicalException, SyntaxException, IOException {
-        if (Arrays.asList("puntoComa","pr_this","idMetVar","pr_new","idClase", "abreParentesis","pr_var","pr_return","pr_if","pr_while","abreCorchete").contains(actualToken.getDescription())) {
+        if (Arrays.asList("puntoComa","pr_this","idMetVar","pr_new","idClase", "abreParentesis","pr_var","pr_return","pr_if","pr_while","abreCorchete","pr_int","pr_boolean","pr_char").contains(actualToken.getDescription())) {
             sentencia();
             listaSentencias();
         }
@@ -246,11 +253,22 @@ public class SyntaxAnalyzer {
     private void sentencia() throws LexicalException, SyntaxException, IOException {
         if (Arrays.asList("puntoComa").contains(actualToken.getDescription())) {
             match("puntoComa");
+        } else if (Arrays.asList("idClase").contains(actualToken.getDescription())) {
+            match("idClase");
+            if (Arrays.asList("punto").contains(actualToken.getDescription())){
+                acceso();
+                asignacion();
+                match("puntoComa");
+            }
+            else{
+                varLocalTipoClase();
+            }
+            
         } else if (Arrays.asList("pr_this","idMetVar","pr_new","idClase", "abreParentesis").contains(actualToken.getDescription())) {
             acceso();
             asignacion();
             match("puntoComa");
-        } else if (Arrays.asList("pr_var").contains(actualToken.getDescription())) {
+        } else if (Arrays.asList("pr_var","pr_int","pr_boolean","pr_char").contains(actualToken.getDescription())) {
             varLocal();
             match("puntoComa");
         } else if (Arrays.asList("pr_return").contains(actualToken.getDescription())) {
@@ -263,6 +281,15 @@ public class SyntaxAnalyzer {
         } else if (Arrays.asList("abreCorchete").contains(actualToken.getDescription())) {
             bloque();
         }
+        else {
+            throw new SyntaxException(actualToken,"se esperaba una sentencia");
+        }
+    }
+
+    private void varLocalTipoClase() throws LexicalException, SyntaxException, IOException {
+        match("idMetVar");
+        match("=");
+        expresion();
     }
 
     private void While() throws LexicalException, SyntaxException, IOException {
@@ -298,7 +325,7 @@ public class SyntaxAnalyzer {
     }
 
     private void expresionOpt() throws LexicalException, SyntaxException, IOException {
-        if (Arrays.asList("+","-","!"," pr_null", "pr_true", "pr_false", "intLiteral", "charLiteral", "stringLiteral", "pr_this", "idMetVar", "pr_new", "idClase").contains(actualToken.getDescription())) {
+        if (Arrays.asList("+","-","!","pr_null", "pr_true", "pr_false", "intLiteral", "charLiteral", "stringLiteral", "pr_this", "idMetVar", "pr_new", "idClase").contains(actualToken.getDescription())) {
             expresion();
         }
         else{
@@ -307,12 +334,20 @@ public class SyntaxAnalyzer {
     }
 
     private void varLocal() throws LexicalException, SyntaxException, IOException {
-        match("pr_var");
-        match("idMetVar");
-        match("=");
-        expresion();
-        
+        if (Arrays.asList("pr_var").contains(actualToken.getDescription())) {
+            match("pr_var");
+            match("idMetVar");
+            match("=");
+            expresion();
+        }
+        else{
+            tipoPrimitivo();
+            match("idMetVar");
+            match("=");
+            expresion();
+        }
     }
+
 
     private void asignacion() throws LexicalException, SyntaxException, IOException {
         if (Arrays.asList("=","+=","-=").contains(actualToken.getDescription())) {
@@ -369,6 +404,9 @@ public class SyntaxAnalyzer {
         } else if (Arrays.asList("%").contains(actualToken.getDescription())) {
             match("%");
         }
+        else {
+            throw new SyntaxException(actualToken,"se esperaba un operador binario");
+        }
     }
 
     private void expresionUnaria() throws LexicalException, SyntaxException, IOException {
@@ -378,8 +416,9 @@ public class SyntaxAnalyzer {
          }else if (Arrays.asList("pr_null", "pr_true", "pr_false", "intLiteral", "charLiteral", "stringLiteral", "pr_this", "idMetVar", "pr_new", "idClase", "abreParentesis").contains(actualToken.getDescription())) {
              operando();
          }
-
-
+         else {
+             throw new SyntaxException(actualToken,"se esperaba una expresion unaria");
+         }
 
     }
 
@@ -388,6 +427,9 @@ public class SyntaxAnalyzer {
             literal();
         }else if (Arrays.asList("pr_this", "idMetVar", "pr_new", "idClase", "abreParentesis").contains(actualToken.getDescription())) {
             acceso();
+        }
+        else {
+            throw new SyntaxException(actualToken,"se esperaba un operando");
         }
     }
 
@@ -405,6 +447,9 @@ public class SyntaxAnalyzer {
         } else if (Arrays.asList("stringLiteral").contains(actualToken.getDescription())) {
             match("stringLiteral");
         }
+        else {
+            throw new SyntaxException(actualToken,"se esperaba un literal");
+        }
     }
 
     private void operadorUnario() throws LexicalException, SyntaxException, IOException {
@@ -415,6 +460,9 @@ public class SyntaxAnalyzer {
         } else if (Arrays.asList("!").contains(actualToken.getDescription())) {
             match("!");
         }
+        else {
+            throw new SyntaxException(actualToken,"se esperaba un operador unario");
+        }
     }
 
     private void tipoDeAsignacion() throws LexicalException, SyntaxException, IOException {
@@ -424,6 +472,9 @@ public class SyntaxAnalyzer {
             match("+=");
         } else if (Arrays.asList("-=").contains(actualToken.getDescription())) {
             match("-=");
+        }
+        else {
+            throw new SyntaxException(actualToken,"se esperaba un tipo de asignacion");
         }
     }
 
@@ -463,11 +514,14 @@ public class SyntaxAnalyzer {
             accesoMetodo();
         } else if (Arrays.asList("pr_new").contains(actualToken.getDescription())) {
             accesoConstructor();
-        } else if (Arrays.asList("idClase").contains(actualToken.getDescription())) {
+        } else if (Arrays.asList("punto").contains(actualToken.getDescription())) {
             accesoMetodoEstatico();
         } else if (Arrays.asList("abreParentesis").contains(actualToken.getDescription())) {
             expresionParentizada();
-        } 
+        }
+        else {
+            throw new SyntaxException(actualToken,"se esperaba un primario");
+        }
     }
 
     private void expresionParentizada() throws LexicalException, SyntaxException, IOException {
@@ -477,7 +531,14 @@ public class SyntaxAnalyzer {
     }
 
     private void listaExpsOpt() throws LexicalException, SyntaxException, IOException {
-        listaExps();
+        if (Arrays.asList( "+","-", "!", "pr_null", "pr_true", "pr_false", "intLiteral", "charLiteral", "stringLiteral", "pr_this", "idMetVar", "pr_new", "idClase", "abreParentesis").contains(actualToken.getDescription())) {
+            listaExps();
+        }
+        else{
+
+        }
+
+
     }
 
     private void listaExps() throws LexicalException, SyntaxException, IOException {
@@ -496,11 +557,12 @@ public class SyntaxAnalyzer {
     }
 
     private void accesoMetodoEstatico() throws LexicalException, SyntaxException, IOException {
-        match("idClase");
         match("punto");
         match("idMetVar");
         argsActuales();
     }
+
+
 
     private void argsActuales() throws LexicalException, SyntaxException, IOException {
         match("abreParentesis");
@@ -556,8 +618,8 @@ public class SyntaxAnalyzer {
         else if(Arrays.asList("idClase").contains(actualToken.getDescription())){
             match("idClase");
         }
-        else{
-            //Error
+        else {
+            throw new SyntaxException(actualToken,"se esperaba un tipo");
         }
     }
 
@@ -571,8 +633,8 @@ public class SyntaxAnalyzer {
         else if (Arrays.asList("pr_int").contains(actualToken.getDescription())){
             match("pr_int");
         }
-        else{
-
+        else {
+            throw new SyntaxException(actualToken,"se esperaba un tipo Primitivo");
         }
     }
 
@@ -593,7 +655,7 @@ public class SyntaxAnalyzer {
             match("pr_implements");
             listaTipoReferencia();
         }
-        else{
+        else {
 
         }
     }
