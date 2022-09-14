@@ -3,6 +3,6 @@
 
 class A extends B {
 
-    int metodo;
+    int metodo;;
 
 }

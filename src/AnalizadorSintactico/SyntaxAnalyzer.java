@@ -254,7 +254,7 @@ public class SyntaxAnalyzer {
         if (Arrays.asList("puntoComa").contains(actualToken.getDescription())) {
             match("puntoComa");
         } else if (Arrays.asList("idClase").contains(actualToken.getDescription())) {
-            match("idClase");
+            listaClaseGenerica();
             if (Arrays.asList("punto").contains(actualToken.getDescription())){
                 acceso();
                 asignacion();

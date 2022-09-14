@@ -1,8 +1,8 @@
- ///[Error:int|6]
+ //[Error:x|6]
 
 class Prueba {
 
     void metodo() {
-        int x = 3;
+        entero x = 3;
     }
 }
