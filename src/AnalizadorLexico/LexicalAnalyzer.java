@@ -179,7 +179,7 @@ public class LexicalAnalyzer {
     }
 
     private Token e5() {
-        return new Token("EOF",lexeme, fileManager.getLineNumber());
+        return new Token("EOF","", fileManager.getLineNumber());
     }
 
     private Token e6() throws IOException {
