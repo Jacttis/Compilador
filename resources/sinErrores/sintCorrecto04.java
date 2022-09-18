@@ -4,7 +4,7 @@ class Prueba_1{
 
     static  int prueba1(int a)
     {
-        this.b().a = 5;
+        Agua.b().a.b.c.d.e = 5+(4+4);
     
     }
     

@@ -4,6 +4,6 @@
 class Prueba1{
 
     int metodo_1() {
-        
+        String.hola();
     }
 }

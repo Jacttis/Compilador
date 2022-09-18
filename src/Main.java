@@ -15,7 +15,6 @@ public class Main {
     public static void main(String[] args) {
         File file = null;
         FileManager fileManager = null;
-        ArrayList<Exception> exceptions=new ArrayList<>();
         LexicalAnalyzer lexical;
         SyntaxAnalyzer syntaxAnalyzer;
         boolean errores=false;
