@@ -2,6 +2,8 @@ import AnalizadorLexico.FileManager;
 import AnalizadorLexico.LexicalAnalyzer;
 import AnalizadorLexico.LexicalException;
 import AnalizadorLexico.Token;
+import AnalizadorSemantico.SemanticException;
+import AnalizadorSemantico.TablaDeSimbolos;
 import AnalizadorSintactico.SyntaxAnalyzer;
 import AnalizadorSintactico.SyntaxException;
 
@@ -37,8 +39,9 @@ public class Main {
         try {
             lexical = new LexicalAnalyzer(fileManager);
             syntaxAnalyzer= new SyntaxAnalyzer(lexical);
+            TablaDeSimbolos tablaDeSimbolo=new TablaDeSimbolos();
             syntaxAnalyzer.inicial();
-        } catch (LexicalException | IOException | SyntaxException e) {
+        } catch (LexicalException | IOException | SyntaxException | SemanticException e) {
             e.printStackTrace();
             errores=true;
 

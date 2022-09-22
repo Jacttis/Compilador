@@ -3,10 +3,11 @@ package AnalizadorSintactico;
 import AnalizadorLexico.LexicalAnalyzer;
 import AnalizadorLexico.LexicalException;
 import AnalizadorLexico.Token;
+import AnalizadorSemantico.*;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Stack;
+import java.util.LinkedList;
 
 public class SyntaxAnalyzer {
 
@@ -28,13 +29,13 @@ public class SyntaxAnalyzer {
 
 
     }
-    public void inicial() throws LexicalException, SyntaxException, IOException {
+    public void inicial() throws LexicalException, SyntaxException, IOException, SemanticException {
         listaClases();
         match("EOF");
 
     }
 
-    private void listaClases() throws LexicalException, SyntaxException, IOException {
+    private void listaClases() throws LexicalException, SyntaxException, IOException, SemanticException {
         if(actualToken.getDescription().equals("pr_class") ||actualToken.getDescription().equals("pr_interface") ){
             clase();
             listaClases();
@@ -45,7 +46,7 @@ public class SyntaxAnalyzer {
             
     }
 
-    private void clase() throws LexicalException, SyntaxException, IOException {
+    private void clase() throws LexicalException, SyntaxException, IOException, SemanticException {
         if(actualToken.getDescription().equals("pr_class")){
             claseConcreta();
             
@@ -57,13 +58,18 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void interfaz() throws LexicalException, SyntaxException, IOException {
+    private void interfaz() throws LexicalException, SyntaxException, IOException, SemanticException {
         match("pr_interface");
-        claseGenerica();
-        extiendeA();
+        Interfaz interfazActual=new Interfaz(actualToken);
+        TablaDeSimbolos.tablaSimbolos.setClaseActual(interfazActual);
+        LinkedList<Token> tokensGenericos=new LinkedList<>();
+        LinkedList<Token> tokensGenericosTerminados=claseGenerica(tokensGenericos);
+        setearClaseActualGenericidad(); //REVISARRR
+        LinkedList<Token>interfazExtendidas = extiendeA(); //ACORDASE DEL HASH
         match("abreCorchete");
         listaEncabezado();
         match("cierraCorchete");
+        TablaDeSimbolos.tablaSimbolos.agregarInterfaz(interfazActual.getToken().getLexeme(),interfazActual);
     }
 
     private void listaEncabezado() throws LexicalException, SyntaxException, IOException {
@@ -78,9 +84,12 @@ public class SyntaxAnalyzer {
     }
 
     private void encabezadoMetodo() throws LexicalException, SyntaxException, IOException {
+        Metodo metodo;
         if (Arrays.asList("pr_static").contains(actualToken.getDescription())){
             estaticoOpt();
-            tipoMetodo();
+            Tipo tipo=tipoMetodo();
+            metodo=new Metodo(actualToken,true,tipo);
+            TablaDeSimbolos.tablaSimbolos.setMetodoActual(metodo);
             match("idMetVar");
             argsFormales();
         }else{
@@ -125,13 +134,17 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void tipoMetodo() throws LexicalException, SyntaxException, IOException {
+    private Tipo tipoMetodo() throws LexicalException, SyntaxException, IOException {
+       Tipo tipo;
         if (Arrays.asList("pr_boolean","pr_int","pr_char","idClase").contains(actualToken.getDescription())) {
-            tipo();
+            tipo=tipo();
+
         }
         else{
+            tipo=new Tipo(actualToken);
             match("pr_void");
         }
+        return tipo;
     }
 
     private void estaticoOpt() throws LexicalException, SyntaxException, IOException {
@@ -143,22 +156,33 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void extiendeA() throws LexicalException, SyntaxException, IOException {
+    private LinkedList<Token> extiendeA() throws LexicalException, SyntaxException, IOException {
             match("pr_extends");
-            listaClaseGenerica();
+            LinkedList<Token> tokensGenericos=new LinkedList<>();
+            return listaClaseGenerica(tokensGenericos);
     }
 
-    private void claseConcreta() throws LexicalException, SyntaxException, IOException {
+    private void claseConcreta() throws LexicalException, SyntaxException, IOException, SemanticException {
         match("pr_class");
-        claseGenerica();
-        heredaDe();
-        implementaA();
+        Clase actualClase=new Clase(actualToken);
+        TablaDeSimbolos.tablaSimbolos.setClaseActual(actualClase);
+        LinkedList<Token> tokensGenericos=new LinkedList<>();
+        LinkedList<Token> tokensGenericosTerminado=claseGenerica(tokensGenericos);
+        setearClaseActualGenericidad(); //preguntar si se puede hacer asi
+        Token padre=heredaDe();
+        actualClase.setClaseHerencia(padre);
+        LinkedList<Token> tokensInterfaces= implementaA();
+        //TablaDeSimbolos.tablaSimbolos.set(tokensInteraface)
         match("abreCorchete");
         listaMiembro();
         match("cierraCorchete");
+        TablaDeSimbolos.tablaSimbolos.agregarClase(actualClase.getToken().getLexeme(),actualClase);
     }
 
-    private void listaMiembro() throws LexicalException, SyntaxException, IOException {
+    private void setearClaseActualGenericidad() {
+    }
+
+    private void listaMiembro() throws LexicalException, SyntaxException, IOException, SemanticException {
         if (Arrays.asList("pr_public","pr_private","pr_static","pr_void","pr_boolean","pr_char","pr_int","idClase").contains(actualToken.getDescription())) {
             miembro();
             listaMiembro();
@@ -168,7 +192,7 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void miembro() throws LexicalException, SyntaxException, IOException {
+    private void miembro() throws LexicalException, SyntaxException, IOException, SemanticException {
         if (Arrays.asList("pr_public","pr_private").contains(actualToken.getDescription())) {
             atributo();
         }
@@ -183,52 +207,62 @@ public class SyntaxAnalyzer {
 
     }
 
-    private void  constructor_atributo_metodo() throws LexicalException, SyntaxException, IOException {
+    private void  constructor_atributo_metodo() throws LexicalException, SyntaxException, IOException, SemanticException {
         if (Arrays.asList("idClase").contains(actualToken.getDescription())) {
-            claseGenerica();
+            LinkedList<Token> tokensGenericos=new LinkedList<>();
+            LinkedList<Token> tokensGenericosTerminado=claseGenerica(tokensGenericos);
+            Tipo tipo=new Tipo(tokensGenericosTerminado.getFirst());
             if (Arrays.asList("idMetVar").contains(actualToken.getDescription())) {
-                metodo_atributoSinVisibilidad();
+                metodo_atributoSinVisibilidad(tipo);
+                //metodo
             }
             else {
                 if (Arrays.asList("abreParentesis").contains(actualToken.getDescription())) {
+                    //constructor
                     argsFormales();
                     bloque();
                 }
             }
         }
         else{
-            tipo();
-            metodo_atributoSinVisibilidad();
+           Tipo tipo = tipo();
+            metodo_atributoSinVisibilidad(tipo);
         }
     }
 
-    private void metodo_atributoSinVisibilidad() throws LexicalException, SyntaxException, IOException {
+    private void metodo_atributoSinVisibilidad(Tipo tipo) throws LexicalException, SyntaxException, IOException, SemanticException {
+        Token metodoOAtributo=actualToken;
         match("idMetVar");
         if (Arrays.asList("abreParentesis").contains(actualToken.getDescription())) {
             argsFormales();
             bloque();
         }
         else{
-            listaDecAtrsSinVisibilidad();
+
+            String visibilidad="public";
+            Atributo atributo=new Atributo(metodoOAtributo,visibilidad,tipo);
+            Clase claseActual= (Clase) TablaDeSimbolos.tablaSimbolos.getClaseActual();
+            claseActual.agregarAtributo(atributo.getTokenAtributo().getLexeme(),atributo);
+            listaDecAtrsSinVisibilidad(visibilidad,tipo);
             match("puntoComa");
         }
 
 
     }
 
-    private void listaDecAtrsSinVisibilidad() throws LexicalException, SyntaxException, IOException {
+    private void listaDecAtrsSinVisibilidad(String visibilidad,Tipo tipo) throws LexicalException, SyntaxException, IOException, SemanticException {
         if (Arrays.asList("coma").contains(actualToken.getDescription())) {
             match("coma");
-            listaDecAtrs();
+            listaDecAtrs(visibilidad,tipo);
         }
     }
 
-    private void metodo() throws LexicalException, SyntaxException, IOException {
+    private void metodo() throws LexicalException, SyntaxException, IOException, SemanticException {
         encabezadoMetodo();
         bloque();
     }
 
-    private void bloque() throws LexicalException, SyntaxException, IOException {
+    private void bloque() throws LexicalException, SyntaxException, IOException, SemanticException {
         if (Arrays.asList("abreCorchete").contains(actualToken.getDescription())) {
             match("abreCorchete");
             listaSentencias();
@@ -239,7 +273,7 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void listaSentencias() throws LexicalException, SyntaxException, IOException {
+    private void listaSentencias() throws LexicalException, SyntaxException, IOException, SemanticException {
         if (Arrays.asList("puntoComa","pr_this","idMetVar","pr_new","idClase", "abreParentesis","pr_var","pr_return","pr_if","pr_while","abreCorchete","pr_int","pr_boolean","pr_char").contains(actualToken.getDescription())) {
             sentencia();
             listaSentencias();
@@ -249,11 +283,12 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void sentencia() throws LexicalException, SyntaxException, IOException {
+    private void sentencia() throws LexicalException, SyntaxException, IOException, SemanticException {
         if (Arrays.asList("puntoComa").contains(actualToken.getDescription())) {
             match("puntoComa");
         } else if (Arrays.asList("idClase").contains(actualToken.getDescription())) {
-            claseGenerica();
+            LinkedList<Token> tokensGenericos=new LinkedList<>();
+            claseGenerica(tokensGenericos);
             if (Arrays.asList("punto").contains(actualToken.getDescription())){
                 acceso();
                 asignacion();
@@ -285,13 +320,13 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void varLocalTipoClase() throws LexicalException, SyntaxException, IOException {
-        listaDecAtrs();
+    private void varLocalTipoClase() throws LexicalException, SyntaxException, IOException, SemanticException {
+        listaDecVars();
         match("=");
         expresion();
     }
 
-    private void While() throws LexicalException, SyntaxException, IOException {
+    private void While() throws LexicalException, SyntaxException, IOException, SemanticException {
         match("pr_while");
         match("abreParentesis");
         expresion();
@@ -299,7 +334,7 @@ public class SyntaxAnalyzer {
         sentencia();
     }
 
-    private void If() throws LexicalException, SyntaxException, IOException {
+    private void If() throws LexicalException, SyntaxException, IOException, SemanticException {
         match("pr_if");
         match("abreParentesis");
         expresion();
@@ -308,7 +343,7 @@ public class SyntaxAnalyzer {
         Else();
     }
 
-    private void Else() throws LexicalException, SyntaxException, IOException {
+    private void Else() throws LexicalException, SyntaxException, IOException, SemanticException {
         if (Arrays.asList("pr_else").contains(actualToken.getDescription())) {
             match("pr_else");
             sentencia();
@@ -332,16 +367,16 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void varLocal() throws LexicalException, SyntaxException, IOException {
+    private void varLocal() throws LexicalException, SyntaxException, IOException, SemanticException {
         if (Arrays.asList("pr_var").contains(actualToken.getDescription())) {
             match("pr_var");
-            listaDecAtrs();
+            listaDecVars();
             match("=");
             expresion();
         }
         else{
-            tipoPrimitivo();
-            listaDecAtrs();
+            Tipo tipo =tipoPrimitivo();
+            listaDecVars();
             match("=");
             expresion();
         }
@@ -588,74 +623,106 @@ public class SyntaxAnalyzer {
         match("pr_this");
     }
 
-    private void atributo() throws LexicalException, SyntaxException, IOException {
-        visibilidad();
-        tipo();
-        listaDecAtrs();
+    private void atributo() throws LexicalException, SyntaxException, IOException, SemanticException {
+       String visibilidad = visibilidad();
+        Tipo tipo=tipo();
+        listaDecAtrs(visibilidad,tipo);
         match("puntoComa");
     }
 
-    private void listaDecAtrs() throws LexicalException, SyntaxException, IOException {
+    private void listaDecAtrs(String visibilidad,Tipo tipo) throws LexicalException, SyntaxException, IOException, SemanticException {
+        Atributo atributo=new Atributo(actualToken,visibilidad,tipo);
         match("idMetVar");
-        listaDecAtrsPrima();
+        Clase claseActual= (Clase) TablaDeSimbolos.tablaSimbolos.getClaseActual();
+        claseActual.agregarAtributo(atributo.getTokenAtributo().getLexeme(),atributo);
+        listaDecAtrsPrima(visibilidad,tipo);
     }
 
-    private void listaDecAtrsPrima() throws LexicalException, SyntaxException, IOException {
+    private void listaDecAtrsPrima(String visibilidad,Tipo tipo) throws LexicalException, SyntaxException, IOException, SemanticException {
         if (Arrays.asList("coma").contains(actualToken.getDescription())) {
             match("coma");
-            listaDecAtrs();
+            listaDecAtrs(visibilidad,tipo);
         }
         else{
             //vacio
         }
     }
 
-    private void tipo() throws LexicalException, SyntaxException, IOException {
+    private void listaDecVars() throws LexicalException, SyntaxException, IOException, SemanticException {
+        match("idMetVar");
+        listaDecVarsPrima();
+    }
+
+    private void listaDecVarsPrima() throws LexicalException, SyntaxException, IOException, SemanticException {
+        if (Arrays.asList("coma").contains(actualToken.getDescription())) {
+            match("coma");
+            listaDecVars();
+        }
+        else{
+            //vacio
+        }
+    }
+
+    private Tipo tipo() throws LexicalException, SyntaxException, IOException {
+        Tipo tipo;
         if (Arrays.asList("pr_boolean","pr_char","pr_int").contains(actualToken.getDescription())) {
-            tipoPrimitivo();
+            tipo=tipoPrimitivo();
         }
         else if(Arrays.asList("idClase").contains(actualToken.getDescription())){
-            claseGenerica();
+            LinkedList<Token> tokensGenericos=new LinkedList<>();
+            tipo=new Tipo(actualToken);
+            claseGenerica(tokensGenericos);
         }
         else {
             throw new SyntaxException(actualToken,"un tipo");
         }
+        return tipo;
     }
 
-    private void tipoPrimitivo() throws LexicalException, SyntaxException, IOException {
+    private Tipo tipoPrimitivo() throws LexicalException, SyntaxException, IOException {
+        Tipo tipo;
         if (Arrays.asList("pr_boolean").contains(actualToken.getDescription())) {
+            tipo=new Tipo(actualToken);
             match("pr_boolean");
         }
         else if(Arrays.asList("pr_char").contains(actualToken.getDescription())){
+            tipo=new Tipo(actualToken);
             match("pr_char");
         }
         else if (Arrays.asList("pr_int").contains(actualToken.getDescription())){
+            tipo=new Tipo(actualToken);
             match("pr_int");
         }
         else {
             throw new SyntaxException(actualToken,"un tipo Primitivo");
         }
+        return tipo;
     }
 
-    private void visibilidad() throws LexicalException, SyntaxException, IOException {
+    private String visibilidad() throws LexicalException, SyntaxException, IOException {
+        String retorno;
         if (Arrays.asList("pr_public").contains(actualToken.getDescription())) {
+            retorno=actualToken.getLexeme();
             match("pr_public");
         }
         else if(Arrays.asList("pr_private").contains(actualToken.getDescription())){
+            retorno=actualToken.getLexeme();
             match("pr_private");
         }
         else{
             throw new SyntaxException(actualToken,"un public o private");
         }
+        return retorno;
     }
 
-    private void implementaA() throws LexicalException, SyntaxException, IOException {
+    private LinkedList<Token> implementaA() throws LexicalException, SyntaxException, IOException {
         if (Arrays.asList("pr_implements").contains(actualToken.getDescription())) {
             match("pr_implements");
-            listaClaseGenerica();
+            LinkedList<Token> tokensGenericos=new LinkedList<>();
+            return listaClaseGenerica(tokensGenericos);
         }
         else {
-
+            return null;
         }
     }
 
@@ -674,45 +741,53 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void heredaDe() throws LexicalException, SyntaxException, IOException {
+    private Token heredaDe() throws LexicalException, SyntaxException, IOException {
         if (Arrays.asList("pr_extends").contains(actualToken.getDescription())) {
             match("pr_extends");
-            claseGenerica();
+            LinkedList<Token> tokensGenericos=new LinkedList<>();
+            LinkedList<Token>tokensGenericosNueva=claseGenerica(tokensGenericos);
+            return tokensGenericosNueva.getFirst();
         }
         else{
-
+            return new Token("idClase","Object", 0);//PReguntar
         }
     }
 
-    private void listaClaseGenerica() throws LexicalException, SyntaxException, IOException {
-        claseGenerica();
-        listaClaseGenericaPrima();
+    private LinkedList<Token> listaClaseGenerica(LinkedList<Token> tokensGenericos) throws LexicalException, SyntaxException, IOException {
+        LinkedList<Token> tokenGenericosActualizado= claseGenerica(tokensGenericos);
+        return listaClaseGenericaPrima(tokenGenericosActualizado);
     }
 
 
-    private void claseGenerica() throws LexicalException, SyntaxException, IOException {
+    private LinkedList<Token> claseGenerica(LinkedList<Token> tokensGenericos) throws LexicalException, SyntaxException, IOException {
+        tokensGenericos.add(actualToken);
         match("idClase");
-        pico();
+        return pico(tokensGenericos);
     }
 
-    private void pico() throws LexicalException, SyntaxException, IOException {
+    private LinkedList<Token> pico(LinkedList<Token> tokensGenericos) throws LexicalException, SyntaxException, IOException {
         if (Arrays.asList("<").contains(actualToken.getDescription())) {
+            tokensGenericos.add(actualToken);
             match("<");
-            listaClaseGenerica();
+            LinkedList<Token> tokensGenericosActualizado=listaClaseGenerica(tokensGenericos);
+            tokensGenericosActualizado.add(actualToken);
             match(">");
+            return tokensGenericosActualizado;
         }
         else {
-
+            return tokensGenericos;
         }
     }
 
-    private void listaClaseGenericaPrima() throws LexicalException, SyntaxException, IOException {
+    private LinkedList<Token> listaClaseGenericaPrima(LinkedList<Token> tokensGenericos) throws LexicalException, SyntaxException, IOException {
         if (Arrays.asList("coma").contains(actualToken.getDescription())) {
+            tokensGenericos.add(actualToken);
             match("coma");
-            listaClaseGenerica();
+            LinkedList<Token> tokensGenericosActualizado=listaClaseGenerica(tokensGenericos);
+            return tokensGenericosActualizado;
         }
         else{
-
+            return tokensGenericos;
         }
     }
 

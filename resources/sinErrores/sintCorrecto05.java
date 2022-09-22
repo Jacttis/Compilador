@@ -1,7 +1,7 @@
 class Prueba extends Object {
 
     private String text;
-    private AA<E> hola,a,s,d;
+    private AA<E> hola,s,d;
     int x,y,t;
     public ClaseA<T> a;
 
@@ -13,7 +13,7 @@ class Prueba extends Object {
 
     }
 
-    int metodoPrueba(boolean a) {
+    int metodoPrueba() {
         a=5;
         s=10;
         int nuevo = new Prueba(f, 3 + 5);
@@ -30,7 +30,7 @@ class Prueba extends Object {
         return f;
     }
 
-    String metodoPrueba(Hola<T> a) {
+    String metodoPrueba() {
         int nuevo,x = new Prueba(f, 3 + 5);
         Clasesita<String,Integer> hola,hola2,hol3,hola4 = new Clasesita<>();
         String string = "String";
@@ -74,6 +74,16 @@ class Prueba extends Object {
         var contador = 10;
         return f;
         return f;
+    }
+
+}
+
+class X {
+
+
+    char metodo(int x) {
+        x = 10 + 3;
+        return x;
     }
 
 }
