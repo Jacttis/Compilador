@@ -1,12 +1,13 @@
 class Prueba extends Object {
 
-    private String text;
+    String text;
     private AA<E> hola,s,d;
     int x,y,t;
     public ClaseA<T> a;
 
     Prueba(int f, char j) {
         a+=12;
+        x=A.a();
         x = this.hola + 4;
         Prueba.metodoPrueba(true);
 
@@ -16,6 +17,7 @@ class Prueba extends Object {
     int metodoPrueba() {
         a=5;
         s=10;
+        String x,y;
         int nuevo = new Prueba(f, 3 + 5);
         Clasesita<E> hola = new Clasesita<>();
         String string = "String";
@@ -46,6 +48,7 @@ class Prueba extends Object {
     }
 
     Hola<E,V> metodoPrueba(boolean a) {
+        int t,x;
         int nuevo = new Prueba(f, 3 + 5);
         Clasesita<E> hola = new Clasesita<>();
         String string = "String";

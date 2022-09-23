@@ -157,9 +157,14 @@ public class SyntaxAnalyzer {
     }
 
     private LinkedList<Token> extiendeA() throws LexicalException, SyntaxException, IOException {
+        if (Arrays.asList("pr_extends").contains(actualToken.getDescription())) {
             match("pr_extends");
-            LinkedList<Token> tokensGenericos=new LinkedList<>();
+            LinkedList<Token> tokensGenericos = new LinkedList<>();
             return listaClaseGenerica(tokensGenericos);
+        }
+        else{
+            return null;
+        }
     }
 
     private void claseConcreta() throws LexicalException, SyntaxException, IOException, SemanticException {
@@ -221,6 +226,9 @@ public class SyntaxAnalyzer {
                     //constructor
                     argsFormales();
                     bloque();
+                }
+                else{
+                    throw new SyntaxException(actualToken,"variable o {");
                 }
             }
         }
@@ -322,8 +330,12 @@ public class SyntaxAnalyzer {
 
     private void varLocalTipoClase() throws LexicalException, SyntaxException, IOException, SemanticException {
         listaDecVars();
-        match("=");
-        expresion();
+        if (Arrays.asList("=").contains(actualToken.getDescription())) {
+            match("=");
+            expresion();
+        } else if (Arrays.asList(";").contains(actualToken.getDescription())) {
+            match(";");
+        }
     }
 
     private void While() throws LexicalException, SyntaxException, IOException, SemanticException {
@@ -377,8 +389,12 @@ public class SyntaxAnalyzer {
         else{
             Tipo tipo =tipoPrimitivo();
             listaDecVars();
-            match("=");
-            expresion();
+            if (Arrays.asList("=").contains(actualToken.getDescription())) {
+                match("=");
+                expresion();
+            } else if (Arrays.asList(";").contains(actualToken.getDescription())) {
+                match(";");
+            }
         }
     }
 
@@ -548,7 +564,7 @@ public class SyntaxAnalyzer {
             accesoMetodo();
         } else if (Arrays.asList("pr_new").contains(actualToken.getDescription())) {
             accesoConstructor();
-        } else if (Arrays.asList("punto").contains(actualToken.getDescription())) {
+        } else if (Arrays.asList("idClase","punto").contains(actualToken.getDescription())) {
             accesoMetodoEstatico();
         } else if (Arrays.asList("abreParentesis").contains(actualToken.getDescription())) {
             expresionParentizada();
@@ -591,9 +607,16 @@ public class SyntaxAnalyzer {
     }
 
     private void accesoMetodoEstatico() throws LexicalException, SyntaxException, IOException {
-        match("punto");
-        match("idMetVar");
-        argsActuales();
+        if (Arrays.asList("idClase").contains(actualToken.getDescription())) {
+            match("idClase");
+            match("punto");
+            match("idMetVar");
+            argsActuales();
+        } else if (Arrays.asList("punto").contains(actualToken.getDescription())) {
+            match("punto");
+            match("idMetVar");
+            argsActuales();
+        }
     }
 
 

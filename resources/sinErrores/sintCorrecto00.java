@@ -1,8 +1,8 @@
 
 class A<E,V<C<T>>> extends B<E,V> {
-
+    String  a;
     void metodo1() {
-        return 10;
+        S.a();
     }
 
     int metodo2() {
