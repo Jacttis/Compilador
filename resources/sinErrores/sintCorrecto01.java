@@ -1,7 +1,7 @@
 // Prueba una Clase vacia
 
-interface Prueba1<E,V<T<Y>>> {
-     int hola();
-     int hola();
+interface Prueba1{
+     static int  hola(String s);
+     int hola(String s,int i);
 
 }

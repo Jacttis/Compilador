@@ -7,17 +7,16 @@ class Prueba extends Object {
 
     Prueba(int f, char j) {
         a+=12;
-        x=A.a();
+        x=A.a().a.a.a.a;
+
         x = this.hola + 4;
         Prueba.metodoPrueba(true);
-
-
     }
-
-    int metodoPrueba() {
+    int metodoPrueba1() {
         a=5;
         s=10;
         String x,y;
+        s="Hola";
         int nuevo = new Prueba(f, 3 + 5);
         Clasesita<E> hola = new Clasesita<>();
         String string = "String";
@@ -32,7 +31,7 @@ class Prueba extends Object {
         return f;
     }
 
-    String metodoPrueba() {
+    String<E,V> metodoPrueba() {
         int nuevo,x = new Prueba(f, 3 + 5);
         Clasesita<String,Integer> hola,hola2,hol3,hola4 = new Clasesita<>();
         String string = "String";
@@ -47,7 +46,7 @@ class Prueba extends Object {
         return f;
     }
 
-    Hola<E,V> metodoPrueba(boolean a) {
+    Hola<E,V> metodoPrueba2(boolean a) {
         int t,x;
         int nuevo = new Prueba(f, 3 + 5);
         Clasesita<E> hola = new Clasesita<>();
@@ -63,7 +62,7 @@ class Prueba extends Object {
         return f;
     }
 
-    char metodoPrueba(boolean a) {
+    char metodoPrueba3(boolean a) {
         int nuevo = new Prueba(f, 3 + 5);
         Clasesita<E> hola = new Clasesita<>();
         String string = "String";

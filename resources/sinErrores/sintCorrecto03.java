@@ -1,14 +1,15 @@
-// Prueba un bloque con un otro bloque que tiene una sentencia vacia
+///[Error:Clase|4]
+class X {
 
-class Prueba1<E,V>{
+    static Clase metodo() {
+        while (1 < 5) {
+            return x;
+            while (true) {
+                var x = 20;
+            }
 
-    static int prueba1(int a)
-    {
-        {
-            ;
         }
-    
     }
-    
 }
+
 

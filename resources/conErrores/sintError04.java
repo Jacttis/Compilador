@@ -1,12 +1,29 @@
-///[Error:else|7]
-// Se esperaba sentencia se encontro else - ln:7
-class Error1{
-    static  void metodo(){
-        if(a>b){
-            a=10;
-            else a=20;
-        }
-}
+///[Error:A|8]
+class A<E,VCT> extends B<E,V> {
+    String  a,b,c;
+
+    A(){
+
+    }
+    A(){
+
+    }
+    void metodo1(String s) {
+        S.a();
+    }
+
+    int metodo1() {
+        return null;
+    }
+
+    static String metodo3() {
+        return this.x();
+    }
+    String metodo3(int i) {
+        return this.x();
+    }
+
+
 }
 
     

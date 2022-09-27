@@ -17,17 +17,19 @@ public class Tipo {
     public Tipo(Token actualToken) {
         tokenTipo=actualToken;
     }
-    public boolean es_de_tipo(Tipo tipo) {
-       /* boolean toReturn = false;
+    public boolean compareTipo(Tipo tipo) {
+        boolean toReturn = false;
+
         if(!tipo.getToken().getLexeme().equals(tokenTipo.getLexeme())) {
-            LinkedList<String> lista_ancestros = new LinkedList<String>();
-            TablaDeSimbolos.tablaSimbolos.getClaseByName(tokenTipo.getLexeme()).get_lista_ancestros(lista_ancestros); //Puede andar mal por q no se si se puede ejecutar antes de haber verificado que la clase estaba declarada
-            if(lista_ancestros.contains(tipo.getNombre()))
-                toReturn = true;
+            toReturn=false;
         }
         else toReturn = true;
 
-        return toReturn;*/
-        return false;
+        return toReturn;
+
+    }
+
+    public boolean checkTipo(Clase claseActual) {
+        return true;
     }
 }

@@ -4,23 +4,27 @@ import AnalizadorLexico.Token;
 
 public class Metodo extends MetodoConstructor {
 
-    protected Token tokenMetodo;
 
     protected boolean estatico;
     protected Tipo tipo;
 
     public Metodo(Token token, boolean estatico, Tipo tipo) {
         super();
-        this.tokenMetodo = token;
+        this.token = token;
         this.estatico = estatico;
         this.tipo = tipo;
-        //tabla_variables = new HashMap<String,EntradaVariable>();
     }
 
 
     @Override
-    public void setArgumento(String nombre, Parametro argumento) throws SemanticException {
-
+    public void addArgumento(Parametro argumento) throws SemanticException {
+        if(!listaArgumentos.contains(argumento)){
+            listaArgumentos.add(argumento);
+        }
+        else{
+            throw new SemanticException(argumento.getToken(), "Error Semantico en linea "
+                    + argumento.getToken().getNumberline() + ": Ya hay un argumento declarado con el nombre " + argumento.getToken().getLexeme());
+        }
     }
 
     @Override
@@ -29,11 +33,11 @@ public class Metodo extends MetodoConstructor {
     }
 
     public Token getTokenMetodo() {
-        return tokenMetodo;
+        return token;
     }
 
     public void setTokenMetodo(Token tokenMetodo) {
-        this.tokenMetodo = tokenMetodo;
+        this.token = tokenMetodo;
     }
 
     public boolean isEstatico() {
@@ -50,5 +54,14 @@ public class Metodo extends MetodoConstructor {
 
     public void setTipo(Tipo tipo) {
         this.tipo = tipo;
+    }
+
+    public void checkDeclaracion(Clase claseActual) throws SemanticException {
+        if(tipo.getToken().getDescription().equals("idClase")){
+            if (tipo.checkTipo(claseActual)){
+                throw new SemanticException(tipo.getToken(), "Error Semantico en linea "
+                        + tipo.getToken().getNumberline() + ": Clase de retorno no declarada " + tipo.getToken().getLexeme());
+            }
+        }
     }
 }

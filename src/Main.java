@@ -5,6 +5,7 @@ import AnalizadorLexico.Token;
 import AnalizadorSemantico.SemanticException;
 import AnalizadorSemantico.TablaDeSimbolos;
 import AnalizadorSintactico.SyntaxAnalyzer;
+import AnalizadorSintactico.SyntaxAnalyzerEtapa2;
 import AnalizadorSintactico.SyntaxException;
 
 import java.io.File;
@@ -41,6 +42,7 @@ public class Main {
             syntaxAnalyzer= new SyntaxAnalyzer(lexical);
             TablaDeSimbolos tablaDeSimbolo=new TablaDeSimbolos();
             syntaxAnalyzer.inicial();
+            tablaDeSimbolo.checkDeclaracion();
         } catch (LexicalException | IOException | SyntaxException | SemanticException e) {
             e.printStackTrace();
             errores=true;

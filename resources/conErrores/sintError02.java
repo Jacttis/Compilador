@@ -1,7 +1,9 @@
-///[Error:clasesita|3]
+///[Error:hola|5]
 
-class clasesita{
-    
+interface Prueba1{
+    int hola();
+    int hola();
+
 }
 
 

@@ -13,9 +13,11 @@ public class Parametro {
     }
 
     public Token getToken(){ return tokenParametro;}
+
+    public String getNombre(){return tokenParametro.getLexeme();}
     public Tipo getTipo(){return tipoParametro;};
     public boolean toCompare(Parametro param_a_comparar) {
-        return this.tipoParametro.es_de_tipo(param_a_comparar.getTipo());
+        return this.tipoParametro.compareTipo(param_a_comparar.getTipo());
     }
 
     /*public void esta_bien_declarado() throws SemanticException {

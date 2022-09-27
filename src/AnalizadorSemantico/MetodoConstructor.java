@@ -1,20 +1,21 @@
 package AnalizadorSemantico;
 
+import AnalizadorLexico.Token;
+
 import java.util.Hashtable;
 import java.util.LinkedList;
 
 public abstract class MetodoConstructor {
 
-    protected Hashtable<String,Parametro> tablaArgumentos;
     protected LinkedList<Parametro> listaArgumentos;
+    protected Token token;
+
 
     public MetodoConstructor(){
         listaArgumentos = new LinkedList<Parametro>();
     }
 
-    public abstract void setArgumento(String nombre, Parametro argumento) throws SemanticException;
-    //public abstract void setVariable(EntradaVariable variable);   No de esta etapa var locales
-
+    public abstract void addArgumento(Parametro argumento) throws SemanticException;
 
     public boolean compareArgumentos(LinkedList<Parametro> parametrosToCompare){
         boolean iguales = true;
@@ -31,5 +32,6 @@ public abstract class MetodoConstructor {
 
     public LinkedList<Parametro> getListaArgumentos() {  return listaArgumentos;}
     public abstract void esta_bien_declarado() throws SemanticException;
+
 
 }

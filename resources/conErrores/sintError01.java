@@ -1,7 +1,9 @@
-///[Error:,|3]
+///[Error:E|3]
 
-class Clase extends Clasesita, Clasesita{
-    
+interface Prueba1<E,V> extends E<String,E>,E<T>{
+    int hola();
+    int hola();
+
 }
 
 

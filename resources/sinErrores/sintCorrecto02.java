@@ -3,6 +3,10 @@
 
 class Prueba1{
 
+    Prueba1(){
+
+    }
+
     int metodo_1() {
         String.hola();
     }
