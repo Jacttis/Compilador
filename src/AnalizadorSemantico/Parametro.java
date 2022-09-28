@@ -20,6 +20,17 @@ public class Parametro {
         return this.tipoParametro.compareTipo(param_a_comparar.getTipo());
     }
 
+    public void checkDeclaracion(Clase claseActual) throws SemanticException {
+        if(tipoParametro.getToken().getDescription().equals("idClase")){
+            TipoReferencia tipoR= (TipoReferencia) tipoParametro;
+            if (!tipoR.checkTipo(claseActual)){
+                throw new SemanticException(tipoR.getToken(), "Error Semantico en linea "
+                        + tipoR.getToken().getNumberline() + ": Clase del Argumento" + tipoR.getToken().getLexeme()+" no declarada ");
+            }
+        }
+
+    }
+
     /*public void esta_bien_declarado() throws SemanticException {
         if(!tipoParametro.esPrimitivo()){
             if(!TablaSimbolos.getInstance().clase_esta_declarada(tipoParametro.getNombre()))

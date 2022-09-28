@@ -92,6 +92,11 @@ public class Interfaz implements IClaseInterfaz{
 
     }
 
+    @Override
+    public void agregarInterfaz(Token token, LinkedList<Token> interfaz) throws SemanticException {
+
+    }
+
     public void agregarInterfaz(LinkedList<Token> interfaz) throws SemanticException {
         if(!interfacesExtendidas.containsKey(interfaz.getFirst().getLexeme())){
            interfacesExtendidas.put(interfaz.getFirst().getLexeme(),interfaz);

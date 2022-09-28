@@ -153,4 +153,7 @@ public class TablaDeSimbolos {
         }
 
 
+    public Interfaz getInterfazByName(String lexeme) {
+        return interfaces.get(lexeme);
+    }
 }

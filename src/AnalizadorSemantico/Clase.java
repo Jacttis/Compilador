@@ -2,6 +2,7 @@ package AnalizadorSemantico;
 
 import AnalizadorLexico.Token;
 
+import java.lang.reflect.Array;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
@@ -11,7 +12,7 @@ public class Clase implements IClaseInterfaz{
     protected Hashtable<String, Atributo> atributos;
     protected Hashtable<String, LinkedList<Metodo>> metodos;
     protected LinkedList<Constructor> constructores;
-    protected Hashtable<String,LinkedList<Token>> interfacesImplementadas;
+    protected Hashtable<Token, Hashtable<String,Token>> interfacesImplementadas;
 
     public Hashtable<String, Token> getParametrosGenericos() {
         return parametrosGenericos;
@@ -148,13 +149,23 @@ public class Clase implements IClaseInterfaz{
     }
 
     @Override
-    public void agregarInterfaz(LinkedList<Token> interfaz) throws SemanticException {
-        if(!interfacesImplementadas.containsKey(interfaz.getFirst().getLexeme())){
-            interfacesImplementadas.put(interfaz.getFirst().getLexeme(),interfaz);
+    public void agregarInterfaz(Token token,LinkedList<Token> interfaz) throws SemanticException {
+        Hashtable<String,Token> parametrosInterfaz=new Hashtable<>();
+        for (Token t:interfaz) {
+            if(!parametrosInterfaz.contains(t.getLexeme())){
+                parametrosInterfaz.put(t.getLexeme(),t);
+            }
+            else {
+                throw new SemanticException(t, "Error Semantico en linea " +
+                        t.getNumberline() + ": Ya hay un parametro de la interfaz"+ token.getLexeme()+"con el nombre  "+t.getLexeme());
+            }
+        }
+        if(!interfacesImplementadas.containsKey(token)){
+            interfacesImplementadas.put(token,parametrosInterfaz);
         }
         else{
-            throw new SemanticException(interfaz.getFirst(), "Error Semantico en linea "
-                    + interfaz.getFirst().getNumberline() + ": Ya hay una interfaz declarado con el nombre " + interfaz.getFirst().getLexeme());
+            throw new SemanticException(token, "Error Semantico en linea "
+                    + token.getNumberline() + ": Ya hay una interfaz declarado con el nombre " + token.getLexeme());
         }
     }
 
@@ -166,36 +177,46 @@ public class Clase implements IClaseInterfaz{
 
     public void checkDeclaracion() throws SemanticException {
         if(!tokenClase.getLexeme().equals("Object")) {
-            if (checkPadre()) {
+            if (checkClase(claseHerencia,parametrosPadre)) {
                 if(!checkCircleHerencia(new LinkedList<>())){
                     throw new SemanticException(claseHerencia, "Error Semantico en linea "
                             + claseHerencia.getNumberline() + ": Herencia Circular " + claseHerencia.getLexeme());
+                }
+                for (Token token:interfacesImplementadas.keySet()) {
+                    if(!checkInterface(token,interfacesImplementadas.get(token))){
+                        throw new SemanticException(token, "Error Semantico en linea "
+                                + token.getNumberline() + ": No existe una interfaz declarada con el nombre -> " + token.getLexeme());
+                    }
                 }
                 for (LinkedList<Metodo> listaMetodo:metodos.values()) {
                     for (Metodo metodo:listaMetodo) {
                         metodo.checkDeclaracion(this);
                     }
                 }
+
+                for (Atributo atributo:atributos.values()) {
+                    atributo.checkDeclaracion(this);
+                }
             } else {
                 throw new SemanticException(claseHerencia, "Error Semantico en linea "
-                        + claseHerencia.getNumberline() + ": No existe una Clase declarada con el nombre-> " + claseHerencia.getLexeme());
+                        + claseHerencia.getNumberline() + ": No existe una Clase declarada con el nombre -> " + claseHerencia.getLexeme());
             }
         }
     }
 
-    private boolean checkPadre() throws SemanticException {
+    private boolean checkClase(Token clase,Hashtable<String,Token> parametros) throws SemanticException {
         boolean correcto=true;
-        if(claseHerencia!=null && TablaDeSimbolos.tablaSimbolos.getClases().containsKey(claseHerencia.getLexeme())){
-            if(parametrosPadre.size()==TablaDeSimbolos.tablaSimbolos.getClaseByName(claseHerencia.getLexeme()).getParametrosGenericos().size()){
-                for (Token t:parametrosPadre.values()) {
+        if(clase!=null && TablaDeSimbolos.tablaSimbolos.getClases().containsKey(clase.getLexeme())){
+            if(parametros.size()==TablaDeSimbolos.tablaSimbolos.getClaseByName(clase.getLexeme()).getParametrosGenericos().size()){
+                for (Token t:parametros.values()) {
                     if(!TablaDeSimbolos.tablaSimbolos.getClases().containsKey(t.getLexeme()) && !parametrosGenericos.containsKey(t.getLexeme())){
                         throw new SemanticException(t, "Error Semantico en linea "
                                 + t.getNumberline() + ": No existe una Clase declarada con el nombre-> " + t.getLexeme()+"Como parametro del padre");
                     }
                 }
             }else {
-                throw new SemanticException(claseHerencia, "Error Semantico en linea "
-                        + claseHerencia.getNumberline() + ": Cantidad de parametricos invalidos para " + claseHerencia.getLexeme());
+                throw new SemanticException(clase, "Error Semantico en linea "
+                        + clase.getNumberline() + ": Cantidad de parametricos invalidos para " + clase.getLexeme());
             }
         }else {
             correcto=false;
@@ -203,6 +224,25 @@ public class Clase implements IClaseInterfaz{
         return correcto;
     }
 
+    private boolean checkInterface(Token clase,Hashtable<String,Token> parametros) throws SemanticException {
+        boolean correcto=true;
+        if(clase!=null && TablaDeSimbolos.tablaSimbolos.getInterfaces().containsKey(clase.getLexeme())){
+            if(parametros.size()==TablaDeSimbolos.tablaSimbolos.getInterfazByName(clase.getLexeme()).getParametrosGenericos().size()){
+                for (Token t:parametros.values()) {
+                    if(!TablaDeSimbolos.tablaSimbolos.getClases().containsKey(t.getLexeme()) && !parametrosGenericos.containsKey(t.getLexeme())){
+                        throw new SemanticException(t, "Error Semantico en linea "
+                                + t.getNumberline() + ": No existe una Clase declarada con el nombre-> " + t.getLexeme()+"Como parametro del padre");
+                    }
+                }
+            }else {
+                throw new SemanticException(clase, "Error Semantico en linea "
+                        + clase.getNumberline() + ": Cantidad de parametricos invalidos para " + clase.getLexeme());
+            }
+        }else {
+            correcto=false;
+        }
+        return correcto;
+    }
     public boolean checkCircleHerencia(LinkedList<Token> clasesPadres) throws SemanticException {
        if(claseHerencia!=null) {
            if (!clasesPadres.contains(claseHerencia)) {

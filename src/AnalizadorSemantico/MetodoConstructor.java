@@ -31,7 +31,6 @@ public abstract class MetodoConstructor {
 
 
     public LinkedList<Parametro> getListaArgumentos() {  return listaArgumentos;}
-    public abstract void esta_bien_declarado() throws SemanticException;
 
 
 }

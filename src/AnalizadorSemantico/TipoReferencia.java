@@ -27,7 +27,7 @@ public class TipoReferencia extends Tipo{
     }
     public boolean checkTipo(Clase claseActual){
         boolean ret=true;
-        if(TablaDeSimbolos.tablaSimbolos.getClases().containsKey(tokenTipo.getLexeme()) && claseActual.parametrosGenericos.containsKey(tokenTipo.getLexeme())){
+        if(TablaDeSimbolos.tablaSimbolos.getClases().containsKey(tokenTipo.getLexeme()) || claseActual.parametrosGenericos.containsKey(tokenTipo.getLexeme())){
             for (Token token:parametrosGenericos.values()) {
                 if (!TablaDeSimbolos.tablaSimbolos.getClases().containsKey(token.getLexeme()) && !claseActual.parametrosGenericos.containsKey(token.getLexeme())){
                     ret=false;

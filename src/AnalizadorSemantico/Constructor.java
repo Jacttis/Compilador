@@ -20,11 +20,6 @@ public class Constructor extends MetodoConstructor{
         }
     }
 
-    @Override
-    public void esta_bien_declarado() throws SemanticException {
-
-    }
-
     public Token getToken() {
         return token;
     }

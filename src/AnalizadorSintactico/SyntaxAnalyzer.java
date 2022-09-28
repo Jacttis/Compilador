@@ -108,7 +108,14 @@ public class SyntaxAnalyzer {
 
     private void setearInterfaces(LinkedList<LinkedList<Token>> interfazExtendidas) throws SemanticException {
         for (LinkedList<Token> interfaz:interfazExtendidas) {
-            TablaDeSimbolos.tablaSimbolos.getClaseActual().agregarInterfaz(interfaz);
+            Token tokenLexema = interfaz.getFirst();
+            if(interfaz.size()>1) {
+                checkCorrectGenericity(interfaz);
+            }
+            else{
+                interfaz.removeFirst();
+            }
+            TablaDeSimbolos.tablaSimbolos.getClaseActual().agregarInterfaz(tokenLexema,interfaz);
         }
 
     }

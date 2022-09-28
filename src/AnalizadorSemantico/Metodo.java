@@ -27,11 +27,6 @@ public class Metodo extends MetodoConstructor {
         }
     }
 
-    @Override
-    public void esta_bien_declarado() throws SemanticException {
-
-    }
-
     public Token getTokenMetodo() {
         return token;
     }
@@ -58,10 +53,14 @@ public class Metodo extends MetodoConstructor {
 
     public void checkDeclaracion(Clase claseActual) throws SemanticException {
         if(tipo.getToken().getDescription().equals("idClase")){
-            if (tipo.checkTipo(claseActual)){
+            TipoReferencia tipoR= (TipoReferencia) tipo;
+            if (!tipoR.checkTipo(claseActual)){
                 throw new SemanticException(tipo.getToken(), "Error Semantico en linea "
                         + tipo.getToken().getNumberline() + ": Clase de retorno no declarada " + tipo.getToken().getLexeme());
             }
+        }
+        for (Parametro param:listaArgumentos) {
+            param.checkDeclaracion(claseActual);
         }
     }
 }

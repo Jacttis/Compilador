@@ -31,7 +31,7 @@ class Prueba extends Object {
         return f;
     }
 
-    String<E,V> metodoPrueba() {
+    String metodoPrueba() {
         int nuevo,x = new Prueba(f, 3 + 5);
         Clasesita<String,Integer> hola,hola2,hol3,hola4 = new Clasesita<>();
         String string = "String";
@@ -46,7 +46,7 @@ class Prueba extends Object {
         return f;
     }
 
-    Hola<E,V> metodoPrueba2(boolean a) {
+    Object metodoPrueba2(boolean a) {
         int t,x;
         int nuevo = new Prueba(f, 3 + 5);
         Clasesita<E> hola = new Clasesita<>();
@@ -80,9 +80,7 @@ class Prueba extends Object {
 
 }
 
-class X {
-
-
+class String {
     char metodo(int x) {
         x = 10 + 3;
         return x;

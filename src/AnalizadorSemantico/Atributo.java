@@ -38,4 +38,13 @@ public class Atributo {
         this.visibilidadAtributo = visibilidadAtributo;
     }
 
+    public void checkDeclaracion(Clase claseActual) throws SemanticException {
+        if (tipoAtributo.tokenTipo.getDescription().equals("idClase")){
+            TipoReferencia tipoReferencia = (TipoReferencia) tipoAtributo;
+            if(!tipoReferencia.checkTipo(claseActual)){
+                throw new SemanticException(tipoAtributo.getToken(), "Error Semantico en linea "
+                        + tipoAtributo.getToken().getNumberline() + ": Tipo de atributo no declarada " + tipoAtributo.getToken().getLexeme());
+            }
+        }
+    }
 }

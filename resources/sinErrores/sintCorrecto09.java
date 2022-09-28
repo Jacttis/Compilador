@@ -1,5 +1,8 @@
 
-class A extends B implements C, D, E, F {
+class A<X> implements C, D, E, F {
 
+
+}
+class B<E,V>{
 
 }

@@ -1,7 +1,7 @@
 ///[Error:Clase|4]
 class X {
 
-    static Clase metodo() {
+    static Object metodo() {
         while (1 < 5) {
             return x;
             while (true) {

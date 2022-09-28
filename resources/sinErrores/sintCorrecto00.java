@@ -1,49 +1,16 @@
 
-class A<E,VCT> {
-    String  a,b,c;
+class Prueba implements C<Object> {
 
-    A(){
-
-    }
-    A(int i){
+    int x,y,z;
+    B y1;
+    Prueba(){
 
     }
-    void metodo1(String s) {
-        S.a();
-    }
+ static B m1(){
 
-    int metodo1() {
-        return null;
-    }
-
-    static E metodo3() {
-        return this.x();
-    }
-    VCT metodo3(int i) {
-        return this.x();
-    }
+ }
 }
+interface C<D>{}
+class B<E,V>{
 
-class B<E,VCT> extends A<Object,System> {
-    String  a,b,c;
-    void metodo1(String s) {
-        S.a();
-    }
-
-    int metodo1() {
-        return null;
-    }
-
-    static String metodo3() {
-        return this.x();
-    }
-    String metodo3(int i) {
-        return this.x();
-    }
 }
-
-
-
-
-
-
