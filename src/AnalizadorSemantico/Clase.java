@@ -160,13 +160,22 @@ public class Clase implements IClaseInterfaz{
                         t.getNumberline() + ": Ya hay un parametro de la interfaz"+ token.getLexeme()+"con el nombre  "+t.getLexeme());
             }
         }
-        if(!interfacesImplementadas.containsKey(token)){
+        if(!this.contieneA(token)){
             interfacesImplementadas.put(token,parametrosInterfaz);
         }
         else{
             throw new SemanticException(token, "Error Semantico en linea "
                     + token.getNumberline() + ": Ya hay una interfaz declarado con el nombre " + token.getLexeme());
         }
+    }
+
+    private boolean contieneA(Token token){
+        for (Token t:interfacesImplementadas.keySet()) {
+            if(t.getLexeme().equals(token.getLexeme())){
+                return true;
+            }
+        }
+        return false;
     }
 
     private void insertarMetodoNuevo(String nombre, Metodo entradaMetodo) {
