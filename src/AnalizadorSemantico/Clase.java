@@ -122,6 +122,15 @@ public class Clase implements IClaseInterfaz{
     }
 
     public void agregarMetodo(String nombreMetodo, Metodo metodo) throws SemanticException {
+        if (nombreMetodo.equals("main") ){
+            if ( TablaDeSimbolos.tablaSimbolos.main!=null) {
+                TablaDeSimbolos.tablaSimbolos.setMetodoMain(metodo);
+            }
+            else {
+                throw new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
+                        ": Ya hay un metodo main declarado ");
+            }
+        }
         if(!metodos.containsKey(nombreMetodo))
             insertarMetodoNuevo(nombreMetodo,metodo);
         else {

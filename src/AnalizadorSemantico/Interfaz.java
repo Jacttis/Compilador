@@ -94,19 +94,18 @@ public class Interfaz implements IClaseInterfaz{
 
     @Override
     public void agregarInterfaz(Token token, LinkedList<Token> interfaz) throws SemanticException {
-
-    }
-
-    public void agregarInterfaz(LinkedList<Token> interfaz) throws SemanticException {
+        interfaz.addFirst(token);
         if(!interfacesExtendidas.containsKey(interfaz.getFirst().getLexeme())){
-           interfacesExtendidas.put(interfaz.getFirst().getLexeme(),interfaz);
+            interfacesExtendidas.put(interfaz.getFirst().getLexeme(),interfaz);
         }
         else{
             throw new SemanticException(interfaz.getFirst(), "Error Semantico en linea "
                     + interfaz.getFirst().getNumberline() + ": Ya hay una interfaz declarado con el nombre " + interfaz.getFirst().getLexeme());
         }
-
     }
 
 
+
+    public void checkDeclaracion() {
+    }
 }

@@ -10,6 +10,7 @@ public class TablaDeSimbolos {
     protected IClaseInterfaz claseActual;
     protected MetodoConstructor metodoActual;
     public static TablaDeSimbolos tablaSimbolos;
+    public Metodo main;
 
     public TablaDeSimbolos() throws SemanticException {
         clases=new Hashtable<>();
@@ -76,6 +77,9 @@ public class TablaDeSimbolos {
     public void checkDeclaracion() throws SemanticException {
         for (Clase c:clases.values()) {
             c.checkDeclaracion();
+        }
+        for (Interfaz i:interfaces.values()) {
+            i.checkDeclaracion();
         }
     }
 
@@ -155,5 +159,9 @@ public class TablaDeSimbolos {
 
     public Interfaz getInterfazByName(String lexeme) {
         return interfaces.get(lexeme);
+    }
+
+    public void setMetodoMain(Metodo metodo) {
+            main=metodo;
     }
 }
