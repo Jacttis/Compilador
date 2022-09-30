@@ -24,8 +24,8 @@ public class Metodo extends MetodoConstructor {
             listaArgumentos.add(argumento);
         }
         else{
-            throw new SemanticException(argumento.getToken(), "Error Semantico en linea "
-                    + argumento.getToken().getNumberline() + ": Ya hay un argumento declarado con el nombre " + argumento.getToken().getLexeme());
+            TablaDeSimbolos.listaExcepciones.add( new SemanticException(argumento.getToken(), "Error Semantico en linea "
+                    + argumento.getToken().getNumberline() + ": Ya hay un argumento declarado con el nombre " + argumento.getToken().getLexeme()));
         }
     }
 
@@ -57,8 +57,8 @@ public class Metodo extends MetodoConstructor {
         if(tipo.getToken().getDescription().equals("idClase")){
             TipoReferencia tipoR= (TipoReferencia) tipo;
             if (!tipoR.checkTipo(claseActual)){
-                throw new SemanticException(tipo.getToken(), "Error Semantico en linea "
-                        + tipo.getToken().getNumberline() + ": Clase de retorno no declarada " + tipo.getToken().getLexeme());
+                TablaDeSimbolos.listaExcepciones.add( new SemanticException(tipo.getToken(), "Error Semantico en linea "
+                        + tipo.getToken().getNumberline() + ": Clase de retorno no declarada " + tipo.getToken().getLexeme()));
             }
         }
         LinkedList<String> parametrosVisitados=new LinkedList<>();
@@ -67,8 +67,8 @@ public class Metodo extends MetodoConstructor {
                 param.checkDeclaracion(claseActual);
             }
             else{
-                throw new SemanticException(param.getToken(), "Error Semantico en linea "
-                        + param.getToken().getNumberline() + ": parametro con nombre repetido " + param.getToken().getLexeme());
+                TablaDeSimbolos.listaExcepciones.add( new SemanticException(param.getToken(), "Error Semantico en linea "
+                        + param.getToken().getNumberline() + ": parametro con nombre repetido " + param.getToken().getLexeme()));
             }
 
             parametrosVisitados.add(param.getNombre());

@@ -17,8 +17,8 @@ public class Constructor extends MetodoConstructor{
             listaArgumentos.add(argumento);
         }
         else{
-            throw new SemanticException(argumento.getToken(), "Error Semantico en linea "
-                    + argumento.getToken().getNumberline() + ": Ya hay un argumento declarado con el nombre " + argumento.getToken().getLexeme());
+            TablaDeSimbolos.listaExcepciones.add( new SemanticException(argumento.getToken(), "Error Semantico en linea "
+                    + argumento.getToken().getNumberline() + ": Ya hay un argumento declarado con el nombre " + argumento.getToken().getLexeme()));
         }
     }
 
@@ -37,8 +37,8 @@ public class Constructor extends MetodoConstructor{
                 param.checkDeclaracion(claseActual);
             }
             else{
-                throw new SemanticException(param.getToken(), "Error Semantico en linea "
-                        + param.getToken().getNumberline() + ": parametro con nombre repetido " + param.getToken().getLexeme());
+                TablaDeSimbolos.listaExcepciones.add( new SemanticException(param.getToken(), "Error Semantico en linea "
+                        + param.getToken().getNumberline() + ": parametro con nombre repetido " + param.getToken().getLexeme()));
             }
 
             parametrosVisitados.add(param.getNombre());

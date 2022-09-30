@@ -46,14 +46,18 @@ public class Main {
             syntaxAnalyzer.inicial();
             tablaDeSimbolo.checkDeclaracion();
             tablaDeSimbolo.consolidar();
+            for (Exception e:TablaDeSimbolos.listaExcepciones) {
+                e.printStackTrace();
+            }
         } catch (LexicalException | IOException | SyntaxException | SemanticException e) {
             e.printStackTrace();
             errores=true;
 
         }
-        if (!errores)
+        if (!errores && TablaDeSimbolos.listaExcepciones.isEmpty())
             System.out.println("[SinErrores]");
 
+        TablaDeSimbolos.listaExcepciones.clear();
 
     }
 }

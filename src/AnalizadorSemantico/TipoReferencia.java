@@ -20,8 +20,8 @@ public class TipoReferencia extends Tipo{
             parametrosGenericos.put(parametro.getLexeme(),parametro);
         }
         else{
-            throw new SemanticException(parametro, "Error Semantico en linea "
-                    + parametro.getNumberline() + ": Ya hay un parametro declarado con el nombre " + parametro.getLexeme());
+            TablaDeSimbolos.listaExcepciones.add( new SemanticException(parametro, "Error Semantico en linea "
+                    + parametro.getNumberline() + ": Ya hay un parametro declarado con el nombre " + parametro.getLexeme()));
         }
 
     }
