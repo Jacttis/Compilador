@@ -29,7 +29,5 @@ public class Tipo {
 
     }
 
-    public boolean checkTipo(Clase claseActual) {
-        return true;
-    }
+
 }

@@ -2,6 +2,8 @@ package AnalizadorSemantico;
 
 import AnalizadorLexico.Token;
 
+import java.util.LinkedList;
+
 public class Metodo extends MetodoConstructor {
 
 
@@ -51,7 +53,7 @@ public class Metodo extends MetodoConstructor {
         this.tipo = tipo;
     }
 
-    public void checkDeclaracion(Clase claseActual) throws SemanticException {
+    public void checkDeclaracion(IClaseInterfaz claseActual) throws SemanticException {
         if(tipo.getToken().getDescription().equals("idClase")){
             TipoReferencia tipoR= (TipoReferencia) tipo;
             if (!tipoR.checkTipo(claseActual)){
@@ -59,8 +61,17 @@ public class Metodo extends MetodoConstructor {
                         + tipo.getToken().getNumberline() + ": Clase de retorno no declarada " + tipo.getToken().getLexeme());
             }
         }
+        LinkedList<String> parametrosVisitados=new LinkedList<>();
         for (Parametro param:listaArgumentos) {
-            param.checkDeclaracion(claseActual);
+            if(!parametrosVisitados.contains(param.getNombre())){
+                param.checkDeclaracion(claseActual);
+            }
+            else{
+                throw new SemanticException(param.getToken(), "Error Semantico en linea "
+                        + param.getToken().getNumberline() + ": parametro con nombre repetido " + param.getToken().getLexeme());
+            }
+
+            parametrosVisitados.add(param.getNombre());
         }
     }
 }

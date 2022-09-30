@@ -12,14 +12,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Main {
-
+    static LinkedList<SemanticException> excepciones=new LinkedList<>();
     public static void main(String[] args) {
         File file = null;
         FileManager fileManager = null;
         LexicalAnalyzer lexical;
         SyntaxAnalyzer syntaxAnalyzer;
+
         boolean errores=false;
         try {
             if(args.length>0) {
@@ -43,6 +45,7 @@ public class Main {
             TablaDeSimbolos tablaDeSimbolo=new TablaDeSimbolos();
             syntaxAnalyzer.inicial();
             tablaDeSimbolo.checkDeclaracion();
+            tablaDeSimbolo.consolidar();
         } catch (LexicalException | IOException | SyntaxException | SemanticException e) {
             e.printStackTrace();
             errores=true;
