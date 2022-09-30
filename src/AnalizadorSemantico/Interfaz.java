@@ -9,6 +9,7 @@ public class Interfaz implements IClaseInterfaz{
 
     protected Token tokenClase;
     protected Hashtable<String, LinkedList<Metodo>> metodos;
+    protected boolean herenciaCircularChequeada=false;
     protected Hashtable<String,LinkedList<Token>> interfacesExtendidas;
 
     public Hashtable<String, Token> getParametrosGenericos() {
@@ -59,14 +60,36 @@ public class Interfaz implements IClaseInterfaz{
 
 
     public void agregarMetodo(String nombreMetodo, Metodo metodo) throws SemanticException {
+        if (metodo.isEstatico()){
+            throw new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
+                    ": Las interfaces no pueden tener metodos estaticos");
+        }
         if (!metodos.containsKey(nombreMetodo))
             insertarMetodoNuevo(nombreMetodo, metodo);
         else {
             LinkedList<Metodo> metodosMismoNombre = metodos.get(nombreMetodo);
             for (Metodo met : metodosMismoNombre) {
                 if (met.compareArgumentos(metodo.getListaArgumentos())) {
-                    throw new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline()
-                            + ": Ya hay un metodo declarado con el nombre " + nombreMetodo + " que posee los mismos argumentos.");
+                    throw new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
+                            ": Ya hay un metodo declarado con el nombre " + nombreMetodo + " que posee los mismos argumentos.");
+                }
+            }
+            metodosMismoNombre.add(metodo);
+        }
+
+    }
+
+    public void agregarMetodoPadres(String nombreMetodo, Metodo metodo) throws SemanticException {
+        if (!metodos.containsKey(nombreMetodo))
+            insertarMetodoNuevo(nombreMetodo, metodo);
+        else {
+            LinkedList<Metodo> metodosMismoNombre = metodos.get(nombreMetodo);
+            for (Metodo met : metodosMismoNombre) {
+                if (met.compareArgumentos(metodo.getListaArgumentos())) {
+                    if(!met.estatico== metodo.estatico){
+                        throw new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline()
+                                + ": Mal redifinicion del metodo " + nombreMetodo);
+                    }
                 }
             }
             metodosMismoNombre.add(metodo);
@@ -106,6 +129,68 @@ public class Interfaz implements IClaseInterfaz{
 
 
 
-    public void checkDeclaracion() {
+    public void checkDeclaracion() throws SemanticException {
+        for (LinkedList<Token> listaPadres :interfacesExtendidas.values()) {
+            Token t=listaPadres.getFirst();
+            if (!TablaDeSimbolos.tablaSimbolos.getInterfaces().containsKey(listaPadres.getFirst().getLexeme())){
+                throw new SemanticException(t, "Error Semantico en linea "
+                        + t.getNumberline() + ": No existe una Clase declarada con el nombre-> " + t.getLexeme()+"Como parametro del padre");
+            }
+        }
+        Token enError=new Token("","",0);
+        if(herenciaCircular(new LinkedList<>(),enError)){
+            throw new SemanticException(enError, "Error Semantico en linea "
+                    + enError.getNumberline() + ": Herencia Circular " + enError.getLexeme());
+        }
+        for (LinkedList<Metodo> listaMetodo:metodos.values()) {
+            for (Metodo metodo:listaMetodo) {
+                metodo.checkDeclaracion(this);
+            }
+        }
     }
+
+    public boolean herenciaCircular(LinkedList<String> padres,Token enError){
+        if (!herenciaCircularChequeada) {
+            if (!padres.contains(this.tokenClase.getLexeme())) {
+                padres.add(tokenClase.getLexeme());
+                for (String nameI : interfacesExtendidas.keySet()) {
+                    if (TablaDeSimbolos.tablaSimbolos.getInterfazByName(nameI).herenciaCircular(padres, enError)) {
+                        enError.setNumberline(interfacesExtendidas.get(nameI).getFirst().getNumberline());
+                        enError.setDescription(interfacesExtendidas.get(nameI).getFirst().getDescription());
+                        enError.setLexeme(interfacesExtendidas.get(nameI).getFirst().getLexeme());
+                        return true;
+                    }
+                }
+
+            } else {
+                return true;
+            }
+            herenciaCircularChequeada=true;
+            return false;
+        }
+        return false;
+    }
+
+
+    public void consolidar() throws SemanticException {
+        if (!consolidada){
+            for (LinkedList<Token> token:interfacesExtendidas.values()) {
+                Interfaz padre=TablaDeSimbolos.tablaSimbolos.getInterfazByName(token.getFirst().getLexeme());
+                padre.consolidar();
+                for (LinkedList<Metodo> listaMetodo:padre.getMetodos().values()) {
+                    for (Metodo metodo: listaMetodo) {
+                        consolidarMetodo(metodo);
+                    }
+                }
+            }
+
+        }
+    }
+
+    private void consolidarMetodo(Metodo metodo) throws SemanticException {
+
+            agregarMetodoPadres(metodo.getTokenMetodo().getLexeme(),metodo);
+
+    }
+
 }

@@ -123,7 +123,15 @@ public class Clase implements IClaseInterfaz{
 
     public void agregarMetodo(String nombreMetodo, Metodo metodo) throws SemanticException {
         if (nombreMetodo.equals("main") ){
-            if ( TablaDeSimbolos.tablaSimbolos.main!=null) {
+            if(metodo.getListaArgumentos().size()>0){
+                throw new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
+                        ": El metodo main no acepta parametros ");
+            }
+            if (!metodo.isEstatico()){
+                throw new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
+                        ": El metodo main tiene que ser static");
+            }
+            if ( TablaDeSimbolos.tablaSimbolos.main==null) {
                 TablaDeSimbolos.tablaSimbolos.setMetodoMain(metodo);
             }
             else {
@@ -212,6 +220,15 @@ public class Clase implements IClaseInterfaz{
                     }
                 }
 
+                for (Constructor constructor: constructores) {
+                    constructor.checkDeclaracion(this);
+                }
+
+                if (constructores.isEmpty()){
+                    Constructor constructorPredeterminado = new Constructor(new Token("idClase",tokenClase.getLexeme(),tokenClase.getNumberline()));
+                    agregarConstructor(constructorPredeterminado);
+                }
+
                 for (Atributo atributo:atributos.values()) {
                     atributo.checkDeclaracion(this);
                 }
@@ -273,4 +290,83 @@ public class Clase implements IClaseInterfaz{
        }
        return true;
     }
+
+    public void consolidar() throws SemanticException {
+        if (!consolidada) {
+            if (claseHerencia != null) {
+                Clase padre = TablaDeSimbolos.tablaSimbolos.getClaseByName(claseHerencia.getLexeme());
+                padre.consolidar();
+                for (LinkedList<Metodo> listaMetodo : padre.getMetodos().values()) {
+                    for (Metodo metodo : listaMetodo) {
+                        consolidarMetodo(metodo);
+                    }
+                }
+                for (Atributo atributo:padre.getAtributos().values()) {
+                    agregarAtributoPadre(atributo.getTokenAtributo().getLexeme(),atributo);
+                }
+            }
+            for (Token tokensInterfaces:interfacesImplementadas.keySet()) {
+                Interfaz interfazPadre=TablaDeSimbolos.tablaSimbolos.getInterfazByName(tokensInterfaces.getLexeme());
+                for (LinkedList<Metodo> listaMetodos:interfazPadre.getMetodos().values()) {
+                    for (Metodo metodo:listaMetodos){
+                        if(metodos.containsKey(metodo.getTokenMetodo().getLexeme())){
+                            for (Metodo metodoMismoNombre:metodos.get(metodo.getTokenMetodo().getLexeme())) {
+                                if(!metodoMismoNombre.compareArgumentos(metodo.getListaArgumentos())){
+                                    throw new SemanticException(tokensInterfaces, "Error Semantico en linea "
+                                            + tokensInterfaces.getNumberline() + ": No implementa los metodos de la interfaz " + tokensInterfaces.getLexeme());
+                                }
+                            }
+                        }
+                        else {
+                            throw new SemanticException(tokensInterfaces, "Error Semantico en linea "
+                                    + tokensInterfaces.getNumberline() + ": No implementa los metodos de la interfaz " + tokensInterfaces.getLexeme());
+                        }
+                    }
+
+                }
+            }
+        }
+        
+    }
+
+    private void consolidarMetodo(Metodo metodo) throws SemanticException {
+
+        agregarMetodoPadres(metodo.getTokenMetodo().getLexeme(),metodo);
+    }
+
+    private void agregarMetodoPadres(String nombreMetodo, Metodo metodo) throws SemanticException {
+        boolean redefinido=false;
+        if (!metodos.containsKey(nombreMetodo))
+            insertarMetodoNuevo(nombreMetodo, metodo);
+        else {
+            LinkedList<Metodo> metodosMismoNombre = metodos.get(nombreMetodo);
+            for (Metodo met : metodosMismoNombre) {
+                if (met.compareArgumentos(metodo.getListaArgumentos())) {
+                    if(!(met.estatico== metodo.estatico) || !metodo.getTipo().compareTipo(met.getTipo())){
+                        throw new SemanticException(met.getTokenMetodo(), "Error Semantico en linea " + met.getTokenMetodo().getNumberline()
+                                + ": Mal redifinicion del metodo " + met.getTokenMetodo().getLexeme());
+                    }
+                    else{
+                        redefinido=true;
+                    }
+                }
+            }
+            if (!redefinido)
+                metodosMismoNombre.add(metodo);
+        }
+    }
+
+
+    private void agregarAtributoPadre(String nombreAtributo,Atributo atributo) throws SemanticException {
+        if(!atributos.containsKey(nombreAtributo)){
+            atributos.put(nombreAtributo,atributo);
+        }
+        else{
+            //nada para tapar atributo
+        }
+
+    }
+
+
+
 }

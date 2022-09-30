@@ -18,10 +18,11 @@ public class TablaDeSimbolos {
         tablaSimbolos=this;
         createObject();
         createSystem();
+        createString();
     }
 
     public void agregarClase(String nombre,Clase clase) throws SemanticException {
-        if(!clases.containsKey(nombre)){
+        if(!interfaces.containsKey(nombre) && !clases.containsKey(nombre)){
             clases.put(nombre,clase);
         }
         else{
@@ -29,7 +30,7 @@ public class TablaDeSimbolos {
         }
     }
     public void agregarInterfaz(String nombre,Interfaz interfaz) throws SemanticException {
-        if(!interfaces.containsKey(nombre)){
+        if(!interfaces.containsKey(nombre) && !clases.containsKey(nombre)){
             interfaces.put(nombre,interfaz);
         }
         else{
@@ -81,6 +82,28 @@ public class TablaDeSimbolos {
         for (Interfaz i:interfaces.values()) {
             i.checkDeclaracion();
         }
+
+        if (main==null){
+            Token sinMain=new Token("","",0);
+            throw new SemanticException(sinMain, "Error Semantico en linea "
+                    + sinMain.getNumberline() + ": Clase de retorno no declarada " + sinMain.getLexeme());
+        }
+    }
+
+    public void consolidar() throws SemanticException {
+        for (Interfaz i:interfaces.values()) {
+            i.consolidar();
+        }
+
+        for(Clase c: clases.values()){
+            c.consolidar();
+        }
+    }
+
+    private void createString(){
+        Clase system = new Clase(new Token("idClase","String",0));
+        system.setClaseHerencia(clases.get("Object").getToken());
+        clases.put(system.getToken().getLexeme(), system);
     }
 
     private void createObject() throws SemanticException {
