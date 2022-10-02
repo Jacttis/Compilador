@@ -13,14 +13,6 @@ public class Interfaz implements IClaseInterfaz{
     protected Hashtable<String,LinkedList<Token>> interfacesExtendidas;
     private boolean herenciaCircular;
 
-    public Hashtable<String, Token> getParametrosGenericos() {
-        return parametrosGenericos;
-    }
-
-    public void setParametrosGenericos(Hashtable<String, Token> parametrosGenericos) {
-        this.parametrosGenericos = parametrosGenericos;
-    }
-
     protected Hashtable<String,Token> parametrosGenericos;
 
     protected boolean consolidada;
@@ -33,7 +25,12 @@ public class Interfaz implements IClaseInterfaz{
         consolidada = false;
         herenciaCircular=false;
     }
-
+    public Hashtable<String, Token> getParametrosGenericos() {
+        return parametrosGenericos;
+    }
+    public void setParametrosGenericos(Hashtable<String, Token> parametrosGenericos) {
+        this.parametrosGenericos = parametrosGenericos;
+    }
     public Token getToken() {
         return tokenClase;
     }

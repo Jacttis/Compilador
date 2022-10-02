@@ -124,14 +124,10 @@ public class Clase implements IClaseInterfaz{
     }
 
     public void agregarMetodo(String nombreMetodo, Metodo metodo) throws SemanticException {
-        if (nombreMetodo.equals("main") ){
+        if (nombreMetodo.equals("main") && metodo.isEstatico() ){
             if(metodo.getListaArgumentos().size()>0){
                 TablaDeSimbolos.listaExcepciones.add( new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
                         ": El metodo main no acepta parametros "));
-            }
-            if (!metodo.isEstatico()){
-                TablaDeSimbolos.listaExcepciones.add(new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
-                        ": El metodo main tiene que ser static"));
             }
             if ( TablaDeSimbolos.tablaSimbolos.main==null) {
                 TablaDeSimbolos.tablaSimbolos.setMetodoMain(metodo);

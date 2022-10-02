@@ -11,8 +11,8 @@ class A {
 
 }
 
-interface B {
+interface B<G> {
 
-    String metodo(String parametro);
+    G metodo(String parametro);
 
 }

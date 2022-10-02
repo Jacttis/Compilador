@@ -89,7 +89,7 @@ public class TablaDeSimbolos {
         if (main==null){
             Token sinMain=new Token("","",0);
             TablaDeSimbolos.listaExcepciones.add( new SemanticException(sinMain, "Error Semantico en linea "
-                    + sinMain.getNumberline() + ": Clase de retorno no declarada " + sinMain.getLexeme()));
+                    + sinMain.getNumberline() + ": Clase Main no declarada " + sinMain.getLexeme()));
         }
     }
 
