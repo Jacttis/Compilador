@@ -12,7 +12,6 @@ public class SemanticException extends Exception {
         }
 
         public void printStackTrace(){
-            System.out.println("Error Semantico en linea: "+actualToken.getNumberline());
             System.out.println(error);
             System.out.println("[Error:"+actualToken.getLexeme()+"|"+actualToken.getNumberline()+"]");
         }

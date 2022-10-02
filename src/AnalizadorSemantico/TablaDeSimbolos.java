@@ -3,6 +3,7 @@ package AnalizadorSemantico;
 import AnalizadorLexico.Token;
 
 import java.util.Hashtable;
+import java.util.LinkedList;
 
 public class TablaDeSimbolos {
     protected Hashtable<String,Clase> clases;
@@ -11,6 +12,8 @@ public class TablaDeSimbolos {
     protected MetodoConstructor metodoActual;
     public static TablaDeSimbolos tablaSimbolos;
     public Metodo main;
+
+    public static LinkedList<Exception> listaExcepciones=new LinkedList<>();
 
     public TablaDeSimbolos() throws SemanticException {
         clases=new Hashtable<>();
@@ -26,7 +29,7 @@ public class TablaDeSimbolos {
             clases.put(nombre,clase);
         }
         else{
-            throw new SemanticException(clase.getToken(),"La clase "+nombre+" ya esta declarada");
+            TablaDeSimbolos.listaExcepciones.add( new SemanticException(clase.getToken(),"La clase "+nombre+" ya esta declarada"));
         }
     }
     public void agregarInterfaz(String nombre,Interfaz interfaz) throws SemanticException {
@@ -34,7 +37,7 @@ public class TablaDeSimbolos {
             interfaces.put(nombre,interfaz);
         }
         else{
-            throw new SemanticException(interfaz.getToken(),"La clase "+nombre+" ya esta declarada");
+            TablaDeSimbolos.listaExcepciones.add( new SemanticException(interfaz.getToken(),"La clase "+nombre+" ya esta declarada"));
         }
     }
 
@@ -85,8 +88,8 @@ public class TablaDeSimbolos {
 
         if (main==null){
             Token sinMain=new Token("","",0);
-            throw new SemanticException(sinMain, "Error Semantico en linea "
-                    + sinMain.getNumberline() + ": Clase de retorno no declarada " + sinMain.getLexeme());
+            TablaDeSimbolos.listaExcepciones.add( new SemanticException(sinMain, "Error Semantico en linea "
+                    + sinMain.getNumberline() + ": Clase Main no declarada " + sinMain.getLexeme()));
         }
     }
 

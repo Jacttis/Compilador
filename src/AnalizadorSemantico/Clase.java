@@ -13,6 +13,7 @@ public class Clase implements IClaseInterfaz{
     protected Hashtable<String, LinkedList<Metodo>> metodos;
     protected LinkedList<Constructor> constructores;
     protected Hashtable<Token, Hashtable<String,Token>> interfacesImplementadas;
+    private boolean herenciaCircular;
 
     public Hashtable<String, Token> getParametrosGenericos() {
         return parametrosGenericos;
@@ -31,8 +32,8 @@ public class Clase implements IClaseInterfaz{
                 this.parametrosPadre.put(t.getLexeme(),t);
             }
             else {
-                throw new SemanticException(t, "Error Semantico en linea " +
-                        t.getNumberline() + ": Ya hay un parametro del padre con el nombre  "+t.getLexeme());
+                TablaDeSimbolos.listaExcepciones.add(new SemanticException(t, "Error Semantico en linea " +
+                        t.getNumberline() + ": Ya hay un parametro del padre con el nombre  "+t.getLexeme()));
             }
         }
     }
@@ -51,6 +52,7 @@ public class Clase implements IClaseInterfaz{
         parametrosPadre=new Hashtable<>();
         constructores=new LinkedList<>();
         consolidada = false;
+        herenciaCircular=false;
     }
 
     public Token getToken() {
@@ -99,7 +101,7 @@ public class Clase implements IClaseInterfaz{
             atributos.put(nombreAtributo,atributo);
         }
         else{
-            throw new SemanticException(atributo.getTokenAtributo(),"Error Semantico en linea "+atributo.getTokenAtributo().getNumberline() +": Ya hay un atributo declarado con el nombre "+nombreAtributo);
+            TablaDeSimbolos.listaExcepciones.add(new SemanticException(atributo.getTokenAtributo(),"Error Semantico en linea "+atributo.getTokenAtributo().getNumberline() +": Ya hay un atributo declarado con el nombre "+nombreAtributo));
         }
 
     }
@@ -108,35 +110,31 @@ public class Clase implements IClaseInterfaz{
         if(constructor.getToken().getLexeme().equals(tokenClase.getLexeme())) {
             for (Constructor con : constructores) {
                 if (con.compareArgumentos(constructor.getListaArgumentos())) {
-                    throw new SemanticException(constructor.getToken(), "Error Semantico en linea " +
-                            constructor.getToken().getNumberline() + ": Ya hay un constructor con los mismos argumentos ");
+                    TablaDeSimbolos.listaExcepciones.add(new SemanticException(constructor.getToken(), "Error Semantico en linea " +
+                            constructor.getToken().getNumberline() + ": Ya hay un constructor con los mismos argumentos "));
                 }
             }
             constructores.add(constructor);
         }
         else {
-            throw new SemanticException(constructor.getToken(), "Error Semantico en linea " +
-                    constructor.getToken().getNumberline() + ": No es un constructor valido ");
+            TablaDeSimbolos.listaExcepciones.add(new SemanticException(constructor.getToken(), "Error Semantico en linea " +
+                    constructor.getToken().getNumberline() + ": No es un constructor valido "));
 
         }
     }
 
     public void agregarMetodo(String nombreMetodo, Metodo metodo) throws SemanticException {
-        if (nombreMetodo.equals("main") ){
+        if (nombreMetodo.equals("main") && metodo.isEstatico() ){
             if(metodo.getListaArgumentos().size()>0){
-                throw new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
-                        ": El metodo main no acepta parametros ");
-            }
-            if (!metodo.isEstatico()){
-                throw new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
-                        ": El metodo main tiene que ser static");
+                TablaDeSimbolos.listaExcepciones.add( new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
+                        ": El metodo main no acepta parametros "));
             }
             if ( TablaDeSimbolos.tablaSimbolos.main==null) {
                 TablaDeSimbolos.tablaSimbolos.setMetodoMain(metodo);
             }
             else {
-                throw new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
-                        ": Ya hay un metodo main declarado ");
+                TablaDeSimbolos.listaExcepciones.add( new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
+                        ": Ya hay un metodo main declarado "));
             }
         }
         if(!metodos.containsKey(nombreMetodo))
@@ -145,8 +143,8 @@ public class Clase implements IClaseInterfaz{
             LinkedList<Metodo> metodosMismoNombre = metodos.get(nombreMetodo);
             for(Metodo met : metodosMismoNombre){
                 if(met.compareArgumentos(metodo.getListaArgumentos())) {
-                    throw new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
-                            ": Ya hay un metodo declarado con el nombre " + nombreMetodo + " que posee los mismos argumentos.");
+                    TablaDeSimbolos.listaExcepciones.add( new SemanticException(metodo.getTokenMetodo(), "Error Semantico en linea " + metodo.getTokenMetodo().getNumberline() +
+                            ": Ya hay un metodo declarado con el nombre " + nombreMetodo + " que posee los mismos argumentos."));
                 }
             }
             metodosMismoNombre.add(metodo);
@@ -159,8 +157,8 @@ public class Clase implements IClaseInterfaz{
             parametrosGenericos.put(parametro.getLexeme(),parametro);
         }
         else{
-            throw new SemanticException(parametro, "Error Semantico en linea "
-                    + parametro.getNumberline() + ": Ya hay un parametro declarado con el nombre " + parametro.getLexeme());
+            TablaDeSimbolos.listaExcepciones.add( new SemanticException(parametro, "Error Semantico en linea "
+                    + parametro.getNumberline() + ": Ya hay un parametro declarado con el nombre " + parametro.getLexeme()));
         }
 
     }
@@ -173,16 +171,16 @@ public class Clase implements IClaseInterfaz{
                 parametrosInterfaz.put(t.getLexeme(),t);
             }
             else {
-                throw new SemanticException(t, "Error Semantico en linea " +
-                        t.getNumberline() + ": Ya hay un parametro de la interfaz"+ token.getLexeme()+"con el nombre  "+t.getLexeme());
+                TablaDeSimbolos.listaExcepciones.add( new SemanticException(t, "Error Semantico en linea " +
+                        t.getNumberline() + ": Ya hay un parametro de la interfaz"+ token.getLexeme()+"con el nombre  "+t.getLexeme()));
             }
         }
         if(!this.contieneA(token)){
             interfacesImplementadas.put(token,parametrosInterfaz);
         }
         else{
-            throw new SemanticException(token, "Error Semantico en linea "
-                    + token.getNumberline() + ": Ya hay una interfaz declarado con el nombre " + token.getLexeme());
+            TablaDeSimbolos.listaExcepciones.add( new SemanticException(token, "Error Semantico en linea "
+                    + token.getNumberline() + ": Ya hay una interfaz declarado con el nombre " + token.getLexeme()));
         }
     }
 
@@ -205,13 +203,14 @@ public class Clase implements IClaseInterfaz{
         if(!tokenClase.getLexeme().equals("Object")) {
             if (checkClase(claseHerencia,parametrosPadre)) {
                 if(!checkCircleHerencia(new LinkedList<>())){
-                    throw new SemanticException(claseHerencia, "Error Semantico en linea "
-                            + claseHerencia.getNumberline() + ": Herencia Circular " + claseHerencia.getLexeme());
+                    herenciaCircular=true;
+                    TablaDeSimbolos.listaExcepciones.add( new SemanticException(claseHerencia, "Error Semantico en linea "
+                            + claseHerencia.getNumberline() + ": Herencia Circular " + claseHerencia.getLexeme()));
                 }
                 for (Token token:interfacesImplementadas.keySet()) {
                     if(!checkInterface(token,interfacesImplementadas.get(token))){
-                        throw new SemanticException(token, "Error Semantico en linea "
-                                + token.getNumberline() + ": No existe una interfaz declarada con el nombre -> " + token.getLexeme());
+                        TablaDeSimbolos.listaExcepciones.add( new SemanticException(token, "Error Semantico en linea "
+                                + token.getNumberline() + ": No existe una interfaz declarada con el nombre -> " + token.getLexeme()));
                     }
                 }
                 for (LinkedList<Metodo> listaMetodo:metodos.values()) {
@@ -233,8 +232,8 @@ public class Clase implements IClaseInterfaz{
                     atributo.checkDeclaracion(this);
                 }
             } else {
-                throw new SemanticException(claseHerencia, "Error Semantico en linea "
-                        + claseHerencia.getNumberline() + ": No existe una Clase declarada con el nombre -> " + claseHerencia.getLexeme());
+                TablaDeSimbolos.listaExcepciones.add( new SemanticException(claseHerencia, "Error Semantico en linea "
+                        + claseHerencia.getNumberline() + ": No existe una Clase declarada con el nombre -> " + claseHerencia.getLexeme()));
             }
         }
     }
@@ -245,13 +244,13 @@ public class Clase implements IClaseInterfaz{
             if(parametros.size()==TablaDeSimbolos.tablaSimbolos.getClaseByName(clase.getLexeme()).getParametrosGenericos().size()){
                 for (Token t:parametros.values()) {
                     if(!TablaDeSimbolos.tablaSimbolos.getClases().containsKey(t.getLexeme()) && !parametrosGenericos.containsKey(t.getLexeme())){
-                        throw new SemanticException(t, "Error Semantico en linea "
-                                + t.getNumberline() + ": No existe una Clase declarada con el nombre-> " + t.getLexeme()+"Como parametro del padre");
+                        TablaDeSimbolos.listaExcepciones.add( new SemanticException(t, "Error Semantico en linea "
+                                + t.getNumberline() + ": No existe una Clase declarada con el nombre-> " + t.getLexeme()+"Como parametro del padre"));
                     }
                 }
             }else {
-                throw new SemanticException(clase, "Error Semantico en linea "
-                        + clase.getNumberline() + ": Cantidad de parametricos invalidos para " + clase.getLexeme());
+                TablaDeSimbolos.listaExcepciones.add( new SemanticException(clase, "Error Semantico en linea "
+                        + clase.getNumberline() + ": Cantidad de parametricos invalidos para " + clase.getLexeme()));
             }
         }else {
             correcto=false;
@@ -265,13 +264,13 @@ public class Clase implements IClaseInterfaz{
             if(parametros.size()==TablaDeSimbolos.tablaSimbolos.getInterfazByName(clase.getLexeme()).getParametrosGenericos().size()){
                 for (Token t:parametros.values()) {
                     if(!TablaDeSimbolos.tablaSimbolos.getClases().containsKey(t.getLexeme()) && !parametrosGenericos.containsKey(t.getLexeme())){
-                        throw new SemanticException(t, "Error Semantico en linea "
-                                + t.getNumberline() + ": No existe una Clase declarada con el nombre-> " + t.getLexeme()+"Como parametro del padre");
+                        TablaDeSimbolos.listaExcepciones.add( new SemanticException(t, "Error Semantico en linea "
+                                + t.getNumberline() + ": No existe una Clase declarada con el nombre-> " + t.getLexeme()+"Como parametro del padre"));
                     }
                 }
             }else {
-                throw new SemanticException(clase, "Error Semantico en linea "
-                        + clase.getNumberline() + ": Cantidad de parametricos invalidos para " + clase.getLexeme());
+                TablaDeSimbolos.listaExcepciones.add( new SemanticException(clase, "Error Semantico en linea "
+                        + clase.getNumberline() + ": Cantidad de parametricos invalidos para " + clase.getLexeme()));
             }
         }else {
             correcto=false;
@@ -292,39 +291,43 @@ public class Clase implements IClaseInterfaz{
     }
 
     public void consolidar() throws SemanticException {
-        if (!consolidada) {
-            if (claseHerencia != null) {
+        if (!consolidada && !herenciaCircular) {
+            if (claseHerencia != null ) {
                 Clase padre = TablaDeSimbolos.tablaSimbolos.getClaseByName(claseHerencia.getLexeme());
-                padre.consolidar();
-                for (LinkedList<Metodo> listaMetodo : padre.getMetodos().values()) {
-                    for (Metodo metodo : listaMetodo) {
-                        consolidarMetodo(metodo);
+                if(padre!=null) {
+                    padre.consolidar();
+                    for (LinkedList<Metodo> listaMetodo : padre.getMetodos().values()) {
+                        for (Metodo metodo : listaMetodo) {
+                            consolidarMetodo(metodo);
+                        }
                     }
-                }
-                for (Atributo atributo:padre.getAtributos().values()) {
-                    agregarAtributoPadre(atributo.getTokenAtributo().getLexeme(),atributo);
+                    for (Atributo atributo : padre.getAtributos().values()) {
+                        agregarAtributoPadre(atributo.getTokenAtributo().getLexeme(), atributo);
+                    }
                 }
             }
             for (Token tokensInterfaces:interfacesImplementadas.keySet()) {
-                Interfaz interfazPadre=TablaDeSimbolos.tablaSimbolos.getInterfazByName(tokensInterfaces.getLexeme());
-                for (LinkedList<Metodo> listaMetodos:interfazPadre.getMetodos().values()) {
-                    for (Metodo metodo:listaMetodos){
-                        if(metodos.containsKey(metodo.getTokenMetodo().getLexeme())){
-                            for (Metodo metodoMismoNombre:metodos.get(metodo.getTokenMetodo().getLexeme())) {
-                                if(!metodoMismoNombre.compareArgumentos(metodo.getListaArgumentos())){
-                                    throw new SemanticException(tokensInterfaces, "Error Semantico en linea "
-                                            + tokensInterfaces.getNumberline() + ": No implementa los metodos de la interfaz " + tokensInterfaces.getLexeme());
+                    Interfaz interfazPadre = TablaDeSimbolos.tablaSimbolos.getInterfazByName(tokensInterfaces.getLexeme());
+                    if(interfazPadre!=null) {
+                        for (LinkedList<Metodo> listaMetodos : interfazPadre.getMetodos().values()) {
+                            for (Metodo metodo : listaMetodos) {
+                                if (metodos.containsKey(metodo.getTokenMetodo().getLexeme())) {
+                                    for (Metodo metodoMismoNombre : metodos.get(metodo.getTokenMetodo().getLexeme())) {
+                                        if (!metodoMismoNombre.compareArgumentos(metodo.getListaArgumentos())) {
+                                            TablaDeSimbolos.listaExcepciones.add(new SemanticException(tokensInterfaces, "Error Semantico en linea "
+                                                    + tokensInterfaces.getNumberline() + ": No implementa los metodos de la interfaz " + tokensInterfaces.getLexeme()));
+                                        }
+                                    }
+                                } else {
+                                    TablaDeSimbolos.listaExcepciones.add(new SemanticException(tokensInterfaces, "Error Semantico en linea "
+                                            + tokensInterfaces.getNumberline() + ": No implementa los metodos de la interfaz " + tokensInterfaces.getLexeme()));
                                 }
                             }
-                        }
-                        else {
-                            throw new SemanticException(tokensInterfaces, "Error Semantico en linea "
-                                    + tokensInterfaces.getNumberline() + ": No implementa los metodos de la interfaz " + tokensInterfaces.getLexeme());
+
                         }
                     }
-
-                }
             }
+
         }
         
     }
@@ -343,8 +346,8 @@ public class Clase implements IClaseInterfaz{
             for (Metodo met : metodosMismoNombre) {
                 if (met.compareArgumentos(metodo.getListaArgumentos())) {
                     if(!(met.estatico== metodo.estatico) || !metodo.getTipo().compareTipo(met.getTipo())){
-                        throw new SemanticException(met.getTokenMetodo(), "Error Semantico en linea " + met.getTokenMetodo().getNumberline()
-                                + ": Mal redifinicion del metodo " + met.getTokenMetodo().getLexeme());
+                        TablaDeSimbolos.listaExcepciones.add( new SemanticException(met.getTokenMetodo(), "Error Semantico en linea " + met.getTokenMetodo().getNumberline()
+                                + ": Mal redifinicion del metodo " + met.getTokenMetodo().getLexeme()));
                     }
                     else{
                         redefinido=true;

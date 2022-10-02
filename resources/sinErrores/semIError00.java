@@ -16,5 +16,5 @@ class B extends A {
 
     }
 
-    static void main () {}
+    static int main () {}
 }

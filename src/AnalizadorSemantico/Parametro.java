@@ -24,8 +24,8 @@ public class Parametro {
         if(tipoParametro.getToken().getDescription().equals("idClase")){
             TipoReferencia tipoR= (TipoReferencia) tipoParametro;
             if (!tipoR.checkTipo(claseActual)){
-                throw new SemanticException(tipoR.getToken(), "Error Semantico en linea "
-                        + tipoR.getToken().getNumberline() + ": Clase del Argumento " + tipoR.getToken().getLexeme()+" no declarada ");
+                TablaDeSimbolos.listaExcepciones.add( new SemanticException(tipoR.getToken(), "Error Semantico en linea "
+                        + tipoR.getToken().getNumberline() + ": Clase del Argumento " + tipoR.getToken().getLexeme()+" no declarada "));
             }
         }
 

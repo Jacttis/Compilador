@@ -42,8 +42,8 @@ public class Atributo {
         if (tipoAtributo.tokenTipo.getDescription().equals("idClase")){
             TipoReferencia tipoReferencia = (TipoReferencia) tipoAtributo;
             if(!tipoReferencia.checkTipo(claseActual)){
-                throw new SemanticException(tipoAtributo.getToken(), "Error Semantico en linea "
-                        + tipoAtributo.getToken().getNumberline() + ": Tipo de atributo no declarada " + tipoAtributo.getToken().getLexeme());
+                TablaDeSimbolos.listaExcepciones.add(new SemanticException(tipoAtributo.getToken(), "Error Semantico en linea "
+                        + tipoAtributo.getToken().getNumberline() + ": Tipo de atributo no declarada " + tipoAtributo.getToken().getLexeme()));
             }
         }
     }

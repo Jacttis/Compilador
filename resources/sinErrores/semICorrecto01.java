@@ -1,12 +1,14 @@
 //Control simple de declaracion de clases con nombres validos
-
-class A{
+class A<E>{
 
     A(String a){}
+    A(int s){}
+
+    E hola(){}
 
 }
 
-class B{
+class B extends A<Object>{
 
 }
 

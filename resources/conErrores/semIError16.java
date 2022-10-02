@@ -4,7 +4,7 @@
 
 class A implements B, C {
 
-    void debugPrint(int x) {
+    String debugPrint(int x) {
 
     }
 
