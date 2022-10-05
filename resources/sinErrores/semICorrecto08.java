@@ -21,3 +21,4 @@ class B extends A implements C,H {
 interface C{
     String metodoC();
 }
+
