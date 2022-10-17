@@ -1,5 +1,6 @@
 package AnalizadorSemantico;
 
+import AST.NodoBloque;
 import AnalizadorLexico.Token;
 
 import java.util.Hashtable;
@@ -14,6 +15,7 @@ public class TablaDeSimbolos {
     public Metodo main;
 
     public static LinkedList<Exception> listaExcepciones=new LinkedList<>();
+    private NodoBloque bloqueActual;
 
     public TablaDeSimbolos() throws SemanticException {
         clases=new Hashtable<>();
@@ -190,4 +192,9 @@ public class TablaDeSimbolos {
     public void setMetodoMain(Metodo metodo) {
             main=metodo;
     }
+
+    public void setBloqueActual(NodoBloque bloqueMetodoActual) {
+        bloqueActual=bloqueMetodoActual;
+    }
+    public NodoBloque getBloqueActual(){return bloqueActual;}
 }

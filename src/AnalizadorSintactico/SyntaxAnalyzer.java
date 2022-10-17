@@ -1,5 +1,6 @@
 package AnalizadorSintactico;
 
+import AST.*;
 import AnalizadorLexico.LexicalAnalyzer;
 import AnalizadorLexico.LexicalException;
 import AnalizadorLexico.Token;
@@ -289,7 +290,7 @@ public class SyntaxAnalyzer {
                         argsFormales();
                         Clase claseActual= (Clase) TablaDeSimbolos.tablaSimbolos.getClaseActual();
                         claseActual.agregarConstructor(constructor);
-                        bloque();
+                        bloque(null);
                     }
                     else {
                         throw new SemanticException(tipo.getToken(), "Error Semantico en linea "
@@ -316,7 +317,7 @@ public class SyntaxAnalyzer {
             TablaDeSimbolos.tablaSimbolos.setMetodoActual(metodo);
             argsFormales();
             TablaDeSimbolos.tablaSimbolos.getClaseActual().agregarMetodo(metodo.getTokenMetodo().getLexeme(),metodo);
-            bloque();
+            bloque(null);
         }
         else{
             String visibilidad="public";
@@ -339,14 +340,21 @@ public class SyntaxAnalyzer {
 
     private void metodo() throws LexicalException, SyntaxException, IOException, SemanticException {
         encabezadoMetodo();
-        bloque();
+        bloque(null);
     }
 
-    private void bloque() throws LexicalException, SyntaxException, IOException, SemanticException {
+    private void bloque(NodoBloque bloqueMetodoActual) throws LexicalException, SyntaxException, IOException, SemanticException {
         if (Arrays.asList("abreCorchete").contains(actualToken.getDescription())) {
             match("abreCorchete");
+            NodoBloque bloque=new NodoBloque(TablaDeSimbolos.tablaSimbolos.getMetodoActual());
+            if (bloqueMetodoActual!=null) {
+                bloque.setBloqueContainer(bloqueMetodoActual);
+            }
+            TablaDeSimbolos.tablaSimbolos.setBloqueActual(bloque);
             listaSentencias();
             match("cierraCorchete");
+            TablaDeSimbolos.tablaSimbolos.setBloqueActual(bloqueMetodoActual);
+
         }
         else{
             //vacio
@@ -355,7 +363,7 @@ public class SyntaxAnalyzer {
 
     private void listaSentencias() throws LexicalException, SyntaxException, IOException, SemanticException {
         if (Arrays.asList("puntoComa","pr_this","idMetVar","pr_new","idClase", "abreParentesis","pr_var","pr_return","pr_if","pr_while","abreCorchete","pr_int","pr_boolean","pr_char").contains(actualToken.getDescription())) {
-            sentencia();
+           NodoSentencia sentencia= sentencia();
             listaSentencias();
         }
         else{
@@ -363,13 +371,15 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void sentencia() throws LexicalException, SyntaxException, IOException, SemanticException {
+    private NodoSentencia sentencia() throws LexicalException, SyntaxException, IOException, SemanticException {
+        NodoSentencia sentencia;
         if (Arrays.asList("puntoComa").contains(actualToken.getDescription())) {
             match("puntoComa");
         } else if (Arrays.asList("idClase").contains(actualToken.getDescription())) {
             LinkedList<Token> tokensGenericos=new LinkedList<>();
             claseGenerica(tokensGenericos);
             if (Arrays.asList("punto").contains(actualToken.getDescription())){
+                //Acceso estatico
                 acceso();
                 asignacion();
                 match("puntoComa");
@@ -383,7 +393,7 @@ public class SyntaxAnalyzer {
             asignacion();
             match("puntoComa");
         } else if (Arrays.asList("pr_var","pr_int","pr_boolean","pr_char").contains(actualToken.getDescription())) {
-            varLocal();
+            sentencia =varLocal();
             match("puntoComa");
         } else if (Arrays.asList("pr_return").contains(actualToken.getDescription())) {
             retorno();
@@ -393,11 +403,12 @@ public class SyntaxAnalyzer {
         } else if (Arrays.asList("pr_while").contains(actualToken.getDescription())) {
             While();
         } else if (Arrays.asList("abreCorchete").contains(actualToken.getDescription())) {
-            bloque();
+            bloque(TablaDeSimbolos.tablaSimbolos.getBloqueActual());
         }
         else {
             throw new SyntaxException(actualToken,"sentencia");
         }
+        return null;
     }
 
     private void varLocalTipoClase() throws LexicalException, SyntaxException, IOException, SemanticException {
@@ -451,23 +462,31 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void varLocal() throws LexicalException, SyntaxException, IOException, SemanticException {
+    private LinkedList<NodoVarLocal> varLocal() throws LexicalException, SyntaxException, IOException, SemanticException {
+        LinkedList<NodoVarLocal> varLocalMismoTipo=new LinkedList<>();
         if (Arrays.asList("pr_var").contains(actualToken.getDescription())) {
             match("pr_var");
-            listaDecVars();
+            listaDecVars(varLocalMismoTipo);
             match("=");
-            expresion();
+            for (NodoVarLocal varLocal:varLocalMismoTipo) {
+                varLocal.setExpresion(expresion());
+            }
+
         }
         else{
             Tipo tipo =tipoPrimitivo();
-            listaDecVars();
+            listaDecVars(varLocalMismoTipo);
             if (Arrays.asList("=").contains(actualToken.getDescription())) {
                 match("=");
-                expresion();
+                for (NodoVarLocal varLocal:varLocalMismoTipo) {
+                    varLocal.setExpresion(expresion());
+                    varLocal.setTipo(tipo);
+                }
             } else if (Arrays.asList(";").contains(actualToken.getDescription())) {
                 match(";");
             }
         }
+        return varLocalMismoTipo;
     }
 
 
@@ -482,7 +501,7 @@ public class SyntaxAnalyzer {
 
     }
 
-    private void expresion() throws LexicalException, SyntaxException, IOException {
+    private void  expresion() throws LexicalException, SyntaxException, IOException {
         expresionUnaria();
         expresionPrima();
     }
@@ -531,9 +550,10 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void expresionUnaria() throws LexicalException, SyntaxException, IOException {
-         if (Arrays.asList("+","-","!").contains(actualToken.getDescription())) {
-            operadorUnario();
+    private NodoExpresion expresionUnaria() throws LexicalException, SyntaxException, IOException {
+        NodoExpresionUnaria expresionUnaria;
+        if (Arrays.asList("+","-","!").contains(actualToken.getDescription())) {
+            Token operadorUnarioToken=operadorUnario();
             operando();
          }else if (Arrays.asList("pr_null", "pr_true", "pr_false", "intLiteral", "charLiteral", "stringLiteral", "pr_this", "idMetVar", "pr_new", "idClase", "abreParentesis").contains(actualToken.getDescription())) {
              operando();
@@ -574,17 +594,22 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void operadorUnario() throws LexicalException, SyntaxException, IOException {
+    private Token operadorUnario() throws LexicalException, SyntaxException, IOException {
+        Token operadorUnario;
         if (Arrays.asList("+").contains(actualToken.getDescription())) {
+            operadorUnario=actualToken;
             match("+");
         } else if (Arrays.asList("-").contains(actualToken.getDescription())) {
+            operadorUnario=actualToken;
             match("-");
         } else if (Arrays.asList("!").contains(actualToken.getDescription())) {
+            operadorUnario=actualToken;
             match("!");
         }
         else {
             throw new SyntaxException(actualToken,"un operador unario");
         }
+        return operadorUnario;
     }
 
     private void tipoDeAsignacion() throws LexicalException, SyntaxException, IOException {
@@ -743,15 +768,16 @@ public class SyntaxAnalyzer {
         }
     }
 
-    private void listaDecVars() throws LexicalException, SyntaxException, IOException, SemanticException {
+    private void listaDecVars(LinkedList<NodoVarLocal> varLocals) throws LexicalException, SyntaxException, IOException, SemanticException {
+        varLocals.add(new NodoVarLocal(actualToken,null,TablaDeSimbolos.tablaSimbolos.getBloqueActual(), TablaDeSimbolos.tablaSimbolos.getMetodoActual()));
         match("idMetVar");
-        listaDecVarsPrima();
+        listaDecVarsPrima(varLocals);
     }
 
-    private void listaDecVarsPrima() throws LexicalException, SyntaxException, IOException, SemanticException {
+    private void listaDecVarsPrima(LinkedList<NodoVarLocal> varLocals) throws LexicalException, SyntaxException, IOException, SemanticException {
         if (Arrays.asList("coma").contains(actualToken.getDescription())) {
             match("coma");
-            listaDecVars();
+            listaDecVars(varLocals);
         }
         else{
             //vacio
