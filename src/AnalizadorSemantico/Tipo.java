@@ -28,6 +28,12 @@ public class Tipo {
         return toReturn;
 
     }
+    public boolean checkTipo(IClaseInterfaz claseActual) {
+    return true;
+    }
 
 
+    public boolean esSubtipo(Tipo tipo) {
+        return compareTipo(tipo);
+    }
 }

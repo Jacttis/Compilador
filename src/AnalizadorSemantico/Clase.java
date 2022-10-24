@@ -1,8 +1,8 @@
 package AnalizadorSemantico;
 
+import AST.Expresion.NodoExpresion;
 import AnalizadorLexico.Token;
 
-import java.lang.reflect.Array;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
@@ -11,6 +11,7 @@ public class Clase implements IClaseInterfaz{
     protected Token tokenClase;
     protected Hashtable<String, Atributo> atributos;
     protected Hashtable<String, LinkedList<Metodo>> metodos;
+
     protected LinkedList<Constructor> constructores;
     protected Hashtable<Token, Hashtable<String,Token>> interfacesImplementadas;
     private boolean herenciaCircular;
@@ -59,6 +60,13 @@ public class Clase implements IClaseInterfaz{
         return tokenClase;
     }
 
+    public LinkedList<Constructor> getConstructores() {
+        return constructores;
+    }
+
+    public void setConstructores(LinkedList<Constructor> constructores) {
+        this.constructores = constructores;
+    }
 
     public void setTokenClase(Token tokenClase) {
         this.tokenClase = tokenClase;
@@ -290,6 +298,20 @@ public class Clase implements IClaseInterfaz{
        return true;
     }
 
+    public boolean esSubtipo(String clase){
+        boolean esSubtipo=false;
+        if(clase.equals(tokenClase.getLexeme())){
+            esSubtipo=true;
+        }
+        else{
+            if(claseHerencia!=null) {
+                esSubtipo = TablaDeSimbolos.tablaSimbolos.getClaseByName(claseHerencia.getLexeme()).esSubtipo(clase);
+            }
+        }
+        return esSubtipo;
+    }
+
+
     public void consolidar() throws SemanticException {
         if (!consolidada && !herenciaCircular) {
             if (claseHerencia != null ) {
@@ -370,6 +392,26 @@ public class Clase implements IClaseInterfaz{
 
     }
 
+    public boolean chequearContieneConstructor(LinkedList<NodoExpresion> parametros){
+        for (Constructor constructor:constructores) {
+            LinkedList<Parametro> parametrosC=constructor.getListaArgumentos();
+            int i=0;
+            boolean iguales=true;
+            if (parametros.size()==parametrosC.size()){
+                while(iguales && i<parametros.size()){
+                    if(!parametrosC.get(i).getTipo().esSubtipo(parametros.get(i).chequear())){
+                        iguales=false;
+                    }
+                    i++;
+                }
+                if(iguales){
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
 
 
 }

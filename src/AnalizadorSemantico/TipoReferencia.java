@@ -3,6 +3,7 @@ package AnalizadorSemantico;
 import AnalizadorLexico.Token;
 
 import java.util.Hashtable;
+import java.util.LinkedList;
 
 public class TipoReferencia extends Tipo{
     public Hashtable<String, Token> getParametrosGenericos() {
@@ -38,5 +39,16 @@ public class TipoReferencia extends Tipo{
             ret=false;
         }
         return ret;
+    }
+    public boolean esSubtipo(Tipo tipo){
+        if(TablaDeSimbolos.tablaSimbolos.getClases().containsKey(tipo.getToken().getLexeme())){
+            return TablaDeSimbolos.tablaSimbolos.getClaseByName(tokenTipo.getLexeme()).esSubtipo(tipo.getToken().getLexeme());
+        } else if (TablaDeSimbolos.tablaSimbolos.getInterfaces().containsKey(tipo.getToken().getLexeme())) {
+            return TablaDeSimbolos.tablaSimbolos.getClaseByName(tokenTipo.getLexeme()).esSubtipo(tipo.getToken().getLexeme());
+        } else{
+            TablaDeSimbolos.listaExcepciones.add( new SemanticException(tipo.getToken(), "Error Semantico en linea "
+                    + tipo.getToken().getNumberline() + ": Clase del tipo no existe " + tipo.getToken().getLexeme()));
+            return false;
+        }
     }
 }

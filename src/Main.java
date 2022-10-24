@@ -43,6 +43,7 @@ public class Main {
             syntaxAnalyzer.inicial();
             tablaDeSimbolo.checkDeclaracion();
             tablaDeSimbolo.consolidar();
+            tablaDeSimbolo.chequearBloques();
             for (Exception e:TablaDeSimbolos.listaExcepciones) {
                 e.printStackTrace();
             }

@@ -1,5 +1,6 @@
 package AnalizadorSemantico;
 
+import AST.NodoBloque;
 import AnalizadorLexico.Token;
 
 import java.util.Hashtable;
@@ -9,6 +10,8 @@ public abstract class MetodoConstructor {
 
     protected LinkedList<Parametro> listaArgumentos;
     protected Token token;
+
+    protected NodoBloque bloquePrincipal;
 
 
     public MetodoConstructor(){
@@ -32,5 +35,14 @@ public abstract class MetodoConstructor {
 
     public LinkedList<Parametro> getListaArgumentos() {  return listaArgumentos;}
 
+    public NodoBloque getBloquePrincipal() {
+        return bloquePrincipal;
+    }
 
+    public void chequearBloque(Clase claseActual) {
+        bloquePrincipal.chequearBloque(claseActual);
+    }
+    public void setBloquePrincipal(NodoBloque bloquePrincipal) {
+        this.bloquePrincipal = bloquePrincipal;
+    }
 }

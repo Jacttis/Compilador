@@ -1,9 +1,8 @@
 package AST;
 
+import AST.Expresion.NodoExpresion;
 import AnalizadorLexico.Token;
-import AnalizadorSemantico.Metodo;
-import AnalizadorSemantico.MetodoConstructor;
-import AnalizadorSemantico.Tipo;
+import AnalizadorSemantico.*;
 
 public class NodoVarLocal extends NodoSentencia{
 
@@ -61,4 +60,18 @@ public class NodoVarLocal extends NodoSentencia{
         this.expresion = expresion;
     }
 
+    protected boolean esVar() {
+        return true;
+    }
+
+    public void chequear(IClaseInterfaz claseActual) {
+        tipo.checkTipo(claseActual);
+        if(expresion!=null){
+            if(!tipo.esSubtipo(expresion.chequear())){
+                TablaDeSimbolos.listaExcepciones.add( new SemanticException(tokenVar, "Error Semantico en linea "
+                        + tokenVar.getNumberline() + ": tipo de variable y expresion distintos " +tokenVar.getLexeme()));
+            }
+        }
+
+    }
 }
