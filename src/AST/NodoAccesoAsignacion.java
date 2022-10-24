@@ -16,4 +16,11 @@ public class NodoAccesoAsignacion extends NodoSentencia{
         this.asignacion=asignacion;
         this.expresion=expresion;
     }
+
+    @Override
+    public void chequear() {
+        System.out.println(acceso.getToken().getLexeme());
+        System.out.println(asignacion.getLexeme());
+
+    }
 }

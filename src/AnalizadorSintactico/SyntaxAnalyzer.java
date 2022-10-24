@@ -538,7 +538,7 @@ public class SyntaxAnalyzer {
             accesoAsignacion=new NodoAccesoAsignacion(acceso,tokenAsignacion,expresion);
         }
         else {
-
+            accesoAsignacion=new NodoAccesoAsignacion(acceso,null,null);
         }
         return accesoAsignacion;
     }
@@ -845,14 +845,15 @@ public class SyntaxAnalyzer {
         return expresiones;
     }
 
-    private NodoAccesoMetodo accesoMetodo(Token token) throws LexicalException, SyntaxException, IOException {
-        NodoAccesoMetodo accesoMetodo=new NodoAccesoMetodo(token);
+    private NodoAcceso accesoMetodo(Token token) throws LexicalException, SyntaxException, IOException {
+        NodoAcceso accesoMetodo;
         if (Arrays.asList("abreParentesis").contains(actualToken.getDescription())) {
+            accesoMetodo=new NodoAccesoMetodo(token);
             LinkedList<NodoExpresion> parametros=argsActuales();
-            accesoMetodo.setParametros(parametros);
+            ((NodoAccesoMetodo) accesoMetodo).setParametros(parametros);
         }
         else{
-
+            accesoMetodo=new NodoAccesoVarParam(token);
         }
         return accesoMetodo;
     }
