@@ -8,11 +8,12 @@ public class NodoAcceso {
     Token accesoToken;
     NodoEncadenado nodoEncadenado;
 
-    public boolean esAsignable;
+    public boolean esAsignable,esLlamable;
 
     public NodoAcceso(Token token){
         accesoToken=token;
         esAsignable=false;
+        esLlamable=false;
     }
     public Token getToken() {
         return accesoToken;
@@ -28,8 +29,17 @@ public class NodoAcceso {
 
     public Tipo chequear() {
     return null;
-    }
+    } //esto hace que sea nulo cuando no esta definido el chequear
     public boolean esAsignable(){
+        if(nodoEncadenado!=null){
+            return nodoEncadenado.esAsignable();
+        }
+        else{
+            return esAsignable;
+        }
+    }
+
+    public boolean isLLamable() {
         if(nodoEncadenado!=null){
             return nodoEncadenado.esAsignable();
         }

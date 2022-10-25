@@ -3,6 +3,8 @@ package AST;
 import AST.Acceso.NodoAcceso;
 import AST.Expresion.NodoExpresion;
 import AnalizadorLexico.Token;
+import AnalizadorSemantico.SemanticException;
+import AnalizadorSemantico.TablaDeSimbolos;
 import AnalizadorSemantico.Tipo;
 import AnalizadorSemantico.TipoPrimitivo;
 
@@ -27,22 +29,34 @@ public class NodoAccesoAsignacion extends NodoSentencia{
 
     @Override
     public void chequear() {
-        if(acceso.esAsignable()){
-            Tipo tipo=acceso.chequear();
-            if(tipo.esSubtipo(expresion.chequear())){
-                if(tipoOperador!=null){
-                    if(!tipoOperador.compareTipo(tipo)){
-                        //error
+        if (expresion != null) {
+            if(acceso.esAsignable()){
+                Tipo tipo=acceso.chequear();
+                if(tipo.esSubtipo(expresion.chequear())){
+                    if(tipoOperador!=null){
+                        if(!tipoOperador.compareTipo(tipo)){
+                            TablaDeSimbolos.listaExcepciones.add(new SemanticException(asignacion, "Error Semantico en linea "
+                                    + asignacion.getNumberline() + ": tipo de variable y expresion distintos " + asignacion.getLexeme()));
+                        }
                     }
+                }
+                else{
+                    TablaDeSimbolos.listaExcepciones.add(new SemanticException(asignacion, "Error Semantico en linea "
+                            + asignacion.getNumberline() + ": tipo de variable y expresion distintos " + asignacion.getLexeme()));
                 }
             }
             else{
-                //error
+                TablaDeSimbolos.listaExcepciones.add(new SemanticException(asignacion, "Error Semantico en linea "
+                        + asignacion.getNumberline() + ": Lado derecho no es asignable " + asignacion.getLexeme()));
             }
         }
         else{
-            //error
+            //Llamada
+            if (acceso.isLLamable()){
+                acceso.chequear();
+            }
         }
+
 
     }
 }

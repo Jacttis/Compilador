@@ -9,12 +9,13 @@ public class NodoEncadenado  {
     Token tokenNodoEncadenado;
     NodoEncadenado nodoEncadenado;
 
-    protected boolean esAsignable;
+    protected boolean esAsignable,esLLamable;
 
     public NodoEncadenado(Token tokenNodoEncadenado) {
         this.tokenNodoEncadenado = tokenNodoEncadenado;
         this.nodoEncadenado = null;
         esAsignable=false;
+        esLLamable=false;
     }
 
     public NodoEncadenado getNodoEncadenado() {
@@ -38,6 +39,15 @@ public class NodoEncadenado  {
     }
 
     public boolean esAsignable(){
+        if(nodoEncadenado!=null){
+            return nodoEncadenado.esAsignable();
+        }
+        else{
+            return esAsignable;
+        }
+    }
+
+    public boolean isLLamable() {
         if(nodoEncadenado!=null){
             return nodoEncadenado.esAsignable();
         }

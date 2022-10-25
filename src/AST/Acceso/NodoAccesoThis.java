@@ -15,6 +15,11 @@ public class NodoAccesoThis extends NodoAcceso{
 
     @Override
     public Tipo chequear() {
-        return new TipoReferencia(claseThis.getToken());
+        if (nodoEncadenado==null){
+            return new TipoReferencia(claseThis.getToken());
+        }
+        else {
+            return nodoEncadenado.chequear(new TipoReferencia(claseThis.getToken()));
+        }
     }
 }

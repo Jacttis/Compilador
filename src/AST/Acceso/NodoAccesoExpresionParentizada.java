@@ -3,6 +3,7 @@ package AST.Acceso;
 import AST.Expresion.NodoExpresion;
 import AnalizadorLexico.Token;
 import AnalizadorSemantico.Tipo;
+import AnalizadorSemantico.TipoReferencia;
 
 public class NodoAccesoExpresionParentizada extends NodoAcceso {
     NodoExpresion nodoExpresion;
@@ -13,6 +14,12 @@ public class NodoAccesoExpresionParentizada extends NodoAcceso {
 
     @Override
     public Tipo chequear() {
-        return nodoExpresion.chequear();
+        Tipo tipo=nodoExpresion.chequear();
+        if(nodoEncadenado==null) {
+            return tipo;
+        }
+        else {
+            return nodoEncadenado.chequear((TipoReferencia) tipo); //ver
+        }
     }
 }

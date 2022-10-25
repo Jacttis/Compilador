@@ -84,4 +84,22 @@ public class NodoBloque extends NodoSentencia {
         }
 
     }
+
+    public Tipo tipoVarEnBloque(Token token){
+        if(bloqueContainer!=null){
+            if(varLocales.containsKey(token.getLexeme())) {
+                return varLocales.get(token.getLexeme()).tipo;
+            }
+             return bloqueContainer.tipoVarEnBloque(token);
+        }
+        else{
+            if(varLocales.containsKey(token.getLexeme())) {
+                return varLocales.get(token.getLexeme()).tipo;
+            }
+            else {
+                return null;
+            }
+        }
+
+    }
 }

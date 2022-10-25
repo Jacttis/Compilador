@@ -12,6 +12,7 @@ public class NodoAccesoMetodoEstatico extends NodoAcceso {
     public NodoAccesoMetodoEstatico(Token token,Token tokenClase) {
         super(token);
         this.tokenClase=tokenClase;
+        esLlamable=true;
     }
 
     public LinkedList<NodoExpresion> getParametros() {

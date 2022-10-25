@@ -42,13 +42,15 @@ public class TipoReferencia extends Tipo{
     }
     public boolean esSubtipo(Tipo tipo){
         if(TablaDeSimbolos.tablaSimbolos.getClases().containsKey(tipo.getToken().getLexeme())){
-            return TablaDeSimbolos.tablaSimbolos.getClaseByName(tokenTipo.getLexeme()).esSubtipo(tipo.getToken().getLexeme());
+            return TablaDeSimbolos.tablaSimbolos.getClaseByName(tipo.getToken().getLexeme()).esSubtipo(tokenTipo.getLexeme());
         } else if (TablaDeSimbolos.tablaSimbolos.getInterfaces().containsKey(tipo.getToken().getLexeme())) {
-            return TablaDeSimbolos.tablaSimbolos.getClaseByName(tokenTipo.getLexeme()).esSubtipo(tipo.getToken().getLexeme());
+            return TablaDeSimbolos.tablaSimbolos.getClaseByName(tokenTipo.getLexeme()).esSubtipo(tipo.getToken().getLexeme()); //Arreglar
         } else{
             TablaDeSimbolos.listaExcepciones.add( new SemanticException(tipo.getToken(), "Error Semantico en linea "
                     + tipo.getToken().getNumberline() + ": Clase del tipo no existe " + tipo.getToken().getLexeme()));
             return false;
         }
     }
+
+
 }

@@ -41,6 +41,15 @@ public abstract class MetodoConstructor {
         return false;
     }
 
+    public Tipo tipoParametro(Token token){
+        for (Parametro param:listaArgumentos) {
+            if(token.getLexeme().equals(param.getToken().getLexeme())){
+                return param.getTipo();
+            }
+        }
+        return null;
+    }
+
 
     public LinkedList<Parametro> getListaArgumentos() {  return listaArgumentos;}
 

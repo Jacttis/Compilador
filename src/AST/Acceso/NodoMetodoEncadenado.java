@@ -12,6 +12,7 @@ public class NodoMetodoEncadenado extends NodoEncadenado {
     public NodoMetodoEncadenado(Token tokenNodoEncadenado) {
         super(tokenNodoEncadenado);
         parametros = new LinkedList<>();
+        esLLamable=true;
     }
 
 

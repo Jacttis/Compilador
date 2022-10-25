@@ -853,7 +853,7 @@ public class SyntaxAnalyzer {
             ((NodoAccesoMetodo) accesoMetodo).setParametros(parametros);
         }
         else{
-            accesoMetodo=new NodoAccesoVarParam(token);
+            accesoMetodo=new NodoAccesoVarParam(token, (Clase) TablaDeSimbolos.tablaSimbolos.getClaseActual(),TablaDeSimbolos.tablaSimbolos.getMetodoActual(),TablaDeSimbolos.tablaSimbolos.getBloqueActual());
         }
         return accesoMetodo;
     }

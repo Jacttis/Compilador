@@ -21,16 +21,19 @@ public class NodoReturn extends NodoSentencia{
 
     public void chequear(){
         if(expresion==null){
-           if(!metodoActual.getTipo().getToken().getLexeme().equals("pr_null")){
-               TablaDeSimbolos.listaExcepciones.add(new SemanticException(expresion.getOperador(), "Error Semantico en linea "
-                       + expresion.getOperador().getNumberline() + ": tipo de variable y expresion distintos " + expresion.getOperador().getLexeme()));
+           if(!metodoActual.getTipo().getToken().getLexeme().equals("void")){
+               TablaDeSimbolos.listaExcepciones.add(new SemanticException(token, "Error Semantico en linea "
+                       + token.getNumberline() + ": tipo de variable y expresion distintos " + token.getLexeme()));
            }
         }
-        if(!metodoActual.getTipo().esSubtipo(expresion.chequear())){
-            TablaDeSimbolos.listaExcepciones.add(new SemanticException(token, "Error Semantico en linea "
-                    + token.getNumberline() + ": tipo de variable y expresion distintos " + token.getLexeme()));
+        else {
+            if(!metodoActual.getTipo().esSubtipo(expresion.chequear())){
+                TablaDeSimbolos.listaExcepciones.add(new SemanticException(token, "Error Semantico en linea "
+                        + token.getNumberline() + ": tipo de variable y expresion distintos " + token.getLexeme()));
 
+            }
         }
+
 
     }
 
