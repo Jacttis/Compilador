@@ -412,7 +412,6 @@ public class SyntaxAnalyzer {
             match("puntoComa");
         } else if (Arrays.asList("pr_return").contains(actualToken.getDescription())) {
             sentencia=retorno();
-            match("puntoComa");
         } else if (Arrays.asList("pr_if").contains(actualToken.getDescription())) {
             sentencia=If();
         } else if (Arrays.asList("pr_while").contains(actualToken.getDescription())) {
@@ -479,9 +478,10 @@ public class SyntaxAnalyzer {
 
     private NodoReturn retorno() throws LexicalException, SyntaxException, IOException {
         NodoReturn nodoReturn;
+        Token tokenRet=actualToken;
         match("pr_return");
         NodoExpresion expresion=expresionOpt();
-        nodoReturn=new NodoReturn(expresion);
+        nodoReturn=new NodoReturn(tokenRet,expresion, (Metodo) TablaDeSimbolos.tablaSimbolos.getMetodoActual());
         match("puntoComa");
         return nodoReturn;
 

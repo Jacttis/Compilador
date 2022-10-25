@@ -6,5 +6,6 @@ import AnalizadorLexico.Token;
 public class NodoVariableEncadenada extends NodoEncadenado {
     public NodoVariableEncadenada(Token tokenNodoEncadenado) {
         super(tokenNodoEncadenado);
+        esAsignable=true;
     }
 }

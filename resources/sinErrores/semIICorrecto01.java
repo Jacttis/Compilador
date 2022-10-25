@@ -2,11 +2,8 @@
 
 class A {
     public int a1;
-   
-    
-     void m1(){
-        a1 = 4;
-        
+     int m1(){
+        return 'a' ;
     }
     
 }    

@@ -1,9 +1,7 @@
 package AST;
 
-import AnalizadorSemantico.Clase;
-import AnalizadorSemantico.Metodo;
-import AnalizadorSemantico.MetodoConstructor;
-import AnalizadorSemantico.SemanticException;
+import AnalizadorLexico.Token;
+import AnalizadorSemantico.*;
 
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -30,8 +28,8 @@ public class NodoBloque extends NodoSentencia {
             varLocales.put(varLocal.getTokenVar().getLexeme(),varLocal);
         }
         else {
-            throw new  SemanticException(varLocal.getTokenVar(), "Error Semantico en linea "
-                    + varLocal.getTokenVar().getNumberline() + ": Ya hay un argumento declarado con el nombre " + varLocal.getTokenVar().getLexeme());
+            TablaDeSimbolos.listaExcepciones.add(new SemanticException(varLocal.getTokenVar(), "Error Semantico en linea "
+                    + varLocal.getTokenVar().getNumberline() + ": Ya hay un argumento declarado con el nombre " + varLocal.getTokenVar().getLexeme()));
         }
     }
 
@@ -75,5 +73,15 @@ public class NodoBloque extends NodoSentencia {
         for (NodoVarLocal varLocal: varLocales.values()) {
             varLocal.chequear(claseActual);
         }
+    }
+
+    public boolean estaVarEnBloque(Token token){
+        if(bloqueContainer!=null){
+            return varLocales.containsKey(token.getLexeme()) || bloqueContainer.estaVarEnBloque(token);
+        }
+        else{
+            return varLocales.containsKey(token.getLexeme());
+        }
+
     }
 }

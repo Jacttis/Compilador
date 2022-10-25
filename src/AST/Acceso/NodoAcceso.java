@@ -29,4 +29,12 @@ public class NodoAcceso {
     public Tipo chequear() {
     return null;
     }
+    public boolean esAsignable(){
+        if(nodoEncadenado!=null){
+            return nodoEncadenado.esAsignable();
+        }
+        else{
+            return esAsignable;
+        }
+    }
 }

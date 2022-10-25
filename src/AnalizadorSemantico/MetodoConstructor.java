@@ -32,6 +32,15 @@ public abstract class MetodoConstructor {
         return iguales;
     }
 
+    public boolean repiteNombre(Token token){
+        for (Parametro param:listaArgumentos) {
+            if(token.getLexeme().equals(param.getToken().getLexeme())){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public LinkedList<Parametro> getListaArgumentos() {  return listaArgumentos;}
 

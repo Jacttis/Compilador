@@ -65,13 +65,27 @@ public class NodoVarLocal extends NodoSentencia{
     }
 
     public void chequear(IClaseInterfaz claseActual) {
-        tipo.checkTipo(claseActual);
-        if(expresion!=null){
-            if(!tipo.esSubtipo(expresion.chequear())){
-                TablaDeSimbolos.listaExcepciones.add( new SemanticException(tokenVar, "Error Semantico en linea "
-                        + tokenVar.getNumberline() + ": tipo de variable y expresion distintos " +tokenVar.getLexeme()));
+        if(bloqueActual.getBloqueContainer()!=null){
+           if(bloqueActual.getBloqueContainer().estaVarEnBloque(tokenVar) || metodoConstructorActual.repiteNombre(tokenVar)){
+               TablaDeSimbolos.listaExcepciones.add( new SemanticException(tokenVar, "Error Semantico en linea "
+                       + tokenVar.getNumberline() + ": ya existe un atributo con el mismo nombre " +tokenVar.getLexeme()));
             }
         }
-
+        if(metodoConstructorActual.repiteNombre(tokenVar)){
+            TablaDeSimbolos.listaExcepciones.add( new SemanticException(tokenVar, "Error Semantico en linea "
+                    + tokenVar.getNumberline() + ": ya existe un atributo con el mismo nombre " +tokenVar.getLexeme()));
+        }
+        if(tipo!=null) {
+            tipo.checkTipo(claseActual);
+            if (expresion != null) {
+                if (!tipo.esSubtipo(expresion.chequear())) {
+                    TablaDeSimbolos.listaExcepciones.add(new SemanticException(tokenVar, "Error Semantico en linea "
+                            + tokenVar.getNumberline() + ": tipo de variable y expresion distintos " + tokenVar.getLexeme()));
+                }
+            }
+        }
+        else{
+            tipo=expresion.chequear();
+        }
     }
 }
