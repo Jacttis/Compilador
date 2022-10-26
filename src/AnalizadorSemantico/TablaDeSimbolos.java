@@ -109,7 +109,7 @@ public class TablaDeSimbolos {
         for (Clase c:clases.values()) {
             for (LinkedList<Metodo> metodo:c.getMetodos().values()) {
                 for (Metodo met:metodo) {
-                    met.chequearBloque(c);
+                    met.chequearBloque();
                 }
             }
         }

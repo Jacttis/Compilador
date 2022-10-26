@@ -29,7 +29,7 @@ public class NodoBloque extends NodoSentencia {
         }
         else {
             TablaDeSimbolos.listaExcepciones.add(new SemanticException(varLocal.getTokenVar(), "Error Semantico en linea "
-                    + varLocal.getTokenVar().getNumberline() + ": Ya hay un argumento declarado con el nombre " + varLocal.getTokenVar().getLexeme()));
+                    + varLocal.getTokenVar().getNumberline() + ": Ya hay una var local declarado con el nombre " + varLocal.getTokenVar().getLexeme()));
         }
     }
 
@@ -65,13 +65,17 @@ public class NodoBloque extends NodoSentencia {
         this.bloqueContainer = bloqueContainer;
     }
 
+    @Override
+    public void chequear() {
+        chequearBloque();
+    }
 
-    public void chequearBloque(Clase claseActual) {
+    public void chequearBloque() {
         for (NodoSentencia sentencia:listaSentencias) {
             sentencia.chequear();
         }
         for (NodoVarLocal varLocal: varLocales.values()) {
-            varLocal.chequear(claseActual);
+            varLocal.chequear();
         }
     }
 

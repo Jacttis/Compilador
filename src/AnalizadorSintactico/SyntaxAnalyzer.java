@@ -442,23 +442,25 @@ public class SyntaxAnalyzer {
     }
 
     private NodoWhile While() throws LexicalException, SyntaxException, IOException, SemanticException {
+        Token token=actualToken;
         match("pr_while");
         match("abreParentesis");
         NodoExpresion expresion=expresion();
         match("cierraParentesis");
         NodoSentencia sentencia=sentencia();
-        return new NodoWhile(expresion,sentencia);
+        return new NodoWhile(token,expresion,sentencia);
     }
 
     private NodoIf If() throws LexicalException, SyntaxException, IOException, SemanticException {
         NodoIf nodoIf;
+        Token token=actualToken;
         match("pr_if");
         match("abreParentesis");
         NodoExpresion expresion=expresion();
         match("cierraParentesis");
         NodoSentencia sentencia=sentencia();
         NodoElse nodoElse=Else();
-        nodoIf=new NodoIf(expresion,sentencia);
+        nodoIf=new NodoIf(token,expresion,sentencia);
         nodoIf.setNodoElse(nodoElse);
         return nodoIf;
     }
@@ -902,7 +904,7 @@ public class SyntaxAnalyzer {
     }
 
     private void listaDecVars(LinkedList<NodoVarLocal> varLocals) throws LexicalException, SyntaxException, IOException, SemanticException {
-        varLocals.add(new NodoVarLocal(actualToken,null,TablaDeSimbolos.tablaSimbolos.getBloqueActual(), TablaDeSimbolos.tablaSimbolos.getMetodoActual()));
+        varLocals.add(new NodoVarLocal(actualToken,null,TablaDeSimbolos.tablaSimbolos.getBloqueActual(), TablaDeSimbolos.tablaSimbolos.getMetodoActual(), (Clase) TablaDeSimbolos.tablaSimbolos.getClaseActual()));
         match("idMetVar");
         listaDecVarsPrima(varLocals);
     }

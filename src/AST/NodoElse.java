@@ -6,4 +6,8 @@ public class NodoElse{
     public NodoElse(NodoSentencia sentencia){
         this.sentencia=sentencia;
     }
+
+    public void chequear() {
+        sentencia.chequear();
+    }
 }

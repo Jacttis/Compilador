@@ -12,12 +12,14 @@ public class NodoVarLocal extends NodoSentencia{
     protected MetodoConstructor metodoConstructorActual;
 
     protected NodoExpresion expresion;
+    protected Clase claseActual;
 
-    public NodoVarLocal(Token token, Tipo tipo, NodoBloque bloque, MetodoConstructor metodoConstructor){
+    public NodoVarLocal(Token token, Tipo tipo, NodoBloque bloque, MetodoConstructor metodoConstructor,Clase clase){
         tokenVar=token;
         this.tipo=tipo;
         bloqueActual=bloque;
         metodoConstructorActual=metodoConstructor;
+        claseActual=clase;
     }
 
     public Token getTokenVar() {
@@ -64,16 +66,18 @@ public class NodoVarLocal extends NodoSentencia{
         return true;
     }
 
-    public void chequear(IClaseInterfaz claseActual) {
+    public void chequear() {
         if(bloqueActual.getBloqueContainer()!=null){
-           if(bloqueActual.getBloqueContainer().estaVarEnBloque(tokenVar) || metodoConstructorActual.repiteNombre(tokenVar)){
+           if(bloqueActual.getBloqueContainer().estaVarEnBloque(tokenVar) || metodoConstructorActual.repiteNombre(tokenVar)|| claseActual.getAtributos().containsKey(tokenVar.getLexeme())){
                TablaDeSimbolos.listaExcepciones.add( new SemanticException(tokenVar, "Error Semantico en linea "
                        + tokenVar.getNumberline() + ": ya existe un atributo con el mismo nombre " +tokenVar.getLexeme()));
             }
         }
-        if(metodoConstructorActual.repiteNombre(tokenVar)){
-            TablaDeSimbolos.listaExcepciones.add( new SemanticException(tokenVar, "Error Semantico en linea "
-                    + tokenVar.getNumberline() + ": ya existe un atributo con el mismo nombre " +tokenVar.getLexeme()));
+        else{
+            if(metodoConstructorActual.repiteNombre(tokenVar)|| claseActual.getAtributos().containsKey(tokenVar.getLexeme())){
+                TablaDeSimbolos.listaExcepciones.add( new SemanticException(tokenVar, "Error Semantico en linea "
+                        + tokenVar.getNumberline() + ": ya existe un atributo con el mismo nombre " +tokenVar.getLexeme()));
+            }
         }
         if(tipo!=null) {
             tipo.checkTipo(claseActual);

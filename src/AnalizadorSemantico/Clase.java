@@ -300,7 +300,7 @@ public class Clase implements IClaseInterfaz{
 
     public boolean esSubtipo(String clase){
         boolean esSubtipo=false;
-        if(clase.equals(tokenClase.getLexeme())){
+        if(clase.equals(tokenClase.getLexeme() )|| contieneA(new Token("pr_class",clase,0))){
             esSubtipo=true;
         }
         else{

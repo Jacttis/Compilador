@@ -28,9 +28,9 @@ public class TipoReferencia extends Tipo{
     }
     public boolean checkTipo(IClaseInterfaz claseActual){
         boolean ret=true;
-        if(TablaDeSimbolos.tablaSimbolos.getClases().containsKey(tokenTipo.getLexeme()) || claseActual.getParametrosGenericos().containsKey(tokenTipo.getLexeme())){
+        if(TablaDeSimbolos.tablaSimbolos.getInterfaces().containsKey(tokenTipo.getLexeme()) || TablaDeSimbolos.tablaSimbolos.getClases().containsKey(tokenTipo.getLexeme()) || claseActual.getParametrosGenericos().containsKey(tokenTipo.getLexeme())){
             for (Token token:parametrosGenericos.values()) {
-                if (!TablaDeSimbolos.tablaSimbolos.getClases().containsKey(token.getLexeme()) && !claseActual.getParametrosGenericos().containsKey(token.getLexeme())){
+                if (!TablaDeSimbolos.tablaSimbolos.getInterfaces().containsKey(token.getLexeme()) && !TablaDeSimbolos.tablaSimbolos.getClases().containsKey(token.getLexeme()) && !claseActual.getParametrosGenericos().containsKey(token.getLexeme())){
                     ret=false;
                 }
             }

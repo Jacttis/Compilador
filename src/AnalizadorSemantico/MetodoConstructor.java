@@ -57,8 +57,8 @@ public abstract class MetodoConstructor {
         return bloquePrincipal;
     }
 
-    public void chequearBloque(Clase claseActual) {
-        bloquePrincipal.chequearBloque(claseActual);
+    public void chequearBloque() {
+        bloquePrincipal.chequearBloque();
     }
 
     public boolean isEstatico(){
