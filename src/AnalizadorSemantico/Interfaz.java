@@ -195,4 +195,21 @@ public class Interfaz implements IClaseInterfaz{
 
     }
 
+    public boolean esSubtipo(String interfaz) {
+        boolean esSubtipo=false;
+        if(interfaz.equals(tokenClase.getLexeme() )){
+            esSubtipo=true;
+        }
+        else{
+            if(interfacesExtendidas.size()>0) {
+                for (String interfazE:interfacesExtendidas.keySet()) {
+                    if(TablaDeSimbolos.tablaSimbolos.getInterfazByName(interfazE).esSubtipo(interfaz)){
+                        return true;
+                    }
+
+                }
+            }
+        }
+        return esSubtipo;
+    }
 }

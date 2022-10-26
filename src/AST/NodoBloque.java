@@ -90,16 +90,6 @@ public class NodoBloque extends NodoSentencia {
                 }
 
             }
-            if(bloqueContainer==null){
-                if(!metodoBloque.getTipo().compareTipo(new Tipo(new Token("pr_void","void",0)))){
-                    if(!tieneRetorno){
-                        Metodo met= (Metodo) metodoBloque;
-                        TablaDeSimbolos.listaExcepciones.add(new SemanticException(met.getTokenMetodo(), "Error Semantico en linea "
-                                + met.getTokenMetodo().getNumberline() + ": Deberia retornar algo de tipo " + met.getTipo().getToken().getLexeme()));
-                    }
-                }
-
-            }
             chequeado=true;
         }
         else{

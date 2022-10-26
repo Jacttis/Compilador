@@ -33,7 +33,7 @@ public class NodoVariableEncadenada extends NodoEncadenado {
                     TablaDeSimbolos.listaExcepciones.add(new SemanticException(tokenNodoEncadenado, "Error Semantico en linea "
                             + tokenNodoEncadenado.getNumberline() + ": No existe un atributo con ese nombre o es privado " + tokenNodoEncadenado.getLexeme()));
 
-                    return new Tipo(new Token("pr_void", "void", 0)); //Devuelvo esto para que no termine la ejecucion
+                    return tipo; //Devuelvo esto para que no termine la ejecucion
                 }
             }
             else{
