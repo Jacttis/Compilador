@@ -85,7 +85,16 @@ public class NodoVarLocal extends NodoSentencia{
             }
         }
         else{
-            tipo=expresion.chequear();
+            Tipo tipoExpresion=expresion.chequear();
+            if(tipoExpresion.compareTipo(new Tipo(new Token("pr_void","void",0)))){
+                TablaDeSimbolos.listaExcepciones.add(new SemanticException(tokenVar, "Error Semantico en linea "
+                        + tokenVar.getNumberline() + ": tipo de variable y expresion distintos " + tokenVar.getLexeme()));
+
+            }
+            else{
+                tipo=tipoExpresion;
+            }
+
         }
     }
 }

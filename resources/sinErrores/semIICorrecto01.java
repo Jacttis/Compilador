@@ -2,8 +2,9 @@
 
 class A {
     public int a1;
-     A m1(){
-        return new B();
+
+     void m1(){
+        return ;
     }
     
 }    

@@ -414,4 +414,31 @@ public class Clase implements IClaseInterfaz{
     }
 
 
+    public Metodo tieneMetodoExacto(String nombreMetodo,LinkedList<NodoExpresion> parametros){
+        if(metodos.containsKey(nombreMetodo)) {
+            for (Metodo met : metodos.get(nombreMetodo)) {
+                LinkedList<Parametro> parametrosMet = met.getListaArgumentos();
+                int i = 0;
+                boolean iguales = true;
+                if (parametros.size() == parametrosMet.size()) {
+                    while (iguales && i < parametros.size()) {
+                        if (!parametrosMet.get(i).getTipo().esSubtipo(parametros.get(i).chequear())) {
+                            iguales = false;
+                        }
+                        i++;
+                    }
+                    if (iguales) {
+                        return met;
+                    }
+                }
+            }
+            return null;
+        }
+        else {
+            return null;
+        }
+
+    }
+
+
 }

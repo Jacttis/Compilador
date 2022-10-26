@@ -60,6 +60,10 @@ public abstract class MetodoConstructor {
     public void chequearBloque(Clase claseActual) {
         bloquePrincipal.chequearBloque(claseActual);
     }
+
+    public boolean isEstatico(){
+        return false;
+    }
     public void setBloquePrincipal(NodoBloque bloquePrincipal) {
         this.bloquePrincipal = bloquePrincipal;
     }

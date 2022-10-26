@@ -20,4 +20,8 @@ public class NodoIf extends NodoSentencia{
         this.nodoElse = nodoElse;
     }
 
+    @Override
+    public void chequear() {
+        expresion
+    }
 }

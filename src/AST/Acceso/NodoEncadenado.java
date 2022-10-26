@@ -35,7 +35,7 @@ public class NodoEncadenado  {
     }
 
     public Tipo chequear(TipoReferencia tipo) {
-        return null;
+        return new Tipo(new Token("pr_int","int",0));
     }
 
     public boolean esAsignable(){

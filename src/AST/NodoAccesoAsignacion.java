@@ -32,7 +32,15 @@ public class NodoAccesoAsignacion extends NodoSentencia{
         if (expresion != null) {
             if(acceso.esAsignable()){
                 Tipo tipo=acceso.chequear();
-                if(tipo.esSubtipo(expresion.chequear())){
+                Tipo tipoExpresion=expresion.chequear();
+
+                if(expresion.chequear().compareTipo(new Tipo(new Token("pr_void","void",0)))){
+                    TablaDeSimbolos.listaExcepciones.add(new SemanticException(asignacion, "Error Semantico en linea "
+                            + asignacion.getNumberline() + ": tipo de expresion no puede ser void " + asignacion.getLexeme()));
+                    return;
+                }
+
+                if(tipo.esSubtipo(tipoExpresion)){
                     if(tipoOperador!=null){
                         if(!tipoOperador.compareTipo(tipo)){
                             TablaDeSimbolos.listaExcepciones.add(new SemanticException(asignacion, "Error Semantico en linea "
@@ -54,6 +62,11 @@ public class NodoAccesoAsignacion extends NodoSentencia{
             //Llamada
             if (acceso.isLLamable()){
                 acceso.chequear();
+            }
+            else{
+                TablaDeSimbolos.listaExcepciones.add(new SemanticException(asignacion, "Error Semantico en linea "
+                        + asignacion.getNumberline() + ": No es llamable " + asignacion.getLexeme()));
+
             }
         }
 

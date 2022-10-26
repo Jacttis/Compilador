@@ -747,7 +747,9 @@ public class SyntaxAnalyzer {
             encadenado.setNodoEncadenado(encadenadoPrima);
             return encadenado;
         } else{
-            return null;
+            NodoVariableEncadenada encadenado;
+            encadenado=new NodoVariableEncadenada(token);
+            return encadenado;
         }
     }
 
@@ -848,7 +850,7 @@ public class SyntaxAnalyzer {
     private NodoAcceso accesoMetodo(Token token) throws LexicalException, SyntaxException, IOException {
         NodoAcceso accesoMetodo;
         if (Arrays.asList("abreParentesis").contains(actualToken.getDescription())) {
-            accesoMetodo=new NodoAccesoMetodo(token);
+            accesoMetodo=new NodoAccesoMetodo(token, (Clase) TablaDeSimbolos.tablaSimbolos.getClaseActual(),TablaDeSimbolos.tablaSimbolos.getMetodoActual());
             LinkedList<NodoExpresion> parametros=argsActuales();
             ((NodoAccesoMetodo) accesoMetodo).setParametros(parametros);
         }
