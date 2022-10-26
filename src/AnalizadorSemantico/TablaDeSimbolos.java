@@ -137,6 +137,7 @@ public class TablaDeSimbolos {
 
             Metodo read = new Metodo(new Token("idMetVar", "read", 0), true, new TipoPrimitivo(new Token("pr_int", "int", 0)));
             read.setBloquePrincipal(new NodoBloque(read));
+            read.bloquePrincipal.chequeado=true;
             system.agregarMetodo(read.getTokenMetodo().getLexeme(), read);
 
 

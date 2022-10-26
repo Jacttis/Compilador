@@ -16,6 +16,11 @@ public class NodoReturn extends NodoSentencia{
         this.token=token;
     }
 
+    @Override
+    public Token getToken() {
+        return token;
+    }
+
     public void chequear(){
         if(expresion==null){
            if(!metodoActual.getTipo().getToken().getLexeme().equals("void")){
@@ -24,11 +29,12 @@ public class NodoReturn extends NodoSentencia{
            }
         }
         else {
-            if(expresion.chequear().compareTipo(new Tipo(new Token("pr_void","void",0)))){
+            Tipo tipoExpresion=expresion.chequear();
+            if(tipoExpresion.compareTipo(new Tipo(new Token("pr_void","void",0)))){
                 TablaDeSimbolos.listaExcepciones.add(new SemanticException(token, "Error Semantico en linea "
                         + token.getNumberline() + ": tipo de expresion no puede ser void " + token.getLexeme()));
             }
-            if(!metodoActual.getTipo().esSubtipo(expresion.chequear())){
+            if(!metodoActual.getTipo().esSubtipo(expresion.chequear(),this)){
                 TablaDeSimbolos.listaExcepciones.add(new SemanticException(token, "Error Semantico en linea "
                         + token.getNumberline() + ": tipo de variable y expresion distintos " + token.getLexeme()));
 

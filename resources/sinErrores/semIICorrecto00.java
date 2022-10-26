@@ -1,32 +1,21 @@
-// mediante la llamada a un metodo directo accede encadenadamente a una public
+// Prueba un lado izquierdo con dos encadenamiento y atributos heredados
 
-interface B{
-
-}
 class A {
-    public int a1;
+    public B a1;
+    public int a2;
 
-    B m3(){
+} 
 
-        while(true){
-            int a12=2;
-        }
-        return new A();
-    }
-
-     void m1(char p1)
+class B extends A{
+    public A a3;
+    
+     void m1(B p1)     
     {
-        a1 = m3().a1;
+        a1.a3.a2 = 4;
+        
     }
-    
-     void m2()
-    {}
-    
-
-         
-    
-
 }
+
 
 class Init{
     static void main()

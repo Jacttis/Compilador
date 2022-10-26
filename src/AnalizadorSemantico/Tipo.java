@@ -1,5 +1,6 @@
 package AnalizadorSemantico;
 
+import AST.NodoSentencia;
 import AnalizadorLexico.Token;
 
 import java.util.LinkedList;
@@ -34,6 +35,10 @@ public class Tipo {
 
 
     public boolean esSubtipo(Tipo tipo) {
+        return compareTipo(tipo);
+    }
+
+    public boolean esSubtipo(Tipo tipo, NodoSentencia accesoLLama){
         return compareTipo(tipo);
     }
 }

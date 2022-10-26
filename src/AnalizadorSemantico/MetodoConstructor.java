@@ -60,6 +60,9 @@ public abstract class MetodoConstructor {
     public void chequearBloque() {
         bloquePrincipal.chequearBloque();
     }
+    public Tipo getTipo(){
+        return new Tipo(new Token("pr_void","void",0));
+    }
 
     public boolean isEstatico(){
         return false;

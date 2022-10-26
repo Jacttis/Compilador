@@ -413,8 +413,18 @@ public class Clase implements IClaseInterfaz{
 
     }
 
+    public Atributo tieneAtributoPublico(String atributo){
+        Atributo atr=atributos.get(atributo);
+        if(atr!=null && atr.getVisibilidadAtributo().equals("public")){
+            return atr;
+        }
+        else{
+            return null;
+        }
+    }
 
-    public Metodo tieneMetodoExacto(String nombreMetodo,LinkedList<NodoExpresion> parametros){
+
+    public Metodo tieneMetodoExacto(String nombreMetodo,LinkedList<NodoExpresion> parametros,boolean estatico){
         if(metodos.containsKey(nombreMetodo)) {
             for (Metodo met : metodos.get(nombreMetodo)) {
                 LinkedList<Parametro> parametrosMet = met.getListaArgumentos();
@@ -428,7 +438,12 @@ public class Clase implements IClaseInterfaz{
                         i++;
                     }
                     if (iguales) {
-                        return met;
+                        if(estatico== met.isEstatico()) {
+                            return met;
+                        }
+                        else{
+                            return null;
+                        }
                     }
                 }
             }

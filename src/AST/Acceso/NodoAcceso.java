@@ -3,6 +3,8 @@ package AST.Acceso;
 import AnalizadorLexico.Token;
 import AnalizadorSemantico.Tipo;
 
+import java.util.Map;
+
 public class NodoAcceso {
 
     Token accesoToken;
@@ -39,12 +41,15 @@ public class NodoAcceso {
         }
     }
 
-    public boolean isLLamable() {
+    public Object[] isLLamable() {
+        Object[] retorno=new Object[2];
         if(nodoEncadenado!=null){
-            return nodoEncadenado.esAsignable();
+            return nodoEncadenado.isLLamable();
         }
         else{
-            return esAsignable;
+            retorno[0]=esLlamable;
+            retorno[1]=accesoToken;
+            return retorno;
         }
     }
 }

@@ -1,25 +1,38 @@
 package AST.Acceso;
 
 import AnalizadorLexico.Token;
-import AnalizadorSemantico.Clase;
-import AnalizadorSemantico.Tipo;
-import AnalizadorSemantico.TipoReferencia;
+import AnalizadorSemantico.*;
 
 public class NodoAccesoThis extends NodoAcceso{
 
     protected Clase claseThis;
-    public NodoAccesoThis(Token token, Clase clase) {
+    protected MetodoConstructor metodo;
+    public NodoAccesoThis(Token token, Clase clase, MetodoConstructor metodoConstructor) {
         super(token);
         claseThis=clase;
+        metodo=metodoConstructor;
     }
 
     @Override
     public Tipo chequear() {
+        if(metodo.isEstatico()){
+            TablaDeSimbolos.listaExcepciones.add(new SemanticException(accesoToken, "Error Semantico en linea "
+                    + accesoToken.getNumberline() + ": No se puede llamar a this en metodo estaticos " + accesoToken.getLexeme()));
+            return new Tipo(new Token("pr_void","void",0));//Devuelvo para seguir ejecucion
+        }
         if (nodoEncadenado==null){
             return new TipoReferencia(claseThis.getToken());
         }
         else {
-            return nodoEncadenado.chequear(new TipoReferencia(claseThis.getToken()));
+            Tipo tipo= nodoEncadenado.chequear(new TipoReferencia(claseThis.getToken()));
+            if(tipo!=null){
+                return tipo;
+            }
+            else{
+                TablaDeSimbolos.listaExcepciones.add(new SemanticException(accesoToken, "Error Semantico en linea "
+                        + accesoToken.getNumberline() + ": Tipo no puede ser primitivo " + accesoToken.getLexeme()));
+                return new Tipo(new Token("pr_void","void",0));//Devuelvo para seguir ejecucion
+            }
         }
     }
 }

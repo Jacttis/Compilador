@@ -22,7 +22,7 @@ public class NodoVarLocal extends NodoSentencia{
         claseActual=clase;
     }
 
-    public Token getTokenVar() {
+    public Token getToken() {
         return tokenVar;
     }
 
@@ -68,13 +68,13 @@ public class NodoVarLocal extends NodoSentencia{
 
     public void chequear() {
         if(bloqueActual.getBloqueContainer()!=null){
-           if(bloqueActual.getBloqueContainer().estaVarEnBloque(tokenVar) || metodoConstructorActual.repiteNombre(tokenVar)|| claseActual.getAtributos().containsKey(tokenVar.getLexeme())){
+           if(bloqueActual.getBloqueContainer().estaVarEnBloque(tokenVar) || metodoConstructorActual.repiteNombre(tokenVar)){
                TablaDeSimbolos.listaExcepciones.add( new SemanticException(tokenVar, "Error Semantico en linea "
                        + tokenVar.getNumberline() + ": ya existe un atributo con el mismo nombre " +tokenVar.getLexeme()));
             }
         }
         else{
-            if(metodoConstructorActual.repiteNombre(tokenVar)|| claseActual.getAtributos().containsKey(tokenVar.getLexeme())){
+            if(metodoConstructorActual.repiteNombre(tokenVar)){
                 TablaDeSimbolos.listaExcepciones.add( new SemanticException(tokenVar, "Error Semantico en linea "
                         + tokenVar.getNumberline() + ": ya existe un atributo con el mismo nombre " +tokenVar.getLexeme()));
             }
@@ -82,7 +82,7 @@ public class NodoVarLocal extends NodoSentencia{
         if(tipo!=null) {
             tipo.checkTipo(claseActual);
             if (expresion != null) {
-                if (!tipo.esSubtipo(expresion.chequear())) {
+                if (!tipo.esSubtipo(expresion.chequear(),this)) {
                     TablaDeSimbolos.listaExcepciones.add(new SemanticException(tokenVar, "Error Semantico en linea "
                             + tokenVar.getNumberline() + ": tipo de variable y expresion distintos " + tokenVar.getLexeme()));
                 }
@@ -90,9 +90,9 @@ public class NodoVarLocal extends NodoSentencia{
         }
         else{
             Tipo tipoExpresion=expresion.chequear();
-            if(tipoExpresion.compareTipo(new Tipo(new Token("pr_void","void",0)))){
+            if(tipoExpresion.compareTipo(new Tipo(new Token("pr_null","null",0))) || tipoExpresion.compareTipo(new Tipo(new Token("pr_void","void",0)))){
                 TablaDeSimbolos.listaExcepciones.add(new SemanticException(tokenVar, "Error Semantico en linea "
-                        + tokenVar.getNumberline() + ": tipo de variable y expresion distintos " + tokenVar.getLexeme()));
+                        + tokenVar.getNumberline() + ": tipo no puede null ni void " + tokenVar.getLexeme()));
 
             }
             else{

@@ -2,15 +2,14 @@
 
 class A {
     public int a1;
-
+    
      void m1(){
-        return ;
+        a1 = 4;
+        
     }
     
 }    
-class B extends A{
 
-}
 
 class Init{
     static void main()

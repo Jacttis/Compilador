@@ -20,23 +20,36 @@ public class NodoAccesoVarParam extends NodoAcceso {
     @Override
     public Tipo chequear() {
         Tipo tipo = null;
-        if(clase.getAtributos().containsKey(accesoToken.getLexeme())) {
-            tipo = clase.getAtributos().get(accesoToken.getLexeme()).getTipoAtributo();
-        } else if (metodo.repiteNombre(accesoToken) ) {
+        if (metodo.repiteNombre(accesoToken) ) {
             tipo = metodo.tipoParametro(accesoToken);
         } else if ( bloque.estaVarEnBloque(accesoToken)) {
             tipo = bloque.tipoVarEnBloque(accesoToken);
-        }
-        else {
+        }else if(clase.getAtributos().containsKey(accesoToken.getLexeme())) {
+            if (metodo.isEstatico()){
+                TablaDeSimbolos.listaExcepciones.add(new SemanticException(accesoToken, "Error Semantico en linea "
+                        + accesoToken.getNumberline() + ": No se puede llamar a un atributo en metodo estaticos " + accesoToken.getLexeme()));
+                return new Tipo(new Token("pr_void","void",0));//Devuelvo para seguir ejecucion
+            }
+            tipo = clase.getAtributos().get(accesoToken.getLexeme()).getTipoAtributo();
+        } else {
             TablaDeSimbolos.listaExcepciones.add( new SemanticException(accesoToken, "Error Semantico en linea "
-                    + accesoToken.getNumberline() + ": ya existe un atributo con el mismo nombre " +accesoToken.getLexeme()));
+                    + accesoToken.getNumberline() + ": No existe un atributo con el mismo nombre " +accesoToken.getLexeme()));
+            return new Tipo(new Token("pr_void","void",0));//Devuelvo para seguir ejecucion
         }
 
         if(nodoEncadenado==null){
             return tipo;
         }
         else{
-            return nodoEncadenado.chequear((TipoReferencia) tipo);
+            Tipo tipoEncadenado= nodoEncadenado.chequear(tipo);
+            if(tipoEncadenado!=null){
+                return tipoEncadenado;
+            }
+            else{
+                TablaDeSimbolos.listaExcepciones.add(new SemanticException(accesoToken, "Error Semantico en linea "
+                        + accesoToken.getNumberline() + ": Tipo no puede ser primitivo " + accesoToken.getLexeme()));
+                return new Tipo(new Token("pr_void","void",0));//Devuelvo para seguir ejecucion
+            }
         }
 
     }

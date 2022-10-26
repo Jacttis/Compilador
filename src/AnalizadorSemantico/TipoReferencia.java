@@ -1,5 +1,7 @@
 package AnalizadorSemantico;
 
+import AST.Acceso.NodoAcceso;
+import AST.NodoSentencia;
 import AnalizadorLexico.Token;
 
 import java.util.Hashtable;
@@ -40,14 +42,24 @@ public class TipoReferencia extends Tipo{
         }
         return ret;
     }
+    public boolean esSubtipo(Tipo tipo, NodoSentencia accesoLLama){
+        if(TablaDeSimbolos.tablaSimbolos.getClases().containsKey(tipo.getToken().getLexeme())){
+            return TablaDeSimbolos.tablaSimbolos.getClaseByName(tipo.getToken().getLexeme()).esSubtipo(tokenTipo.getLexeme());
+        } else if (TablaDeSimbolos.tablaSimbolos.getInterfaces().containsKey(tipo.getToken().getLexeme())) {
+            return TablaDeSimbolos.tablaSimbolos.getClaseByName(tokenTipo.getLexeme()).esSubtipo(tipo.getToken().getLexeme()); //Arreglar
+        }
+        else{
+            TablaDeSimbolos.listaExcepciones.add( new SemanticException(accesoLLama.getToken(), "Error Semantico en linea "
+                    + accesoLLama.getToken().getNumberline() + ": Argumento mas definido la clase no existe o es tipo Primitivo " + accesoLLama.getToken().getLexeme()));
+            return false;
+        }
+    }
     public boolean esSubtipo(Tipo tipo){
         if(TablaDeSimbolos.tablaSimbolos.getClases().containsKey(tipo.getToken().getLexeme())){
             return TablaDeSimbolos.tablaSimbolos.getClaseByName(tipo.getToken().getLexeme()).esSubtipo(tokenTipo.getLexeme());
         } else if (TablaDeSimbolos.tablaSimbolos.getInterfaces().containsKey(tipo.getToken().getLexeme())) {
             return TablaDeSimbolos.tablaSimbolos.getClaseByName(tokenTipo.getLexeme()).esSubtipo(tipo.getToken().getLexeme()); //Arreglar
         } else{
-            TablaDeSimbolos.listaExcepciones.add( new SemanticException(tipo.getToken(), "Error Semantico en linea "
-                    + tipo.getToken().getNumberline() + ": Clase del tipo no existe " + tipo.getToken().getLexeme()));
             return false;
         }
     }

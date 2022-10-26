@@ -68,7 +68,7 @@ public class NodoExpresionBinaria extends NodoExpresion{
 
         }
         else {
-            if(expresionDer.chequear().esSubtipo(expresionIzq.chequear())) {
+            if(!expresionIzq.chequear().compareTipo(new Tipo(new Token("pr_void","void",0))) && expresionDer.chequear().esSubtipo(expresionIzq.chequear())) {
                 return tipoRetorno;
             }
             else {

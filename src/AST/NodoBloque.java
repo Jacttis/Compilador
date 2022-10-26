@@ -13,23 +13,26 @@ public class NodoBloque extends NodoSentencia {
     protected MetodoConstructor metodoBloque;
     protected NodoBloque bloqueContainer;
 
+    public  boolean chequeado;
+    private boolean tieneRetorno;
 
     public NodoBloque(MetodoConstructor metodoConstructor){
         metodoBloque=metodoConstructor;
         listaSentencias=new LinkedList<>();
         varLocales=new Hashtable<>();
+        chequeado=false;
     }
     public void addSentencia(NodoSentencia sentencia){
         listaSentencias.add(sentencia);
     }
 
     public void addVarLocal(NodoVarLocal varLocal) throws SemanticException {
-        if(!varLocales.containsKey(varLocal.getTokenVar().getLexeme())){
-            varLocales.put(varLocal.getTokenVar().getLexeme(),varLocal);
+        if(!varLocales.containsKey(varLocal.getToken().getLexeme())){
+            varLocales.put(varLocal.getToken().getLexeme(),varLocal);
         }
         else {
-            TablaDeSimbolos.listaExcepciones.add(new SemanticException(varLocal.getTokenVar(), "Error Semantico en linea "
-                    + varLocal.getTokenVar().getNumberline() + ": Ya hay una var local declarado con el nombre " + varLocal.getTokenVar().getLexeme()));
+            TablaDeSimbolos.listaExcepciones.add(new SemanticException(varLocal.getToken(), "Error Semantico en linea "
+                    + varLocal.getToken().getNumberline() + ": Ya hay una var local declarado con el nombre " + varLocal.getToken().getLexeme()));
         }
     }
 
@@ -71,11 +74,36 @@ public class NodoBloque extends NodoSentencia {
     }
 
     public void chequearBloque() {
-        for (NodoSentencia sentencia:listaSentencias) {
-            sentencia.chequear();
+        if(!chequeado){
+            for (NodoVarLocal varLocal: varLocales.values()) {
+                varLocal.chequear();
+            }
+            for (NodoSentencia sentencia:listaSentencias) {
+                if(sentencia instanceof NodoReturn){
+                    tieneRetorno=true;
+                }
+                if(sentencia==null){
+                    //nada porque es punto y coma
+                }
+                else{
+                    sentencia.chequear();
+                }
+
+            }
+            if(bloqueContainer==null){
+                if(!metodoBloque.getTipo().compareTipo(new Tipo(new Token("pr_void","void",0)))){
+                    if(!tieneRetorno){
+                        Metodo met= (Metodo) metodoBloque;
+                        TablaDeSimbolos.listaExcepciones.add(new SemanticException(met.getTokenMetodo(), "Error Semantico en linea "
+                                + met.getTokenMetodo().getNumberline() + ": Deberia retornar algo de tipo " + met.getTipo().getToken().getLexeme()));
+                    }
+                }
+
+            }
+            chequeado=true;
         }
-        for (NodoVarLocal varLocal: varLocales.values()) {
-            varLocal.chequear();
+        else{
+
         }
     }
 
@@ -92,13 +120,13 @@ public class NodoBloque extends NodoSentencia {
     public Tipo tipoVarEnBloque(Token token){
         if(bloqueContainer!=null){
             if(varLocales.containsKey(token.getLexeme())) {
-                return varLocales.get(token.getLexeme()).tipo;
+                return varLocales.get(token.getLexeme()).getTipo();
             }
              return bloqueContainer.tipoVarEnBloque(token);
         }
         else{
             if(varLocales.containsKey(token.getLexeme())) {
-                return varLocales.get(token.getLexeme()).tipo;
+                return varLocales.get(token.getLexeme()).getTipo();
             }
             else {
                 return null;

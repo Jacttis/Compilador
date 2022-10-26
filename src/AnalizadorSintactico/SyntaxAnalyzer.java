@@ -491,7 +491,7 @@ public class SyntaxAnalyzer {
 
     private NodoExpresion expresionOpt() throws LexicalException, SyntaxException, IOException {
         NodoExpresion expresion=null;
-        if (Arrays.asList("+","-","!","pr_null", "pr_true", "pr_false", "intLiteral", "charLiteral", "stringLiteral", "pr_this", "idMetVar", "pr_new", "idClase").contains(actualToken.getDescription())) {
+        if (Arrays.asList("+","-","!","pr_null", "pr_true", "pr_false", "intLiteral", "charLiteral", "stringLiteral", "pr_this", "idMetVar", "pr_new", "idClase","abreParentesis").contains(actualToken.getDescription())) {
             expresion=expresion();
         }
         else{
@@ -653,19 +653,19 @@ public class SyntaxAnalyzer {
             nodoOperandoLiteral= new NodoOperandoLiteral(actualToken,new TipoReferencia(actualToken));
             match("pr_null");
         } else if (Arrays.asList("pr_true").contains(actualToken.getDescription())) {
-            nodoOperandoLiteral= new NodoOperandoLiteral(actualToken,new TipoPrimitivo(new Token("pr_boolean","boolean",0)));
+            nodoOperandoLiteral= new NodoOperandoLiteral(actualToken,new TipoPrimitivo(new Token("pr_boolean","boolean",actualToken.getNumberline())));
             match("pr_true");
         } else if (Arrays.asList("pr_false").contains(actualToken.getDescription())) {
-            nodoOperandoLiteral= new NodoOperandoLiteral(actualToken,new TipoPrimitivo(new Token("pr_boolean","boolean",0)));
+            nodoOperandoLiteral= new NodoOperandoLiteral(actualToken,new TipoPrimitivo(new Token("pr_boolean","boolean",actualToken.getNumberline())));
             match("pr_false");
         } else if (Arrays.asList("intLiteral").contains(actualToken.getDescription())) {
-            nodoOperandoLiteral= new NodoOperandoLiteral(actualToken,new TipoPrimitivo(new Token("pr_int","int",0)));
+            nodoOperandoLiteral= new NodoOperandoLiteral(actualToken,new TipoPrimitivo(new Token("pr_int","int",actualToken.getNumberline())));
             match("intLiteral");
         } else if (Arrays.asList("charLiteral").contains(actualToken.getDescription())) {
-            nodoOperandoLiteral= new NodoOperandoLiteral(actualToken,new TipoPrimitivo(new Token("pr_char","char",0)));
+            nodoOperandoLiteral= new NodoOperandoLiteral(actualToken,new TipoPrimitivo(new Token("pr_char","char",actualToken.getNumberline())));
             match("charLiteral");
         } else if (Arrays.asList("stringLiteral").contains(actualToken.getDescription())) {
-            nodoOperandoLiteral= new NodoOperandoLiteral(actualToken,new TipoReferencia(new Token("idClase","String",0)));
+            nodoOperandoLiteral= new NodoOperandoLiteral(actualToken,new TipoReferencia(new Token("idClase","String",actualToken.getNumberline())));
             match("stringLiteral");
         }
         else {
@@ -873,7 +873,7 @@ public class SyntaxAnalyzer {
     }
     
     private NodoAccesoThis accesoThis() throws LexicalException, SyntaxException, IOException {
-        NodoAccesoThis accesoThis=new NodoAccesoThis(actualToken, (Clase) TablaDeSimbolos.tablaSimbolos.getClaseActual());
+        NodoAccesoThis accesoThis=new NodoAccesoThis(actualToken, (Clase) TablaDeSimbolos.tablaSimbolos.getClaseActual(),TablaDeSimbolos.tablaSimbolos.getMetodoActual());
         match("pr_this");
         return accesoThis;
     }

@@ -34,7 +34,7 @@ public class NodoEncadenado  {
         this.tokenNodoEncadenado = tokenNodoEncadenado;
     }
 
-    public Tipo chequear(TipoReferencia tipo) {
+    public Tipo chequear(Tipo tipo) {
         return new Tipo(new Token("pr_int","int",0));
     }
 
@@ -47,12 +47,24 @@ public class NodoEncadenado  {
         }
     }
 
-    public boolean isLLamable() {
+   /* public boolean isLLamable() {
         if(nodoEncadenado!=null){
-            return nodoEncadenado.esAsignable();
+            return nodoEncadenado.isLLamable();
         }
         else{
-            return esAsignable;
+            return esLLamable;
+        }
+    }*/
+
+    public Object[] isLLamable() {
+        Object[] retorno=new Object[2];
+        if(nodoEncadenado!=null){
+            return nodoEncadenado.isLLamable();
+        }
+        else{
+            retorno[0]=esLLamable;
+            retorno[1]=tokenNodoEncadenado;
+            return retorno;
         }
     }
 }

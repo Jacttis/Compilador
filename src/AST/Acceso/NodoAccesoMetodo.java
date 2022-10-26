@@ -30,16 +30,24 @@ public class NodoAccesoMetodo extends NodoAcceso{
 
     @Override
     public Tipo chequear() {
-        Metodo met=clase.tieneMetodoExacto(accesoToken.getLexeme(),parametros);
+        Metodo met=clase.tieneMetodoExacto(accesoToken.getLexeme(),parametros,false);
         if(met!=null){
             if(metodo.isEstatico()){
                 TablaDeSimbolos.listaExcepciones.add(new SemanticException(accesoToken, "Error Semantico en linea "
-                        + accesoToken.getNumberline() + ": No se puede llamar a metodos no estaticos" + accesoToken.getLexeme()));
+                        + accesoToken.getNumberline() + ": No se puede llamar a metodos no estaticos " + accesoToken.getLexeme()));
                 return new Tipo(new Token("pr_void","void",0));
             }
             else{
                 if(nodoEncadenado!=null){
-                    return nodoEncadenado.chequear((TipoReferencia) met.getTipo());
+                    Tipo tipoEncadenado= nodoEncadenado.chequear(met.getTipo());
+                    if(tipoEncadenado!=null){
+                        return tipoEncadenado;
+                    }
+                    else{
+                        TablaDeSimbolos.listaExcepciones.add(new SemanticException(accesoToken, "Error Semantico en linea "
+                                + accesoToken.getNumberline() + ": Tipo no puede ser primitivo " + accesoToken.getLexeme()));
+                        return new Tipo(new Token("pr_void","void",0));//Devuelvo para seguir ejecucion
+                    }
                 }
                 else{
                     return met.getTipo();
