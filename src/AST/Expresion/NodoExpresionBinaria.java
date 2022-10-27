@@ -68,8 +68,18 @@ public class NodoExpresionBinaria extends NodoExpresion{
 
         }
         else {
-            if(!expresionIzq.chequear().compareTipo(new Tipo(new Token("pr_void","void",0))) && expresionDer.chequear().esSubtipo(expresionIzq.chequear())) {
-                return tipoRetorno;
+            Tipo expresionIzqT=expresionIzq.chequear();
+            Tipo expresionDerT=expresionDer.chequear();
+            if(!expresionIzqT.compareTipo(new Tipo(new Token("pr_void","void",0)))){
+                if(expresionIzqT.esSubtipo(expresionDerT) || expresionDerT.esSubtipo(expresionIzqT)){
+                    return tipoRetorno;
+                }
+                else{
+                    TablaDeSimbolos.listaExcepciones.add( new SemanticException(tokenOp, "Error Semantico en linea "
+                            + tokenOp.getNumberline() + ": tipo de operador y operandos incompatibles " + tokenOp.getLexeme()));
+                    return tipoRetorno;
+                }
+
             }
             else {
                 TablaDeSimbolos.listaExcepciones.add( new SemanticException(tokenOp, "Error Semantico en linea "

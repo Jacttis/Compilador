@@ -79,9 +79,6 @@ public class NodoBloque extends NodoSentencia {
                 varLocal.chequear();
             }
             for (NodoSentencia sentencia:listaSentencias) {
-                if(sentencia instanceof NodoReturn){
-                    tieneRetorno=true;
-                }
                 if(sentencia==null){
                     //nada porque es punto y coma
                 }

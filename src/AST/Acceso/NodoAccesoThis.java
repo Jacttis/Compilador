@@ -24,6 +24,7 @@ public class NodoAccesoThis extends NodoAcceso{
             return new TipoReferencia(claseThis.getToken());
         }
         else {
+            nodoEncadenado.setEsThis();
             Tipo tipo= nodoEncadenado.chequear(new TipoReferencia(claseThis.getToken()));
             if(tipo!=null){
                 return tipo;

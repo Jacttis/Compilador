@@ -34,7 +34,7 @@ public class NodoMetodoEncadenado extends NodoEncadenado {
                 if(nodoEncadenado!=null){
                     Tipo tipoEncadenado=nodoEncadenado.chequear(met.getTipo());
                     if(tipoEncadenado!=null){
-                        return tipo;
+                        return tipoEncadenado;
                     }
                     else{
                         TablaDeSimbolos.listaExcepciones.add(new SemanticException(tokenNodoEncadenado, "Error Semantico en linea "

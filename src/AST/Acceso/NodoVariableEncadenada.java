@@ -10,12 +10,19 @@ public class NodoVariableEncadenada extends NodoEncadenado {
         esAsignable=true;
     }
 
+
     @Override
     public Tipo chequear(Tipo tipo) {
         if(tipo instanceof TipoReferencia){
             Clase clase= TablaDeSimbolos.tablaSimbolos.getClaseByName(tipo.getToken().getLexeme());
             if(clase!=null) {
-                Atributo atributo = clase.tieneAtributoPublico(tokenNodoEncadenado.getLexeme());
+                Atributo atributo=null;
+                if(!esThis) {
+                    atributo = clase.tieneAtributoPublico(tokenNodoEncadenado.getLexeme());
+                }
+                else{
+                    atributo = clase.getAtributos().get(tokenNodoEncadenado.getLexeme());
+                }
                 if (atributo != null) {
                     if (nodoEncadenado != null) {
                         Tipo tipoEncadenado = nodoEncadenado.chequear(atributo.getTipoAtributo());

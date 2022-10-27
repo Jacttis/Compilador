@@ -324,7 +324,9 @@ public class Clase implements IClaseInterfaz{
                         }
                     }
                     for (Atributo atributo : padre.getAtributos().values()) {
-                        agregarAtributoPadre(atributo.getTokenAtributo().getLexeme(), atributo);
+                        if(atributo.getVisibilidadAtributo().equals("public")) {
+                            agregarAtributoPadre(atributo.getTokenAtributo().getLexeme(), atributo);
+                        }
                     }
                 }
             }

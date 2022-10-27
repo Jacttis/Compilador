@@ -1,10 +1,10 @@
-// Prueba de creacion de variable
+// Prueba de acceso a atributo
 
 class A {
     public A a;
     public B b;
     int m1a(){
-        var a = 3;
+        var a = b.c;
     }
 }
 

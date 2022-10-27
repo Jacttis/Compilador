@@ -30,15 +30,17 @@ public class NodoIf extends NodoSentencia{
     @Override
     public void chequear() {
         if (expresion.chequear().compareTipo(tipoBoolean)){
-            sentencia.chequear();
-            if (nodoElse!=null){
-                nodoElse.chequear();
+            if (sentencia!=null){
+                sentencia.chequear();
+                if (nodoElse!=null){
+                    nodoElse.chequear();
+                }
             }
         }
-        else{
+        else {
             TablaDeSimbolos.listaExcepciones.add(new SemanticException(token, "Error Semantico en linea "
-                    + token.getNumberline() + ": expresion no es tipo boolean del " + token.getLexeme()));
-
+            + token.getNumberline() + ": expresion no es tipo boolean del " + token.getLexeme()));
         }
-    }
+        }
 }
+

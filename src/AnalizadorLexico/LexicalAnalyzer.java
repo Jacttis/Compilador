@@ -351,8 +351,8 @@ public class LexicalAnalyzer {
             return e18();
         } else if (reservedKeywords.containsKey(lexeme)) {
             Token tokenReserved=reservedKeywords.get(lexeme);
-            tokenReserved.setNumberline(fileManager.getLineNumber());
-            return tokenReserved;
+            Token newToken=new Token(tokenReserved.getDescription(),tokenReserved.getLexeme(), fileManager.getLineNumber());
+            return newToken;
         } else {
             return new Token("idMetVar",lexeme,fileManager.getLineNumber());
         }

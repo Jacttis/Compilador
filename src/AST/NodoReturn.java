@@ -25,7 +25,7 @@ public class NodoReturn extends NodoSentencia{
         if(expresion==null){
            if(!metodoActual.getTipo().getToken().getLexeme().equals("void")){
                TablaDeSimbolos.listaExcepciones.add(new SemanticException(token, "Error Semantico en linea "
-                       + token.getNumberline() + ": tipo de variable y expresion distintos " + token.getLexeme()));
+                       + token.getNumberline() + ": tipo de retorno y expresion distintos " + token.getLexeme()));
            }
         }
         else {
@@ -33,10 +33,19 @@ public class NodoReturn extends NodoSentencia{
             if(tipoExpresion.compareTipo(new Tipo(new Token("pr_void","void",0)))){
                 TablaDeSimbolos.listaExcepciones.add(new SemanticException(token, "Error Semantico en linea "
                         + token.getNumberline() + ": tipo de expresion no puede ser void " + token.getLexeme()));
-            }
-            if(!metodoActual.getTipo().esSubtipo(expresion.chequear(),this)){
-                TablaDeSimbolos.listaExcepciones.add(new SemanticException(token, "Error Semantico en linea "
-                        + token.getNumberline() + ": tipo de variable y expresion distintos " + token.getLexeme()));
+            }else{
+                if (!tipoExpresion.compareTipo(new Tipo(new Token("pr_null","null",0)))){
+                    if(!metodoActual.getTipo().esSubtipo(tipoExpresion,this)){
+                        TablaDeSimbolos.listaExcepciones.add(new SemanticException(token, "Error Semantico en linea "
+                                + token.getNumberline() + ": tipo de retorno y expresion distintos " + token.getLexeme()));
+                    }
+                }
+                else {
+                    if(!(metodoActual.getTipo() instanceof TipoReferencia)){
+                        TablaDeSimbolos.listaExcepciones.add(new SemanticException(token, "Error Semantico en linea "
+                                + token.getNumberline() + ": tipo de retorno y expresion distintos " + token.getLexeme()));
+                    }
+                }
 
             }
         }

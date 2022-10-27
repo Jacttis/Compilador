@@ -31,6 +31,9 @@ public class NodoVarLocal extends NodoSentencia{
     }
 
     public Tipo getTipo() {
+        if(tipo==null){
+            return expresion.chequear();
+        }
         return tipo;
     }
 

@@ -1,9 +1,11 @@
-//[Error:v1|7]
+//[Error:v1|9]
 // La variable v1 no fue declarada - ln: 9
 class A {
     public int a1;
     
-     void m1(int p1){
+     void m1(int p1)
+    
+    {
         v1 = 4;
        
     }

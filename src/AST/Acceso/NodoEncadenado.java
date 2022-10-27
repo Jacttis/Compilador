@@ -11,6 +11,8 @@ public class NodoEncadenado  {
 
     protected boolean esAsignable,esLLamable;
 
+    protected boolean esThis=false;
+
     public NodoEncadenado(Token tokenNodoEncadenado) {
         this.tokenNodoEncadenado = tokenNodoEncadenado;
         this.nodoEncadenado = null;
@@ -45,6 +47,10 @@ public class NodoEncadenado  {
         else{
             return esAsignable;
         }
+    }
+
+    public void setEsThis(){
+        esThis=true;
     }
 
    /* public boolean isLLamable() {
