@@ -8,7 +8,17 @@ class A {
 
 class B extends A{
     public int c;
+    void m1b(){
+        Y t;
+        X c=t;
+    }
 }
+
+class D implements X{}
+
+interface X{}
+
+interface Y extends X{}
 
 
 

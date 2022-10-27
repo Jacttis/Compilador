@@ -396,7 +396,7 @@ public class SyntaxAnalyzer {
             }
             else{
                 NodoVarLocalesMismoTipo varLocalesMismoTipo=new NodoVarLocalesMismoTipo();
-                varLocalesMismoTipo.setVarLocals(varLocalTipoClase());
+                varLocalesMismoTipo.setVarLocals(varLocalTipoClase(token));
                 sentencia =varLocalesMismoTipo;
                 match("puntoComa");
             }
@@ -425,7 +425,7 @@ public class SyntaxAnalyzer {
         return sentencia;
     }
 
-    private LinkedList<NodoVarLocal> varLocalTipoClase() throws LexicalException, SyntaxException, IOException, SemanticException {
+    private LinkedList<NodoVarLocal> varLocalTipoClase(Token token) throws LexicalException, SyntaxException, IOException, SemanticException {
         LinkedList<NodoVarLocal> varLocalMismoTipo=new LinkedList<>();
         listaDecVars(varLocalMismoTipo);
         if (Arrays.asList("=").contains(actualToken.getDescription())) {
@@ -433,10 +433,14 @@ public class SyntaxAnalyzer {
            NodoExpresion expresion= expresion();
            for (NodoVarLocal varLocal:varLocalMismoTipo) {
                varLocal.setExpresion(expresion);
+               varLocal.setTipo(new TipoReferencia(token));
                TablaDeSimbolos.tablaSimbolos.getBloqueActual().addVarLocal(varLocal);
            }
-        } else if (Arrays.asList(";").contains(actualToken.getDescription())) {
-            match(";");
+        } else if (Arrays.asList("puntoComa").contains(actualToken.getDescription())) {
+            for (NodoVarLocal varLocal:varLocalMismoTipo) {
+                varLocal.setTipo(new TipoReferencia(token));
+                TablaDeSimbolos.tablaSimbolos.getBloqueActual().addVarLocal(varLocal);
+            }
         }
         return varLocalMismoTipo;
     }
@@ -524,8 +528,11 @@ public class SyntaxAnalyzer {
                     varLocal.setTipo(tipo);
                     TablaDeSimbolos.tablaSimbolos.getBloqueActual().addVarLocal(varLocal);
                 }
-            } else if (Arrays.asList(";").contains(actualToken.getDescription())) {
-                match(";");
+            } else if (Arrays.asList("puntoComa").contains(actualToken.getDescription())) {
+                for (NodoVarLocal varLocal:varLocalMismoTipo) {
+                    varLocal.setTipo(tipo);
+                    TablaDeSimbolos.tablaSimbolos.getBloqueActual().addVarLocal(varLocal);
+                }
             }
         }
         return varLocalMismoTipo;

@@ -46,14 +46,14 @@ public class TipoReferencia extends Tipo{
         if(TablaDeSimbolos.tablaSimbolos.getClases().containsKey(tipo.getToken().getLexeme())){
             return TablaDeSimbolos.tablaSimbolos.getClaseByName(tipo.getToken().getLexeme()).esSubtipo(tokenTipo.getLexeme());
         } else if (TablaDeSimbolos.tablaSimbolos.getInterfaces().containsKey(tipo.getToken().getLexeme())) {
-            Clase clase=TablaDeSimbolos.tablaSimbolos.getClaseByName(tokenTipo.getLexeme());
+            Clase clase=TablaDeSimbolos.tablaSimbolos.getClaseByName(tipo.getToken().getLexeme());
             if(clase!=null){
-                return clase.esSubtipo(tipo.getToken().getLexeme());
+                return clase.esSubtipo(tokenTipo.getLexeme());
             }
             else{
-                Interfaz interfaz=TablaDeSimbolos.tablaSimbolos.getInterfazByName(tokenTipo.getLexeme());
+                Interfaz interfaz=TablaDeSimbolos.tablaSimbolos.getInterfazByName(tipo.getToken().getLexeme());
                 if(interfaz!=null){
-                    return interfaz.esSubtipo(tipo.getToken().getLexeme());
+                    return interfaz.esSubtipo(tokenTipo.getLexeme());
                 }
                 else{
                     return false;
