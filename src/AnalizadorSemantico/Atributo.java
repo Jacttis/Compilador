@@ -7,6 +7,7 @@ public class Atributo {
     private Token tokenAtributo;
     private Tipo tipoAtributo;
     private String visibilidadAtributo;
+    private int offset;
 
     public Atributo (Token token_atributo, String visibilidad_atributo, Tipo tipo_atributo ){
         this.tokenAtributo = token_atributo;

@@ -30,9 +30,9 @@ public class NodoAccesoMetodo extends NodoAcceso{
 
     @Override
     public Tipo chequear() {
-        Metodo met=clase.tieneMetodoExacto(accesoToken.getLexeme(),parametros,false);
+        Metodo met=clase.tieneMetodoExacto(accesoToken.getLexeme(),parametros);
         if(met!=null){
-            if(metodo.isEstatico()){
+            if(metodo.isEstatico() && !met.isEstatico()){
                 TablaDeSimbolos.listaExcepciones.add(new SemanticException(accesoToken, "Error Semantico en linea "
                         + accesoToken.getNumberline() + ": No se puede llamar a metodos no estaticos " + accesoToken.getLexeme()));
                 return new Tipo(new Token("pr_void","void",0));

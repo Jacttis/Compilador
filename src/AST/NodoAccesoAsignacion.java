@@ -40,6 +40,10 @@ public class NodoAccesoAsignacion extends NodoSentencia{
                 Tipo tipo=acceso.chequear();
                 Tipo tipoExpresion=expresion.chequear();
 
+
+                if(tipoExpresion.compareTipo(new Tipo(new Token("pr_null","null",0))) && tipo.getToken().getDescription().equals("idClase")){
+                    return;
+                }
                 if(expresion.chequear().compareTipo(new Tipo(new Token("pr_void","void",0)))){
                     TablaDeSimbolos.listaExcepciones.add(new SemanticException(asignacion, "Error Semantico en linea "
                             + asignacion.getNumberline() + ": tipo de expresion no puede ser void " + asignacion.getLexeme()));

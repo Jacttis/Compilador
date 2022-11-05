@@ -13,6 +13,7 @@ public class NodoVarLocal extends NodoSentencia{
 
     protected NodoExpresion expresion;
     protected Clase claseActual;
+    protected int offset;
 
     public NodoVarLocal(Token token, Tipo tipo, NodoBloque bloque, MetodoConstructor metodoConstructor,Clase clase){
         tokenVar=token;
@@ -20,6 +21,7 @@ public class NodoVarLocal extends NodoSentencia{
         bloqueActual=bloque;
         metodoConstructorActual=metodoConstructor;
         claseActual=clase;
+        offset=1;//?
     }
 
     public Token getToken() {
@@ -71,7 +73,7 @@ public class NodoVarLocal extends NodoSentencia{
 
     public void chequear() {
         if(bloqueActual.getBloqueContainer()!=null){
-           if(bloqueActual.getBloqueContainer().estaVarEnBloque(tokenVar) || metodoConstructorActual.repiteNombre(tokenVar)){
+           if(bloqueActual.getBloqueContainer().estaVarEnBloque(tokenVar)  || metodoConstructorActual.repiteNombre(tokenVar)){
                TablaDeSimbolos.listaExcepciones.add( new SemanticException(tokenVar, "Error Semantico en linea "
                        + tokenVar.getNumberline() + ": ya existe un atributo con el mismo nombre " +tokenVar.getLexeme()));
             }

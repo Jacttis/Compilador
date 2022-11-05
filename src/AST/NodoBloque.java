@@ -96,10 +96,10 @@ public class NodoBloque extends NodoSentencia {
 
     public boolean estaVarEnBloque(Token token){
         if(bloqueContainer!=null){
-            return varLocales.containsKey(token.getLexeme()) || bloqueContainer.estaVarEnBloque(token);
+            return varLocales.containsKey(token.getLexeme()) && token.getNumberline()>varLocales.get(token.getLexeme()).getToken().getNumberline() || bloqueContainer.estaVarEnBloque(token);
         }
         else{
-            return varLocales.containsKey(token.getLexeme());
+            return varLocales.containsKey(token.getLexeme()) && token.getNumberline()>varLocales.get(token.getLexeme()).getToken().getNumberline() ;
         }
 
     }

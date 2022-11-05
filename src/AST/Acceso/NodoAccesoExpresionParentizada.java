@@ -26,8 +26,8 @@ public class NodoAccesoExpresionParentizada extends NodoAcceso {
                 return tipoEncadenado;
             }
             else{
-                TablaDeSimbolos.listaExcepciones.add(new SemanticException(accesoToken, "Error Semantico en linea "
-                        + accesoToken.getNumberline() + ": Tipo no puede ser primitivo " + accesoToken.getLexeme()));
+                TablaDeSimbolos.listaExcepciones.add(new SemanticException(tipo.getToken(), "Error Semantico en linea "
+                        + tipo.getToken().getNumberline() + ": Tipo no puede ser primitivo " + tipo.getToken().getLexeme()));
                 return new Tipo(new Token("pr_void","void",0));//Devuelvo para seguir ejecucion
             }
         }

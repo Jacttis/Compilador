@@ -194,7 +194,7 @@ public class Clase implements IClaseInterfaz{
 
     private boolean contieneA(Token token){
         for (Token t:interfacesImplementadas.keySet()) {
-            if(t.getLexeme().equals(token.getLexeme())){
+            if(t.getLexeme().equals(token.getLexeme()) || TablaDeSimbolos.tablaSimbolos.getInterfazByName(t.getLexeme()).esSubtipo(token.getLexeme())){
                 return true;
             }
         }
@@ -434,7 +434,8 @@ public class Clase implements IClaseInterfaz{
                 boolean iguales = true;
                 if (parametros.size() == parametrosMet.size()) {
                     while (iguales && i < parametros.size()) {
-                        if (!parametrosMet.get(i).getTipo().esSubtipo(parametros.get(i).chequear())) {
+                        if (!parametros.get(i).chequear().esSubtipo(parametrosMet.get(i).getTipo())) {
+
                             iguales = false;
                         }
                         i++;
@@ -446,6 +447,33 @@ public class Clase implements IClaseInterfaz{
                         else{
                             return null;
                         }
+                    }
+                }
+            }
+            return null;
+        }
+        else {
+            return null;
+        }
+
+    }
+
+    public Metodo tieneMetodoExacto(String nombreMetodo,LinkedList<NodoExpresion> parametros){
+        if(metodos.containsKey(nombreMetodo)) {
+            for (Metodo met : metodos.get(nombreMetodo)) {
+                LinkedList<Parametro> parametrosMet = met.getListaArgumentos();
+                int i = 0;
+                boolean iguales = true;
+                if (parametros.size() == parametrosMet.size()) {
+                    while (iguales && i < parametros.size()) {
+                        if (!parametros.get(i).chequear().esSubtipo(parametrosMet.get(i).getTipo())) {
+
+                            iguales = false;
+                        }
+                        i++;
+                    }
+                    if (iguales) {
+                        return met;
                     }
                 }
             }

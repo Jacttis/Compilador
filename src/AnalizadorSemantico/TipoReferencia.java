@@ -43,6 +43,9 @@ public class TipoReferencia extends Tipo{
         return ret;
     }
     public boolean esSubtipo(Tipo tipo, NodoSentencia accesoLLama){
+        if(this.compareTipo(new TipoPrimitivo(new Token("pr_null","null",0)))&& tipo instanceof TipoReferencia){
+            return true;
+        }
         if(TablaDeSimbolos.tablaSimbolos.getClases().containsKey(tipo.getToken().getLexeme())){
             return TablaDeSimbolos.tablaSimbolos.getClaseByName(tipo.getToken().getLexeme()).esSubtipo(tokenTipo.getLexeme());
         } else if (TablaDeSimbolos.tablaSimbolos.getInterfaces().containsKey(tipo.getToken().getLexeme())) {
@@ -67,14 +70,12 @@ public class TipoReferencia extends Tipo{
         }
     }
     public boolean esSubtipo(Tipo tipo){
+        if(this.compareTipo(new TipoPrimitivo(new Token("pr_null","null",0)))&& tipo instanceof TipoReferencia){
+            return true;
+        }
         if(TablaDeSimbolos.tablaSimbolos.getClases().containsKey(tipo.getToken().getLexeme())){
             return TablaDeSimbolos.tablaSimbolos.getClaseByName(tipo.getToken().getLexeme()).esSubtipo(tokenTipo.getLexeme());
         } else if (TablaDeSimbolos.tablaSimbolos.getInterfaces().containsKey(tipo.getToken().getLexeme())) {
-            Clase clase=TablaDeSimbolos.tablaSimbolos.getClaseByName(tipo.getToken().getLexeme());
-            if(clase!=null){
-                return clase.esSubtipo(tokenTipo.getLexeme());
-            }
-            else{
                 Interfaz interfaz=TablaDeSimbolos.tablaSimbolos.getInterfazByName(tipo.getToken().getLexeme());
                 if(interfaz!=null){
                     return interfaz.esSubtipo(tokenTipo.getLexeme());
@@ -83,9 +84,8 @@ public class TipoReferencia extends Tipo{
                     return false;
                 }
             }
-        } else{
-            return false;
-        }
+        return false;
+
     }
 
 
