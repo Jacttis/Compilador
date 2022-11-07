@@ -1,7 +1,7 @@
 // Prueba un lado izquierdo simple
 
 class A {
-    public A a1;
+    private A a1;
     
      void m1(){
         a1 = null;
@@ -12,7 +12,11 @@ class A {
         
     }
     
-}    
+}
+
+class B extends A{
+    public int a2;
+}
 
 
 class Init{

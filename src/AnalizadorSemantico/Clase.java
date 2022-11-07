@@ -22,11 +22,40 @@ public class Clase implements IClaseInterfaz{
 
     Hashtable<String, Token> parametrosGenericos;
     protected Token claseHerencia;
+    protected Hashtable<String,Token> parametrosPadre;
+    protected boolean consolidada;
 
-    public Hashtable<String, Token> getParametrosPadre() {
-        return parametrosPadre;
+    public int getOffsetDisponibleCir() {
+        return offsetDisponibleCir;
     }
 
+    public void setOffsetDisponibleCir(int offsetDisponibleCir) {
+        this.offsetDisponibleCir = offsetDisponibleCir;
+    }
+
+    public int getOffsetDisponibleVT() {
+        return offsetDisponibleVT;
+    }
+
+    public void setOffsetDisponibleVT(int offsetDisponibleVT) {
+        this.offsetDisponibleVT = offsetDisponibleVT;
+    }
+
+    protected int offsetDisponibleCir,offsetDisponibleVT;
+
+    public Clase(Token tokenClase) {
+        this.tokenClase = tokenClase;
+        atributos = new Hashtable<>();
+        metodos = new Hashtable<>();
+        interfacesImplementadas = new Hashtable<>();
+        parametrosGenericos=new Hashtable<>();
+        parametrosPadre=new Hashtable<>();
+        constructores=new LinkedList<>();
+        consolidada = false;
+        herenciaCircular=false;
+        offsetDisponibleCir=1;
+        offsetDisponibleVT=0;
+    }
     public void setParametrosPadre(LinkedList<Token> parametrosPadre) throws SemanticException {
         for (Token t:parametrosPadre) {
             if(!this.parametrosPadre.contains(t.getLexeme())){
@@ -39,22 +68,10 @@ public class Clase implements IClaseInterfaz{
         }
     }
 
-    protected Hashtable<String,Token> parametrosPadre;
-
-
-    protected boolean consolidada;
-
-    public Clase(Token tokenClase) {
-        this.tokenClase = tokenClase;
-        atributos = new Hashtable<>();
-        metodos = new Hashtable<>();
-        interfacesImplementadas = new Hashtable<>();
-        parametrosGenericos=new Hashtable<>();
-        parametrosPadre=new Hashtable<>();
-        constructores=new LinkedList<>();
-        consolidada = false;
-        herenciaCircular=false;
+    public Hashtable<String, Token> getParametrosPadre() {
+        return parametrosPadre;
     }
+
 
     public Token getToken() {
         return tokenClase;
@@ -327,6 +344,9 @@ public class Clase implements IClaseInterfaz{
                         if(atributo.getVisibilidadAtributo().equals("public")) {
                             agregarAtributoPadre(atributo.getTokenAtributo().getLexeme(), atributo);
                         }
+                        else {
+                            agregarAtributoPadre("#"+atributo.getTokenAtributo().getLexeme(),atributo);
+                        }
                     }
                 }
             }
@@ -351,9 +371,25 @@ public class Clase implements IClaseInterfaz{
                         }
                     }
             }
-
+            consolidada=true;
+            offsetAtributo();
         }
         
+    }
+
+    private void offsetAtributo() {
+        if(claseHerencia!=null) {
+            offsetDisponibleCir = TablaDeSimbolos.tablaSimbolos.getClaseByName(claseHerencia.getLexeme()).getOffsetDisponibleCir();
+        }
+            for (Atributo atr: atributos.values()) {
+                if (!atr.seAsignoOffset()){
+                    atr.setOffset(offsetDisponibleCir);
+                    offsetDisponibleCir++;
+                }
+            }
+            for (Atributo a: atributos.values()) {
+                System.out.println(tokenClase.getLexeme()+" "+a.getTokenAtributo().getLexeme()+" "+a.getOffset());
+            }
     }
 
     private void consolidarMetodo(Metodo metodo) throws SemanticException {

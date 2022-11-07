@@ -13,6 +13,19 @@ public class Atributo {
         this.tokenAtributo = token_atributo;
         this.visibilidadAtributo = visibilidad_atributo;
         this.tipoAtributo = tipo_atributo;
+        offset=0;
+    }
+
+    public boolean seAsignoOffset(){
+        return offset!=0;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     public Token getTokenAtributo() {
