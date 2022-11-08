@@ -9,13 +9,27 @@ public class Metodo extends MetodoConstructor {
 
     protected boolean estatico;
     protected Tipo tipo;
+    protected int offset;
 
     public Metodo(Token token, boolean estatico, Tipo tipo) {
         super();
         this.token = token;
         this.estatico = estatico;
         this.tipo = tipo;
+        offset=-2;
     }
+
+    public boolean seAsignoOffset(){
+        return offset!=-2;
+    }
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
 
 
     @Override

@@ -373,6 +373,7 @@ public class Clase implements IClaseInterfaz{
             }
             consolidada=true;
             offsetAtributo();
+            offsetMetodo();
         }
         
     }
@@ -387,9 +388,32 @@ public class Clase implements IClaseInterfaz{
                     offsetDisponibleCir++;
                 }
             }
+            //Verificar Atributos
             for (Atributo a: atributos.values()) {
                 System.out.println(tokenClase.getLexeme()+" "+a.getTokenAtributo().getLexeme()+" "+a.getOffset());
             }
+    }
+
+    private void offsetMetodo() {
+        if(claseHerencia!=null) {
+            offsetDisponibleVT = TablaDeSimbolos.tablaSimbolos.getClaseByName(claseHerencia.getLexeme()).getOffsetDisponibleVT();
+        }
+        for (LinkedList<Metodo> listaMetodos:metodos.values()) {
+            for (Metodo met:listaMetodos) {
+                if(!met.isEstatico()){
+                    if (!met.seAsignoOffset()){
+                        met.setOffset(offsetDisponibleVT);
+                        offsetDisponibleVT++;
+                    }
+                }
+            }
+        }
+        for (LinkedList<Metodo> listaMetodos:metodos.values()) {
+            for (Metodo met : listaMetodos) {
+                System.out.println(tokenClase.getLexeme()+" "+met.getTokenMetodo().getLexeme()+" "+met.getOffset());
+            }
+        }
+
     }
 
     private void consolidarMetodo(Metodo metodo) throws SemanticException {

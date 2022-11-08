@@ -17,6 +17,7 @@ public class TablaDeSimbolos {
     public static LinkedList<Exception> listaExcepciones=new LinkedList<>();
     private NodoBloque bloqueActual;
 
+    public static LinkedList<String> instruccionesMaquina;
     public TablaDeSimbolos() throws SemanticException {
         clases=new Hashtable<>();
         interfaces=new Hashtable<>();
@@ -219,4 +220,13 @@ public class TablaDeSimbolos {
         bloqueActual=bloqueMetodoActual;
     }
     public NodoBloque getBloqueActual(){return bloqueActual;}
+
+    public void generarCodigo(){
+        instruccionesMaquina.add(".CODE\n");
+        instruccionesMaquina.add("PUSH Lmain\n");
+        instruccionesMaquina.add("CALL\n");
+
+    }
+
+
 }
