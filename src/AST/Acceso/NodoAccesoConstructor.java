@@ -50,5 +50,9 @@ public class NodoAccesoConstructor extends NodoAcceso {
         }
     }
 
+    public void generarCodigo(){
+
+    }
+
 
 }

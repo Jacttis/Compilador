@@ -17,7 +17,7 @@ public class TablaDeSimbolos {
     public static LinkedList<Exception> listaExcepciones=new LinkedList<>();
     private NodoBloque bloqueActual;
 
-    public static LinkedList<String> instruccionesMaquina;
+    public static LinkedList<String> codigoMaquina =new LinkedList<>();
     public TablaDeSimbolos() throws SemanticException {
         clases=new Hashtable<>();
         interfaces=new Hashtable<>();
@@ -124,7 +124,7 @@ public class TablaDeSimbolos {
 
     private void createObject() throws SemanticException {
         Clase object = new Clase(new Token("idClase","Object",0));
-        Metodo debugPrint = new Metodo(new Token("idMetVar","debugPrint",0),true,new TipoPrimitivo(new Token("pr_void","void",0)));
+        Metodo debugPrint = new Metodo(new Token("idMetVar","debugPrint",0),true,new TipoPrimitivo(new Token("pr_void","void",0)),object);
         Parametro i = new Parametro(new Token("idMetVar","i",0),new TipoPrimitivo(new Token("pr_int","int",0)));
         debugPrint.addArgumento(i);
         debugPrint.setBloquePrincipal(new NodoBloque(debugPrint));
@@ -136,67 +136,67 @@ public class TablaDeSimbolos {
         Clase system = new Clase(new Token("idClase","System",0));
         system.setClaseHerencia(clases.get("Object").getToken());
 
-            Metodo read = new Metodo(new Token("idMetVar", "read", 0), true, new TipoPrimitivo(new Token("pr_int", "int", 0)));
+            Metodo read = new Metodo(new Token("idMetVar", "read", 0), true, new TipoPrimitivo(new Token("pr_int", "int", 0)),system);
             read.setBloquePrincipal(new NodoBloque(read));
             read.bloquePrincipal.chequeado=true;
             system.agregarMetodo(read.getTokenMetodo().getLexeme(), read);
 
 
-            Metodo printB = new Metodo(new Token("idMetVar","printB",0),true,new TipoPrimitivo(new Token("pr_void","void",0)));
+            Metodo printB = new Metodo(new Token("idMetVar","printB",0),true,new TipoPrimitivo(new Token("pr_void","void",0)),system);
             Parametro b = new Parametro(new Token("idMetVar","b",0),new TipoPrimitivo(new Token("pr_boolean","boolean",0)));
             printB.addArgumento(b);
             printB.setBloquePrincipal(new NodoBloque(printB));
             system.agregarMetodo(printB.getTokenMetodo().getLexeme(),printB);
 
 
-            Metodo printC = new Metodo(new Token("idMetVar","printC",0),true,new TipoPrimitivo(new Token("pr_void","void",0)));
+            Metodo printC = new Metodo(new Token("idMetVar","printC",0),true,new TipoPrimitivo(new Token("pr_void","void",0)),system);
             Parametro c = new Parametro(new Token("idMetVar","c",0),new TipoPrimitivo(new Token("pr_char","char",0)));
             printC.addArgumento(c);
             printC.setBloquePrincipal(new NodoBloque(printC));
             system.agregarMetodo(printC.getTokenMetodo().getLexeme(), printC);
 
 
-            Metodo printI = new Metodo(new Token("idMetVar","printI",0),true,new TipoPrimitivo(new Token("pr_void","void",0)));
+            Metodo printI = new Metodo(new Token("idMetVar","printI",0),true,new TipoPrimitivo(new Token("pr_void","void",0)),system);
             Parametro i = new Parametro(new Token("idMetVar","i",0),new TipoPrimitivo(new Token("pr_int","int",0)));
             printI.addArgumento(i);
             printI.setBloquePrincipal(new NodoBloque(printI));
             system.agregarMetodo(printI.getTokenMetodo().getLexeme(),printI);
 
 
-            Metodo printS = new Metodo(new Token("idMetVar","printS",0),true,new TipoPrimitivo(new Token("pr_void","void",0)));
+            Metodo printS = new Metodo(new Token("idMetVar","printS",0),true,new TipoPrimitivo(new Token("pr_void","void",0)),system);
             Parametro s = new Parametro(new Token("idMetVar","s",0),new TipoPrimitivo(new Token("pr_String","String",0)));
             printS.addArgumento(s);
             printS.setBloquePrincipal(new NodoBloque(printS));
             system.agregarMetodo(printS.getTokenMetodo().getLexeme(),printS);
 
 
-            Metodo println = new Metodo(new Token("idMetVar","println",0),true,new TipoPrimitivo(new Token("pr_void","void",0)));
+            Metodo println = new Metodo(new Token("idMetVar","println",0),true,new TipoPrimitivo(new Token("pr_void","void",0)),system);
             println.setBloquePrincipal(new NodoBloque(println));
             system.agregarMetodo(println.getTokenMetodo().getLexeme(),println);
 
 
-            Metodo printBln = new Metodo(new Token("idMetVar","printBln",0),true,new TipoPrimitivo(new Token("pr_void","void",0)));
+            Metodo printBln = new Metodo(new Token("idMetVar","printBln",0),true,new TipoPrimitivo(new Token("pr_void","void",0)),system);
             Parametro b2 = new Parametro(new Token("idMetVar","b",0),new TipoPrimitivo(new Token("pr_boolean","boolean",0)));
             printBln.addArgumento(b2);
             printBln.setBloquePrincipal(new NodoBloque(printBln));
             system.agregarMetodo(printBln.getTokenMetodo().getLexeme(),printBln);
 
 
-            Metodo printCln = new Metodo(new Token("idMetVar","printCln",0),true,new TipoPrimitivo(new Token("pr_void","void",0)));
+            Metodo printCln = new Metodo(new Token("idMetVar","printCln",0),true,new TipoPrimitivo(new Token("pr_void","void",0)),system);
             Parametro c2 = new Parametro(new Token("idMetVar","c",0),new TipoPrimitivo(new Token("pr_char","char",0)));
             printCln.addArgumento(c2);
             printCln.setBloquePrincipal(new NodoBloque(printCln));
             system.agregarMetodo(printCln.getTokenMetodo().getLexeme(),printCln);
 
 
-            Metodo printIln = new Metodo(new Token("idMetVar","printIln",0),true,new TipoPrimitivo(new Token("pr_void","void",0)));
+            Metodo printIln = new Metodo(new Token("idMetVar","printIln",0),true,new TipoPrimitivo(new Token("pr_void","void",0)),system);
             Parametro i2 = new Parametro(new Token("idMetVar","i",0),new TipoPrimitivo(new Token("pr_int","int",0)));
             printIln.addArgumento(i2);
             printIln.setBloquePrincipal(new NodoBloque(printIln));
             system.agregarMetodo(printIln.getTokenMetodo().getLexeme(),printIln);
 
 
-            Metodo printSln = new Metodo(new Token("idMetVar","printSln",0),true,new TipoPrimitivo(new Token("pr_void","void",0)));
+            Metodo printSln = new Metodo(new Token("idMetVar","printSln",0),true,new TipoPrimitivo(new Token("pr_void","void",0)),system);
             Parametro s2 = new Parametro(new Token("idMetVar","s",0),new TipoPrimitivo(new Token("pr_String","String",0)));
             printSln.addArgumento(s2);
             printSln.setBloquePrincipal(new NodoBloque(printSln));
@@ -222,9 +222,32 @@ public class TablaDeSimbolos {
     public NodoBloque getBloqueActual(){return bloqueActual;}
 
     public void generarCodigo(){
-        instruccionesMaquina.add(".CODE\n");
-        instruccionesMaquina.add("PUSH Lmain\n");
-        instruccionesMaquina.add("CALL\n");
+        //Main
+        codigoMaquina.add(".CODE");
+        codigoMaquina.add("PUSH Lmain");
+        codigoMaquina.add("CALL");
+
+        //Heap simpleMalloc "Apunte"
+        codigoMaquina.add("LOADFP ");
+        codigoMaquina.add("LOADSP");
+        codigoMaquina.add("STOREFP");
+        codigoMaquina.add("LOADHL");
+        codigoMaquina.add("DUP");
+        codigoMaquina.add("PUSH 1");
+        codigoMaquina.add("ADD");
+        codigoMaquina.add("STORE 4");
+        codigoMaquina.add("LOAD 3");
+        codigoMaquina.add("ADD");
+        codigoMaquina.add("STOREHL");
+        codigoMaquina.add("STOREFP");
+        codigoMaquina.add("RET 1");
+
+        //Codigo Clases
+
+        for (Clase clase:clases.values()) {
+            clase.generarCodigo();
+        }
+
 
     }
 

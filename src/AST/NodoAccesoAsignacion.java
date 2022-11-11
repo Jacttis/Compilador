@@ -81,7 +81,14 @@ public class NodoAccesoAsignacion extends NodoSentencia{
                 acceso.chequear();//?Chequeo para ver otro error
             }
         }
+    }
 
-
+    @Override
+    public void generarCodigo() {
+        if(expresion!=null){
+            expresion.generarCodigo();
+            acceso.setLadoIzquierdo();
+            acceso.genererarCodigo();
+        }
     }
 }

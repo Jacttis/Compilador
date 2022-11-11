@@ -10,12 +10,13 @@ public class NodoAcceso {
     Token accesoToken;
     NodoEncadenado nodoEncadenado;
 
-    public boolean esAsignable,esLlamable;
+    public boolean esAsignable,esLlamable,ladoIzquierdo;
 
     public NodoAcceso(Token token){
         accesoToken=token;
         esAsignable=false;
         esLlamable=false;
+        ladoIzquierdo=false;
     }
     public Token getToken() {
         return accesoToken;
@@ -51,5 +52,16 @@ public class NodoAcceso {
             retorno[1]=accesoToken;
             return retorno;
         }
+    }
+
+    public void genererarCodigo() {
+    }
+
+    public void setLadoIzquierdo(){
+        ladoIzquierdo=true;
+    }
+
+    public boolean isLadoIzquierdo(){
+        return ladoIzquierdo;
     }
 }

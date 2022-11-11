@@ -7,10 +7,22 @@ public class Parametro {
     private Token tokenParametro;
     private Tipo tipoParametro;
 
+    protected int offset;
+
     public Parametro(Token token_parametro, Tipo tipo_parametro){
         this.tokenParametro = token_parametro;
         this.tipoParametro = tipo_parametro;
+        offset=-2;
     }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
 
     public Token getToken(){ return tokenParametro;}
 

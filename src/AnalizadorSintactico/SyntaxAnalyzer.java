@@ -139,14 +139,26 @@ public class SyntaxAnalyzer {
         if (Arrays.asList("pr_static").contains(actualToken.getDescription())){
             estaticoOpt();
             Tipo tipo=tipoMetodo();
-            metodo=new Metodo(actualToken,true,tipo);
+
+            if(TablaDeSimbolos.tablaSimbolos.getClaseActual() instanceof Clase){
+                metodo=new Metodo(actualToken,true,tipo, (Clase) TablaDeSimbolos.tablaSimbolos.getClaseActual());
+            }
+            else{
+                metodo=new Metodo(actualToken,true,tipo);
+            }
             TablaDeSimbolos.tablaSimbolos.setMetodoActual(metodo);
             match("idMetVar");
             argsFormales();
             TablaDeSimbolos.tablaSimbolos.getClaseActual().agregarMetodo(metodo.getTokenMetodo().getLexeme(),metodo);
         }else{
             Tipo tipo =tipoMetodo();
-            metodo=new Metodo(actualToken,false,tipo);
+            if(TablaDeSimbolos.tablaSimbolos.getClaseActual() instanceof Clase){
+                metodo=new Metodo(actualToken,false,tipo, (Clase) TablaDeSimbolos.tablaSimbolos.getClaseActual());
+            }
+            else{
+                metodo=new Metodo(actualToken,false,tipo);
+            }
+
             TablaDeSimbolos.tablaSimbolos.setMetodoActual(metodo);
             match("idMetVar");
             argsFormales();
@@ -316,7 +328,7 @@ public class SyntaxAnalyzer {
         Token metodoOAtributo=actualToken;
         match("idMetVar");
         if (Arrays.asList("abreParentesis").contains(actualToken.getDescription())) {
-            Metodo metodo =new Metodo(metodoOAtributo,false,tipo);
+            Metodo metodo =new Metodo(metodoOAtributo,false,tipo, (Clase) TablaDeSimbolos.tablaSimbolos.getClaseActual());
             TablaDeSimbolos.tablaSimbolos.setMetodoActual(metodo);
             argsFormales();
             TablaDeSimbolos.tablaSimbolos.getClaseActual().agregarMetodo(metodo.getTokenMetodo().getLexeme(),metodo);

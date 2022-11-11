@@ -8,6 +8,7 @@ import AnalizadorSintactico.SyntaxException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -37,6 +38,7 @@ public class Main {
         }
 
         try {
+            String outputFile=args[1];
             lexical = new LexicalAnalyzer(fileManager);
             syntaxAnalyzer= new SyntaxAnalyzer(lexical);
             TablaDeSimbolos tablaDeSimbolo=new TablaDeSimbolos();
@@ -44,6 +46,8 @@ public class Main {
             tablaDeSimbolo.checkDeclaracion();
             tablaDeSimbolo.consolidar();
             tablaDeSimbolo.chequearBloques();
+            TablaDeSimbolos.tablaSimbolos.generarCodigo();
+            crearArchivo(outputFile,TablaDeSimbolos.codigoMaquina);
             for (Exception e:TablaDeSimbolos.listaExcepciones) {
                 e.printStackTrace();
             }
@@ -56,7 +60,16 @@ public class Main {
             System.out.println("[SinErrores]");
 
         TablaDeSimbolos.listaExcepciones.clear();
+        TablaDeSimbolos.codigoMaquina.clear();
 
+    }
+
+    public static void crearArchivo(String archivo,LinkedList<String> codigo) throws IOException {
+        FileWriter writer=new FileWriter(archivo);
+        for (String instruccion:codigo) {
+            writer.write(instruccion+"\n");
+        }
+        writer.close();
     }
 
 }

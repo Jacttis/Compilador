@@ -3,8 +3,10 @@ package AnalizadorSemantico;
 import AST.Expresion.NodoExpresion;
 import AnalizadorLexico.Token;
 
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
+
 
 public class Clase implements IClaseInterfaz{
 
@@ -24,6 +26,8 @@ public class Clase implements IClaseInterfaz{
     protected Token claseHerencia;
     protected Hashtable<String,Token> parametrosPadre;
     protected boolean consolidada;
+
+    protected LinkedList<Metodo> metodosOrdenadosOffset;
 
     public int getOffsetDisponibleCir() {
         return offsetDisponibleCir;
@@ -51,6 +55,7 @@ public class Clase implements IClaseInterfaz{
         parametrosGenericos=new Hashtable<>();
         parametrosPadre=new Hashtable<>();
         constructores=new LinkedList<>();
+        metodosOrdenadosOffset=new LinkedList<>();
         consolidada = false;
         herenciaCircular=false;
         offsetDisponibleCir=1;
@@ -388,10 +393,10 @@ public class Clase implements IClaseInterfaz{
                     offsetDisponibleCir++;
                 }
             }
-            //Verificar Atributos
+            /*//Verificar Atributos
             for (Atributo a: atributos.values()) {
                 System.out.println(tokenClase.getLexeme()+" "+a.getTokenAtributo().getLexeme()+" "+a.getOffset());
-            }
+            }*/
     }
 
     private void offsetMetodo() {
@@ -409,9 +414,25 @@ public class Clase implements IClaseInterfaz{
             }
         }
         for (LinkedList<Metodo> listaMetodos:metodos.values()) {
-            for (Metodo met : listaMetodos) {
-                System.out.println(tokenClase.getLexeme()+" "+met.getTokenMetodo().getLexeme()+" "+met.getOffset());
+            for (Metodo met:listaMetodos) {
+                if(!met.isEstatico()){
+                    metodosOrdenadosOffset.add(met);
+                }
             }
+        }
+        metodosOrdenadosOffset.sort((o1, o2) -> {
+            int ret=0;
+            if(o1.getOffset()<o2.getOffset()){
+                ret=-1;
+            }
+            else if (o1.getOffset()>o2.getOffset()){
+                ret=1;
+            }
+            return ret;
+        });
+
+        for (Metodo met:metodosOrdenadosOffset) {
+            System.out.println(met.getOffset()+" "+met.getTokenMetodo().getLexeme());
         }
 
     }
@@ -546,4 +567,38 @@ public class Clase implements IClaseInterfaz{
     }
 
 
+
+    public void generarCodigo() {
+        TablaDeSimbolos.codigoMaquina.add(".DATA");
+        String etiquetaMetodos="DW ";
+
+        if(metodosOrdenadosOffset.size()>0){
+            TablaDeSimbolos.codigoMaquina.add("VT_"+tokenClase.getLexeme()+":");
+            for (Metodo met: metodosOrdenadosOffset) {
+                etiquetaMetodos+=met.generarEtiqueta()+",";
+            }
+            etiquetaMetodos=etiquetaMetodos.substring(0,etiquetaMetodos.length()-1);
+        }
+        else{
+            etiquetaMetodos="NOP";
+        }
+        TablaDeSimbolos.codigoMaquina.add(etiquetaMetodos);
+
+        //codigo de metodos y constructores
+        for (LinkedList<Metodo> listaMetodos:metodos.values()) {
+            for (Metodo met: listaMetodos) {
+                if (met.esDeClase(tokenClase.getLexeme())) {
+                    TablaDeSimbolos.codigoMaquina.add(met.generarEtiqueta());
+                    met.generarCodigo();
+                }
+
+            }
+        }
+
+        for (Constructor constructor:constructores) {
+            TablaDeSimbolos.codigoMaquina.add(constructor.generarEtiqueta());
+            constructor.generarCodigo();
+        }
+
+    }
 }

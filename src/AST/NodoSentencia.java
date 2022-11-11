@@ -11,4 +11,6 @@ public class NodoSentencia {
     }
 
 
+    public void generarCodigo() {
+    }
 }

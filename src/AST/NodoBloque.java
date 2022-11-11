@@ -104,6 +104,17 @@ public class NodoBloque extends NodoSentencia {
 
     }
 
+    public NodoVarLocal getVarEnBloque(Token token){
+        if(bloqueContainer!=null){
+            NodoVarLocal varLocal=varLocales.get(token.getLexeme());
+            varLocal = varLocal == null ? bloqueContainer.getVarEnBloque(token) : null;
+            return varLocal;
+        }
+        else{
+            return varLocales.get(token.getLexeme());
+        }
+    }
+
     public Tipo tipoVarEnBloque(Token token){
         if(bloqueContainer!=null){
             if(varLocales.containsKey(token.getLexeme())) {
@@ -120,5 +131,15 @@ public class NodoBloque extends NodoSentencia {
             }
         }
 
+    }
+
+    @Override
+    public void generarCodigo() {
+        TablaDeSimbolos.codigoMaquina.add("RMEM"+ varLocales.size());
+        for (NodoSentencia sentencia:listaSentencias) {
+            sentencia.generarCodigo();
+        }
+
+        TablaDeSimbolos.codigoMaquina.add("FMEM"+ varLocales.size());
     }
 }

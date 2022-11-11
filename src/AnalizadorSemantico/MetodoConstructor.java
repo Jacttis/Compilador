@@ -12,6 +12,7 @@ public abstract class MetodoConstructor {
     protected Token token;
 
     protected NodoBloque bloquePrincipal;
+    protected int offsetDisponibleParametro;
 
 
     public MetodoConstructor(){
@@ -39,6 +40,15 @@ public abstract class MetodoConstructor {
             }
         }
         return false;
+    }
+
+    public Parametro getParam(Token token){
+        for (Parametro param:listaArgumentos) {
+            if(token.getLexeme().equals(param.getToken().getLexeme())){
+                return param;
+            }
+        }
+        return null;
     }
 
     public Tipo tipoParametro(Token token){

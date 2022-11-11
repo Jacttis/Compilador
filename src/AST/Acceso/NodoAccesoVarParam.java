@@ -6,9 +6,13 @@ import AnalizadorSemantico.*;
 
 public class NodoAccesoVarParam extends NodoAcceso {
 
+    private static final int PARAMETRO = 1;
+    private static final int VARLOCAL = 2;
+    private static final int ATRIBUTO = 3;
     protected Clase clase;
     protected MetodoConstructor metodo;
     private NodoBloque bloque;
+    private Object variable;
     public NodoAccesoVarParam(Token token, Clase clase, MetodoConstructor metodo, NodoBloque bloque) {
         super(token);
         esAsignable=true;
@@ -21,10 +25,18 @@ public class NodoAccesoVarParam extends NodoAcceso {
     public Tipo chequear() {
         Tipo tipo = null;
         if (metodo.repiteNombre(accesoToken) ) {
+
             tipo = metodo.tipoParametro(accesoToken);
+            variable =metodo.getParam(accesoToken);
+
         } else if ( bloque.estaVarEnBloque(accesoToken)) {
+
             tipo = bloque.tipoVarEnBloque(accesoToken);
+            variable =bloque.getVarEnBloque(accesoToken);
+
         }else if(clase.getAtributos().containsKey(accesoToken.getLexeme())) {
+
+            variable = clase.getAtributos().get(accesoToken.getLexeme());
             if (metodo.isEstatico()){
                 TablaDeSimbolos.listaExcepciones.add(new SemanticException(accesoToken, "Error Semantico en linea "
                         + accesoToken.getNumberline() + ": No se puede llamar a un atributo en metodo estaticos " + accesoToken.getLexeme()));
@@ -50,6 +62,22 @@ public class NodoAccesoVarParam extends NodoAcceso {
                         + accesoToken.getNumberline() + ": Tipo no puede ser primitivo " + accesoToken.getLexeme()));
                 return new Tipo(new Token("pr_void","void",0));//Devuelvo para seguir ejecucion
             }
+        }
+
+    }
+    public void generarCodigo(){
+        if(variable  instanceof Atributo){
+            TablaDeSimbolos.codigoMaquina.add("LOAD 3");
+            if(!ladoIzquierdo || nodoEncadenado!=null){
+                TablaDeSimbolos.codigoMaquina.add("LOADREF"+((Atributo) variable).getOffset());
+            }
+            else{
+                TablaDeSimbolos.codigoMaquina.add("SWAP");
+                TablaDeSimbolos.codigoMaquina.add("STOREREF"+((Atributo) variable).getOffset());
+            }
+        }
+        else if (variable instanceof Parametro){
+            
         }
 
     }

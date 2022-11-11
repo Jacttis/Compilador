@@ -36,4 +36,7 @@ public class NodoExpresion {
 
     return null;
     }
+
+    public void generarCodigo() {
+    }
 }

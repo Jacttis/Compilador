@@ -31,10 +31,12 @@ public class Constructor extends MetodoConstructor{
     }
 
     public void checkDeclaracion(Clase claseActual) throws SemanticException {
-        LinkedList<String> parametrosVisitados=new LinkedList<>();
+        LinkedList<String> parametrosVisitados = new LinkedList<>();
         for (Parametro param:listaArgumentos) {
             if(!parametrosVisitados.contains(param.getNombre())){
                 param.checkDeclaracion(claseActual);
+                param.setOffset(offsetDisponibleParametro);
+                offsetDisponibleParametro++;
             }
             else{
                 TablaDeSimbolos.listaExcepciones.add( new SemanticException(param.getToken(), "Error Semantico en linea "
@@ -43,5 +45,16 @@ public class Constructor extends MetodoConstructor{
 
             parametrosVisitados.add(param.getNombre());
         }
+    }
+
+    public String generarEtiqueta(){
+        String etiqueta = "LCons"+token.getLexeme();
+        for (Parametro parametro:listaArgumentos) {
+            etiqueta += "_"+parametro.getTipo().getToken().getLexeme();
+        }
+        return etiqueta;
+    }
+
+    public void generarCodigo() {
     }
 }
