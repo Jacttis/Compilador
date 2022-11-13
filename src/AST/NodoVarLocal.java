@@ -106,4 +106,8 @@ public class NodoVarLocal extends NodoSentencia{
 
         }
     }
+
+    public int getOffset() {
+        return offset;
+    }
 }

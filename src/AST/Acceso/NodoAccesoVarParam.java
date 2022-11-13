@@ -1,6 +1,7 @@
 package AST.Acceso;
 
 import AST.NodoBloque;
+import AST.NodoVarLocal;
 import AnalizadorLexico.Token;
 import AnalizadorSemantico.*;
 
@@ -67,7 +68,7 @@ public class NodoAccesoVarParam extends NodoAcceso {
     }
     public void generarCodigo(){
         if(variable  instanceof Atributo){
-            TablaDeSimbolos.codigoMaquina.add("LOAD 3");
+            TablaDeSimbolos.codigoMaquina.add("LOAD 3 ;Apilo this");
             if(!ladoIzquierdo || nodoEncadenado!=null){
                 TablaDeSimbolos.codigoMaquina.add("LOADREF"+((Atributo) variable).getOffset());
             }
@@ -77,7 +78,27 @@ public class NodoAccesoVarParam extends NodoAcceso {
             }
         }
         else if (variable instanceof Parametro){
-            
+            if(!ladoIzquierdo || nodoEncadenado!=null){
+                TablaDeSimbolos.codigoMaquina.add("LOADREF"+ ((Parametro) variable).getOffset());
+            }
+            else{
+                TablaDeSimbolos.codigoMaquina.add("STOREREF"+((Parametro) variable).getOffset());
+            }
+        }
+        else if (variable instanceof NodoVarLocal){
+            if(!ladoIzquierdo || nodoEncadenado!=null){
+                TablaDeSimbolos.codigoMaquina.add("LOADREF"+ ((NodoVarLocal) variable).getOffset());
+            }
+            else{
+                TablaDeSimbolos.codigoMaquina.add("STOREREF"+((NodoVarLocal) variable).getOffset());
+            }
+        }
+
+        if(nodoEncadenado != null){
+            if (ladoIzquierdo)
+                nodoEncadenado.setLadoIzquierdo();
+            nodoEncadenado.generarCodigo();
+
         }
 
     }

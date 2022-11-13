@@ -9,7 +9,7 @@ public class NodoEncadenado  {
     Token tokenNodoEncadenado;
     NodoEncadenado nodoEncadenado;
 
-    protected boolean esAsignable,esLLamable;
+    protected boolean esAsignable,esLLamable,ladoIzquierdo;
 
     protected boolean esThis=false;
 
@@ -18,6 +18,7 @@ public class NodoEncadenado  {
         this.nodoEncadenado = null;
         esAsignable=false;
         esLLamable=false;
+        ladoIzquierdo=false;
     }
 
     public NodoEncadenado getNodoEncadenado() {
@@ -72,5 +73,16 @@ public class NodoEncadenado  {
             retorno[1]=tokenNodoEncadenado;
             return retorno;
         }
+    }
+
+    public boolean isLadoIzquierdo(){
+        return ladoIzquierdo;
+    }
+
+    public void setLadoIzquierdo(){
+        ladoIzquierdo=true;
+    }
+
+    public void generarCodigo() {
     }
 }
