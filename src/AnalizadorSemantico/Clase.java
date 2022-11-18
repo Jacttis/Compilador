@@ -407,8 +407,14 @@ public class Clase implements IClaseInterfaz{
             for (Metodo met:listaMetodos) {
                 if(!met.isEstatico()){
                     if (!met.seAsignoOffset()){
-                        met.setOffset(offsetDisponibleVT);
-                        offsetDisponibleVT++;
+                        Metodo metodoRedefinido=TablaDeSimbolos.tablaSimbolos.getClaseByName(claseHerencia.getLexeme()).devolverMetodo(met.getTokenMetodo().getLexeme(),met);
+                        if(metodoRedefinido!=null){
+                           met.setOffset(metodoRedefinido.getOffset());
+                        }
+                        else {
+                            met.setOffset(offsetDisponibleVT);
+                            offsetDisponibleVT++;
+                        }
                     }
                 }
             }
@@ -496,6 +502,27 @@ public class Clase implements IClaseInterfaz{
 
     }
 
+    public Constructor retornarConstructor(LinkedList<NodoExpresion> parametros){
+        for (Constructor constructor:constructores) {
+            LinkedList<Parametro> parametrosC=constructor.getListaArgumentos();
+            int i=0;
+            boolean iguales=true;
+            if (parametros.size()==parametrosC.size()){
+                while(iguales && i<parametros.size()){
+                    if(!parametrosC.get(i).getTipo().esSubtipo(parametros.get(i).chequear())){
+                        iguales=false;
+                    }
+                    i++;
+                }
+                if(iguales){
+                    return constructor;
+                }
+            }
+        }
+        return null;
+
+    }
+
     public Atributo tieneAtributoPublico(String atributo){
         Atributo atr=atributos.get(atributo);
         if(atr!=null && atr.getVisibilidadAtributo().equals("public")){
@@ -568,12 +595,45 @@ public class Clase implements IClaseInterfaz{
 
 
 
+
     public void generarCodigo() {
-        TablaDeSimbolos.codigoMaquina.add(".DATA");
+
+        //codigo de metodos y constructores
+        for (LinkedList<Metodo> listaMetodos:metodos.values()) {
+            for (Metodo met: listaMetodos) {
+                if (met.esDeClase(tokenClase.getLexeme())) {
+                    TablaDeSimbolos.codigoMaquina.add(met.generarEtiqueta()+":");
+                    met.generarCodigo();
+                }
+
+            }
+        }
+
+       for (Constructor constructor:constructores) {
+            TablaDeSimbolos.codigoMaquina.add(constructor.generarEtiqueta()+":");
+            constructor.generarCodigo();
+        }
+
+    }
+
+    private Metodo devolverMetodo(String nombreMetodo,Metodo metodo){
+        LinkedList<Metodo> metodosMismoNombre = metodos.get(nombreMetodo);
+        if(metodosMismoNombre!=null) {
+            for (Metodo met : metodosMismoNombre) {
+                if (met.compareArgumentos(metodo.getListaArgumentos())) {
+                    return met;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void crearVT() {
+
         String etiquetaMetodos="DW ";
+        TablaDeSimbolos.codigoMaquina.add("VT_"+tokenClase.getLexeme()+":");
 
         if(metodosOrdenadosOffset.size()>0){
-            TablaDeSimbolos.codigoMaquina.add("VT_"+tokenClase.getLexeme()+":");
             for (Metodo met: metodosOrdenadosOffset) {
                 etiquetaMetodos+=met.generarEtiqueta()+",";
             }
@@ -583,22 +643,6 @@ public class Clase implements IClaseInterfaz{
             etiquetaMetodos="NOP";
         }
         TablaDeSimbolos.codigoMaquina.add(etiquetaMetodos);
-
-        //codigo de metodos y constructores
-        for (LinkedList<Metodo> listaMetodos:metodos.values()) {
-            for (Metodo met: listaMetodos) {
-                if (met.esDeClase(tokenClase.getLexeme())) {
-                    TablaDeSimbolos.codigoMaquina.add(met.generarEtiqueta());
-                    met.generarCodigo();
-                }
-
-            }
-        }
-
-        for (Constructor constructor:constructores) {
-            TablaDeSimbolos.codigoMaquina.add(constructor.generarEtiqueta());
-            constructor.generarCodigo();
-        }
 
     }
 }

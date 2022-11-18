@@ -41,6 +41,29 @@ public class NodoIf extends NodoSentencia{
             TablaDeSimbolos.listaExcepciones.add(new SemanticException(token, "Error Semantico en linea "
             + token.getNumberline() + ": expresion no es tipo boolean del " + token.getLexeme()));
         }
+    }
+
+    @Override
+    public void generarCodigo() {
+        String etiquetaIF="Lif"+TablaDeSimbolos.numcondicion1++;
+        String etiquetaElse="Lelse"+TablaDeSimbolos.numcondicion2++;
+        expresion.generarCodigo();
+        if(nodoElse!=null){
+            TablaDeSimbolos.codigoMaquina.add("BF "+etiquetaElse+" ; si el tope es falso salto a "+etiquetaElse);
+            sentencia.generarCodigo();
+            TablaDeSimbolos.codigoMaquina.add("JUMP "+etiquetaIF);
+            TablaDeSimbolos.codigoMaquina.add(etiquetaElse+":");
+            nodoElse.generarCodigo();
+
+            TablaDeSimbolos.codigoMaquina.add(etiquetaIF+": NOP");
         }
+        else {
+            TablaDeSimbolos.codigoMaquina.add("BF "+etiquetaIF+" ; si el tope es falso salto a "+etiquetaIF);
+            if(sentencia!=null) {
+                sentencia.generarCodigo();
+            }
+            TablaDeSimbolos.codigoMaquina.add(etiquetaIF+": NOP");
+        }
+    }
 }
 

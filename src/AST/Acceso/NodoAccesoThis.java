@@ -36,4 +36,14 @@ public class NodoAccesoThis extends NodoAcceso{
             }
         }
     }
+
+    @Override
+    public void generarCodigo() {
+        TablaDeSimbolos.codigoMaquina.add("LOAD 3 ");
+        if(nodoEncadenado != null){
+            if (ladoIzquierdo)
+                nodoEncadenado.setLadoIzquierdo();
+            nodoEncadenado.generarCodigo();
+        }
+    }
 }

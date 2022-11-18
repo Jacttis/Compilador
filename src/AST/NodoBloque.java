@@ -16,23 +16,45 @@ public class NodoBloque extends NodoSentencia {
     public  boolean chequeado;
     private boolean tieneRetorno;
 
+    protected int ultimoOffset;
+
     public NodoBloque(MetodoConstructor metodoConstructor){
         metodoBloque=metodoConstructor;
         listaSentencias=new LinkedList<>();
         varLocales=new Hashtable<>();
         chequeado=false;
+        ultimoOffset=0;
     }
     public void addSentencia(NodoSentencia sentencia){
         listaSentencias.add(sentencia);
     }
 
     public void addVarLocal(NodoVarLocal varLocal) throws SemanticException {
+        actualizarUltimoOffset();
         if(!varLocales.containsKey(varLocal.getToken().getLexeme())){
+            varLocal.offset=ultimoOffset--;
             varLocales.put(varLocal.getToken().getLexeme(),varLocal);
         }
         else {
             TablaDeSimbolos.listaExcepciones.add(new SemanticException(varLocal.getToken(), "Error Semantico en linea "
                     + varLocal.getToken().getNumberline() + ": Ya hay una var local declarado con el nombre " + varLocal.getToken().getLexeme()));
+        }
+    }
+
+    public int actualizarUltimoOffset() {
+        if(bloqueContainer != null && bloqueContainer.actualizarUltimoOffset()<ultimoOffset){
+            ultimoOffset= bloqueContainer.actualizarUltimoOffset();
+        }
+        return ultimoOffset;
+    }
+
+    public int obtenerSizeVarLocal(){
+        if(bloqueContainer!=null){
+            int cantidadVarLocal=varLocales.size()+ bloqueContainer.obtenerSizeVarLocal();
+            return cantidadVarLocal;
+        }
+        else {
+            return varLocales.size();
         }
     }
 
@@ -107,7 +129,7 @@ public class NodoBloque extends NodoSentencia {
     public NodoVarLocal getVarEnBloque(Token token){
         if(bloqueContainer!=null){
             NodoVarLocal varLocal=varLocales.get(token.getLexeme());
-            varLocal = varLocal == null ? bloqueContainer.getVarEnBloque(token) : null;
+            varLocal = varLocal == null ? bloqueContainer.getVarEnBloque(token) : varLocal;
             return varLocal;
         }
         else{
@@ -135,11 +157,18 @@ public class NodoBloque extends NodoSentencia {
 
     @Override
     public void generarCodigo() {
-        TablaDeSimbolos.codigoMaquina.add("RMEM"+ varLocales.size());
+        //TablaDeSimbolos.codigoMaquina.add("RMEM "+ varLocales.size());
         for (NodoSentencia sentencia:listaSentencias) {
             sentencia.generarCodigo();
         }
+        if(bloqueContainer!=null){
+            TablaDeSimbolos.codigoMaquina.add("FMEM "+ varLocales.size());
+            ultimoOffset+= varLocales.size();
+        }
+        else{
+            TablaDeSimbolos.codigoMaquina.add("FMEM "+ obtenerSizeVarLocal());
+            ultimoOffset+= obtenerSizeVarLocal();
+        }
 
-        TablaDeSimbolos.codigoMaquina.add("FMEM"+ varLocales.size());
     }
 }

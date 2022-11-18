@@ -10,6 +10,7 @@ public class Constructor extends MetodoConstructor{
     public Constructor(Token token){
         super();
         this.token=token;
+        offsetDisponibleParametro=4;
     }
     @Override
     public void addArgumento(Parametro argumento) throws SemanticException {
@@ -56,5 +57,14 @@ public class Constructor extends MetodoConstructor{
     }
 
     public void generarCodigo() {
+        TablaDeSimbolos.codigoMaquina.add("LOADFP");
+        TablaDeSimbolos.codigoMaquina.add("LOADSP");
+        TablaDeSimbolos.codigoMaquina.add("STOREFP");
+        if(bloquePrincipal!=null) {
+            bloquePrincipal.generarCodigo();
+        }
+        TablaDeSimbolos.codigoMaquina.add("STOREFP");
+        TablaDeSimbolos.codigoMaquina.add("RET "+(listaArgumentos.size()));
+
     }
 }

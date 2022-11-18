@@ -67,7 +67,13 @@ public class Main {
     public static void crearArchivo(String archivo,LinkedList<String> codigo) throws IOException {
         FileWriter writer=new FileWriter(archivo);
         for (String instruccion:codigo) {
-            writer.write(instruccion+"\n");
+            if(instruccion.charAt(0)=='l' || instruccion.charAt(0)=='V' || instruccion.charAt(0)=='.'|| instruccion.startsWith("Lcom") || instruccion.startsWith("Lmalloc") || instruccion.startsWith("Lmain") || instruccion.startsWith("LCon") || instruccion.startsWith("Lfin")  ){
+                writer.write(instruccion+"\n");
+            }
+            else{
+                writer.write("              "+instruccion+"\n");
+            }
+
         }
         writer.close();
     }

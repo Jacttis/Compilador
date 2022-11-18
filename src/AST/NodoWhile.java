@@ -30,4 +30,17 @@ public class NodoWhile extends NodoSentencia{
 
         }
     }
+
+    @Override
+    public void generarCodigo() {
+        String etiquetaComienzoWhile="LcomienzoWhile"+TablaDeSimbolos.numcondicion1++;
+        String etiquetaFinWhile="LfinWhile"+TablaDeSimbolos.numcondicion2++;
+        TablaDeSimbolos.codigoMaquina.add(etiquetaComienzoWhile+":");
+        expresion.generarCodigo();
+        TablaDeSimbolos.codigoMaquina.add("BF "+etiquetaFinWhile);
+        sentencia.generarCodigo();
+        TablaDeSimbolos.codigoMaquina.add("JUMP "+etiquetaComienzoWhile);
+        TablaDeSimbolos.codigoMaquina.add(etiquetaFinWhile+":");
+
+    }
 }

@@ -1,149 +1,242 @@
 .CODE
-PUSH Lmain
-CALL
-LOADFP 
-LOADSP
-STOREFP
-LOADHL
-DUP
-PUSH 1
-ADD
-STORE 4
-LOAD 3
-ADD
-STOREHL
-STOREFP
-RET 1
+              PUSH Lmain
+              CALL
+              HALT
+Lmalloc:
+              LOADFP 
+              LOADSP
+              STOREFP
+              LOADHL
+              DUP
+              PUSH 1
+              ADD
+              STORE 4
+              LOAD 3
+              ADD
+              STOREHL
+              STOREFP
+              RET 1
 .DATA
 VT_A:
-DW lm1_0_A
-lm1_0_A
-LOADFP
-LOADSP
-STOREFP
-RMEM1
-RMEM1
-FMEM1
-FMEM1
-STOREFP
-RET4
-LConsA
-.DATA
-NOP
-LConsString
-.DATA
-NOP
-ldebugPrint_int_-2_Object
-LOADFP
-LOADSP
-STOREFP
-RMEM0
-FMEM0
-STOREFP
-RET4
-.DATA
-NOP
-lread_-2_System
-LOADFP
-LOADSP
-STOREFP
-RMEM0
-FMEM0
-STOREFP
-RET3
-lprintBln_boolean_-2_System
-LOADFP
-LOADSP
-STOREFP
-RMEM0
-FMEM0
-STOREFP
-RET4
-lprintCln_char_-2_System
-LOADFP
-LOADSP
-STOREFP
-RMEM0
-FMEM0
-STOREFP
-RET4
-lprintI_int_-2_System
-LOADFP
-LOADSP
-STOREFP
-RMEM0
-FMEM0
-STOREFP
-RET4
-lprintIln_int_-2_System
-LOADFP
-LOADSP
-STOREFP
-RMEM0
-FMEM0
-STOREFP
-RET4
-lprintC_char_-2_System
-LOADFP
-LOADSP
-STOREFP
-RMEM0
-FMEM0
-STOREFP
-RET4
-lprintln_-2_System
-LOADFP
-LOADSP
-STOREFP
-RMEM0
-FMEM0
-STOREFP
-RET3
-lprintB_boolean_-2_System
-LOADFP
-LOADSP
-STOREFP
-RMEM0
-FMEM0
-STOREFP
-RET4
-lprintSln_String_-2_System
-LOADFP
-LOADSP
-STOREFP
-RMEM0
-FMEM0
-STOREFP
-RET4
-lprintS_String_-2_System
-LOADFP
-LOADSP
-STOREFP
-RMEM0
-FMEM0
-STOREFP
-RET4
-LConsSystem
-.DATA
-NOP
-lmain
-LOADFP
-LOADSP
-STOREFP
-RMEM0
-FMEM0
-STOREFP
-RET3
-LConsInit
-.DATA
+              NOP
+VT_String:
+              NOP
+VT_Object:
+              NOP
+VT_System:
+              NOP
+VT_C:
+              DW lm1_C
 VT_B:
-DW lm1_0_A,lm2_1_B
-lm2_1_B
-LOADFP
-LOADSP
-STOREFP
-RMEM0
-FMEM0
-STOREFP
-RET4
-LConsB
+              DW lm1_B
+.CODE
+Lmain:
+              LOADFP
+              LOADSP
+              STOREFP
+              RMEM 1
+              PUSH lgetB_A
+              CALL
+              DUP ;duplico this
+              LOADREF 0
+              LOADREF -2
+              CALL
+              RMEM 1
+              PUSH lgetC_A
+              CALL
+              DUP ;duplico this
+              LOADREF 0
+              LOADREF -2
+              CALL
+              FMEM 0
+              STOREFP
+              RET 0
+lgetC_A:
+              LOADFP
+              LOADSP
+              STOREFP
+              FMEM 0 ; Se libera memoria de variables locales 
+              RMEM 1
+              PUSH 1
+              PUSH lmalloc
+              CALL
+              DUP
+              PUSH VT_C
+              STOREREF 0
+              PUSH LConsC
+              CALL
+              STORE 3
+              STOREFP ; actualizo el FP para que apunte al RA llamador
+              RET 0 ; Se liberan 0 lugares de la pila
+              FMEM 0
+              STOREFP
+              RET 0
+lgetB_A:
+              LOADFP
+              LOADSP
+              STOREFP
+              FMEM 0 ; Se libera memoria de variables locales 
+              RMEM 1
+              PUSH 1
+              PUSH lmalloc
+              CALL
+              DUP
+              PUSH VT_B
+              STOREREF 0
+              PUSH LConsB
+              CALL
+              STORE 3
+              STOREFP ; actualizo el FP para que apunte al RA llamador
+              RET 0 ; Se liberan 0 lugares de la pila
+              FMEM 0
+              STOREFP
+              RET 0
+LConsA:
+              LOADFP
+              LOADSP
+              STOREFP
+              STOREFP
+              RET 0
+LConsString:
+              LOADFP
+              LOADSP
+              STOREFP
+              STOREFP
+              RET 0
+ldebugPrint_int_Object:
+              LOADFP
+              LOADSP
+              STOREFP
+              LOAD 3
+              IPRINT
+              PRNLN
+              STOREFP
+              RET 1
+lread_System:
+              LOADFP
+              LOADSP
+              STOREFP
+              READ
+              STOREFP
+              RET 1
+lprintBln_boolean_System:
+              LOADFP
+              LOADSP
+              STOREFP
+              LOAD 3
+              BPRINT
+              PRNLN
+              STOREFP
+              RET 1
+lprintCln_char_System:
+              LOADFP
+              LOADSP
+              STOREFP
+              LOAD 3
+              CPRINT
+              PRNLN
+              STOREFP
+              RET 1
+lprintI_int_System:
+              LOADFP
+              LOADSP
+              STOREFP
+              LOAD 3
+              IPRINT
+              STOREFP
+              RET 1
+lprintIln_int_System:
+              LOADFP
+              LOADSP
+              STOREFP
+              LOAD 3
+              IPRINT
+              PRNLN
+              STOREFP
+              RET 1
+lprintC_char_System:
+              LOADFP
+              LOADSP
+              STOREFP
+              LOAD 3
+              CPRINT
+              STOREFP
+              RET 1
+lprintln_System:
+              LOADFP
+              LOADSP
+              STOREFP
+              PRNLN
+              STOREFP
+              RET 0
+lprintB_boolean_System:
+              LOADFP
+              LOADSP
+              STOREFP
+              LOAD 3
+              BPRINT
+              STOREFP
+              RET 1
+lprintSln_String_System:
+              LOADFP
+              LOADSP
+              STOREFP
+              LOAD 3
+              SPRINT
+              PRNLN
+              STOREFP
+              RET 1
+lprintS_String_System:
+              LOADFP
+              LOADSP
+              STOREFP
+              LOAD 3
+              SPRINT
+              STOREFP
+              RET 1
+LConsSystem:
+              LOADFP
+              LOADSP
+              STOREFP
+              STOREFP
+              RET 0
+lm1_C:
+              LOADFP
+              LOADSP
+              STOREFP
+.DATA
+lString1:
+              DW "m1 en C", 0
+.CODE
+              PUSH lString1
+              PUSH lprintSln_String_System
+              CALL
+              FMEM 0
+              STOREFP
+              RET 1
+LConsC:
+              LOADFP
+              LOADSP
+              STOREFP
+              STOREFP
+              RET 0
+lm1_B:
+              LOADFP
+              LOADSP
+              STOREFP
+.DATA
+lString2:
+              DW "m1 en B", 0
+.CODE
+              PUSH lString2
+              PUSH lprintSln_String_System
+              CALL
+              FMEM 0
+              STOREFP
+              RET 1
+LConsB:
+              LOADFP
+              LOADSP
+              STOREFP
+              STOREFP
+              RET 0

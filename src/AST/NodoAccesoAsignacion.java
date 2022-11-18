@@ -17,6 +17,8 @@ public class NodoAccesoAsignacion extends NodoSentencia{
     protected NodoExpresion expresion;
     protected Tipo tipoOperador;
 
+    protected Tipo tipoAcceso;
+
     @Override
     public Token getToken() {
         return asignacion;
@@ -38,6 +40,7 @@ public class NodoAccesoAsignacion extends NodoSentencia{
         if (expresion != null) {
             if(acceso.esAsignable()){
                 Tipo tipo=acceso.chequear();
+                tipoAcceso=tipo;
                 Tipo tipoExpresion=expresion.chequear();
 
 
@@ -72,7 +75,7 @@ public class NodoAccesoAsignacion extends NodoSentencia{
             //Llamada
             Object[] llamable=acceso.isLLamable();
             if ((Boolean) llamable[0]){
-                acceso.chequear();
+                tipoAcceso=acceso.chequear();
             }
             else{
                 Token token= (Token) llamable[1];
@@ -86,9 +89,30 @@ public class NodoAccesoAsignacion extends NodoSentencia{
     @Override
     public void generarCodigo() {
         if(expresion!=null){
-            expresion.generarCodigo();
+            if (asignacion.getLexeme().equals("+=")){
+                acceso.generarCodigo();
+                expresion.generarCodigo();
+                TablaDeSimbolos.codigoMaquina.add("ADD ; realizo la suma");
+                acceso.setLadoIzquierdo();
+                acceso.generarCodigo();
+            }
+            else if (asignacion.getLexeme().equals("-=")){
+                acceso.generarCodigo();
+                expresion.generarCodigo();
+                TablaDeSimbolos.codigoMaquina.add("SUB ; realizo la resta");
+                acceso.setLadoIzquierdo();
+                acceso.generarCodigo();
+            }else {
+                expresion.generarCodigo();
+                acceso.setLadoIzquierdo();
+                acceso.generarCodigo();
+            }
+        }else{
             acceso.setLadoIzquierdo();
-            acceso.genererarCodigo();
+            acceso.generarCodigo();
+            if(!tipoAcceso.compareTipo(new Tipo(new Token("pr_void","void",0)))){
+                TablaDeSimbolos.codigoMaquina.add("POP");
+            }
         }
     }
 }

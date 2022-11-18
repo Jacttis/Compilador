@@ -40,6 +40,17 @@ public class NodoExpresionUnaria extends NodoExpresion {
         else {
             return operando.chequear();
         }
+    }
 
+    @Override
+    public void generarCodigo() {
+        operando.generarCodigo();
+        if(operador!=null) {
+            if (operador.getLexeme().equals("-")) {
+                TablaDeSimbolos.codigoMaquina.add("NEG");
+            } else if (operador.getLexeme().equals("!")) {
+                TablaDeSimbolos.codigoMaquina.add("NOT");
+            }
+        }
     }
 }

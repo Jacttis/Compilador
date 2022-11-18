@@ -21,7 +21,7 @@ public class Metodo extends MetodoConstructor {
         offset = -2;
         this.claseBase=claseBase;
 
-        if (estatico) {
+        if (this.estatico) {
             offsetDisponibleParametro = 3;
         } else {
             offsetDisponibleParametro = 4;
@@ -116,13 +116,13 @@ public class Metodo extends MetodoConstructor {
     public String generarEtiqueta() {
         StringBuilder etiqueta = new StringBuilder("l" + token.getLexeme());
         if (token.getLexeme().equals("main") && estatico) {
-            return "lmain";
+            return "Lmain";
         }
         else{
             for (Parametro parametro:listaArgumentos) {
                 etiqueta.append("_").append(parametro.getTipo().getToken().getLexeme());
             }
-            etiqueta.append("_").append(offset).append("_").append(claseBase.getToken().getLexeme());
+            etiqueta.append("_").append(claseBase.getToken().getLexeme());
             return etiqueta.toString();
         }
     }
@@ -134,14 +134,105 @@ public class Metodo extends MetodoConstructor {
         TablaDeSimbolos.codigoMaquina.add("LOADFP");
         TablaDeSimbolos.codigoMaquina.add("LOADSP");
         TablaDeSimbolos.codigoMaquina.add("STOREFP");
-        bloquePrincipal.generarCodigo();
-        TablaDeSimbolos.codigoMaquina.add("STOREFP");
-        if (estatico){
-            TablaDeSimbolos.codigoMaquina.add("RET"+(listaArgumentos.size()+3));
-        }
-        else{
-            TablaDeSimbolos.codigoMaquina.add("RET"+(listaArgumentos.size()+4));
-        }
+        switch (token.getLexeme()) {
+            case "debugPrint" :{
+                TablaDeSimbolos.codigoMaquina.add("LOAD 3");
+                TablaDeSimbolos.codigoMaquina.add("IPRINT");
+                TablaDeSimbolos.codigoMaquina.add("PRNLN");
+                TablaDeSimbolos.codigoMaquina.add("STOREFP");
+                TablaDeSimbolos.codigoMaquina.add("RET 1"); // tiene 1 parametro formal.
+                break;
+            }
+            case "printI" : {
+                TablaDeSimbolos.codigoMaquina.add("LOAD 3");
+                TablaDeSimbolos.codigoMaquina.add("IPRINT");
+                TablaDeSimbolos.codigoMaquina.add("STOREFP");
+                TablaDeSimbolos.codigoMaquina.add("RET 1"); // tiene 1 parametro formal.
+                break;
+            }
+            case "printC" : {
+                TablaDeSimbolos.codigoMaquina.add("LOAD 3");
+                TablaDeSimbolos.codigoMaquina.add("CPRINT");
+                TablaDeSimbolos.codigoMaquina.add("STOREFP");
+                TablaDeSimbolos.codigoMaquina.add("RET 1"); // tiene 1 parametro formal.
 
+                break;
+            }
+            case "printB" : {
+                TablaDeSimbolos.codigoMaquina.add("LOAD 3");
+                TablaDeSimbolos.codigoMaquina.add("BPRINT");
+                TablaDeSimbolos.codigoMaquina.add("STOREFP");
+                TablaDeSimbolos.codigoMaquina.add("RET 1"); // tiene 1 parametro formal.
+                break;
+            }
+            case "printS" : {
+                TablaDeSimbolos.codigoMaquina.add("LOAD 3");
+                TablaDeSimbolos.codigoMaquina.add("SPRINT");
+                TablaDeSimbolos.codigoMaquina.add("STOREFP");
+                TablaDeSimbolos.codigoMaquina.add("RET 1"); // tiene 1 parametro formal.
+
+                break;
+            }
+            case "read" : {
+                TablaDeSimbolos.codigoMaquina.add("READ");
+                TablaDeSimbolos.codigoMaquina.add("STOREFP");
+                TablaDeSimbolos.codigoMaquina.add("RET 1"); // no tiene param
+
+                break;
+            }
+            case "println" : {
+                TablaDeSimbolos.codigoMaquina.add("PRNLN");
+                TablaDeSimbolos.codigoMaquina.add("STOREFP");
+                TablaDeSimbolos.codigoMaquina.add("RET 0"); // tiene 1 parametro formal.
+                break;
+            }
+            case "printBln" : {
+                TablaDeSimbolos.codigoMaquina.add("LOAD 3");
+                TablaDeSimbolos.codigoMaquina.add("BPRINT");
+                TablaDeSimbolos.codigoMaquina.add("PRNLN");
+                TablaDeSimbolos.codigoMaquina.add("STOREFP");
+                TablaDeSimbolos.codigoMaquina.add("RET 1"); // tiene 1 parametro formal.
+                break;
+            }
+            case "printIln" : {
+                TablaDeSimbolos.codigoMaquina.add("LOAD 3");
+                TablaDeSimbolos.codigoMaquina.add("IPRINT");
+                TablaDeSimbolos.codigoMaquina.add("PRNLN");
+                TablaDeSimbolos.codigoMaquina.add("STOREFP");
+                TablaDeSimbolos.codigoMaquina.add("RET 1"); // tiene 1 parametro formal.
+                break;
+            }
+            case "printCln" : {
+                TablaDeSimbolos.codigoMaquina.add("LOAD 3");
+                TablaDeSimbolos.codigoMaquina.add("CPRINT");
+                TablaDeSimbolos.codigoMaquina.add("PRNLN");
+
+                TablaDeSimbolos.codigoMaquina.add("STOREFP");
+                TablaDeSimbolos.codigoMaquina.add("RET 1"); // tiene 1 parametro formal.
+
+                break;
+            }
+            case "printSln" : {
+                TablaDeSimbolos.codigoMaquina.add("LOAD 3");
+                TablaDeSimbolos.codigoMaquina.add("SPRINT");
+                TablaDeSimbolos.codigoMaquina.add("PRNLN");
+
+                TablaDeSimbolos.codigoMaquina.add("STOREFP");
+                TablaDeSimbolos.codigoMaquina.add("RET 1"); // tiene 1 parametro formal.
+
+                break;
+            }
+            default:{
+                bloquePrincipal.generarCodigo();
+                TablaDeSimbolos.codigoMaquina.add("STOREFP");
+                if (estatico){
+                    TablaDeSimbolos.codigoMaquina.add("RET "+(listaArgumentos.size()));
+                }
+                else{
+                    TablaDeSimbolos.codigoMaquina.add("RET "+(listaArgumentos.size()+1));
+                }
+            }
+
+        }
     }
 }

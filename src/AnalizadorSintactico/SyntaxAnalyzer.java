@@ -499,7 +499,7 @@ public class SyntaxAnalyzer {
         Token tokenRet=actualToken;
         match("pr_return");
         NodoExpresion expresion=expresionOpt();
-        nodoReturn=new NodoReturn(tokenRet,expresion, (Metodo) TablaDeSimbolos.tablaSimbolos.getMetodoActual());
+        nodoReturn=new NodoReturn(tokenRet,expresion, (Metodo) TablaDeSimbolos.tablaSimbolos.getMetodoActual(),TablaDeSimbolos.tablaSimbolos.getBloqueActual());
         match("puntoComa");
         return nodoReturn;
 

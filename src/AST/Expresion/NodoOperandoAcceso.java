@@ -15,4 +15,9 @@ public class NodoOperandoAcceso extends NodoOperando {
     public Tipo chequear() {
             return acceso.chequear();
     }
+
+    @Override
+    public void generarCodigo() {
+        acceso.generarCodigo();
+    }
 }

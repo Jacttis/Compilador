@@ -15,6 +15,9 @@ public class TablaDeSimbolos {
     public Metodo main;
 
     public static LinkedList<Exception> listaExcepciones=new LinkedList<>();
+
+    public static int numcondicion1 =1;
+    public static int numcondicion2 =1;
     private NodoBloque bloqueActual;
 
     public static LinkedList<String> codigoMaquina =new LinkedList<>();
@@ -226,8 +229,10 @@ public class TablaDeSimbolos {
         codigoMaquina.add(".CODE");
         codigoMaquina.add("PUSH Lmain");
         codigoMaquina.add("CALL");
+        codigoMaquina.add("HALT");
 
         //Heap simpleMalloc "Apunte"
+        codigoMaquina.add("Lmalloc:");
         codigoMaquina.add("LOADFP ");
         codigoMaquina.add("LOADSP");
         codigoMaquina.add("STOREFP");
@@ -243,7 +248,11 @@ public class TablaDeSimbolos {
         codigoMaquina.add("RET 1");
 
         //Codigo Clases
-
+        TablaDeSimbolos.codigoMaquina.add(".DATA");
+        for (Clase clase:clases.values()) {
+            clase.crearVT();
+        }
+        TablaDeSimbolos.codigoMaquina.add(".CODE");
         for (Clase clase:clases.values()) {
             clase.generarCodigo();
         }

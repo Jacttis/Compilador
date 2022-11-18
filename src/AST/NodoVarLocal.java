@@ -110,4 +110,13 @@ public class NodoVarLocal extends NodoSentencia{
     public int getOffset() {
         return offset;
     }
+
+    @Override
+    public void generarCodigo() {
+        TablaDeSimbolos.codigoMaquina.add("RMEM 1 ;guardo un espacio en memoria");
+        if(expresion != null){
+            expresion.generarCodigo();
+            TablaDeSimbolos.codigoMaquina.add("STORE "+offset+" ; almacena el valor de la expresion en la variable"+ tokenVar.getLexeme());
+        }
+    }
 }

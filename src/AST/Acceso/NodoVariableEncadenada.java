@@ -5,6 +5,8 @@ import AnalizadorLexico.Token;
 import AnalizadorSemantico.*;
 
 public class NodoVariableEncadenada extends NodoEncadenado {
+
+    protected Atributo atributo;
     public NodoVariableEncadenada(Token tokenNodoEncadenado) {
         super(tokenNodoEncadenado);
         esAsignable=true;
@@ -16,7 +18,6 @@ public class NodoVariableEncadenada extends NodoEncadenado {
         if(tipo instanceof TipoReferencia){
             Clase clase= TablaDeSimbolos.tablaSimbolos.getClaseByName(tipo.getToken().getLexeme());
             if(clase!=null) {
-                Atributo atributo=null;
                 if(!esThis) {
                     atributo = clase.tieneAtributoPublico(tokenNodoEncadenado.getLexeme());
                 }
@@ -49,6 +50,24 @@ public class NodoVariableEncadenada extends NodoEncadenado {
         }
         else{
             return null;
+        }
+    }
+
+    @Override
+    public void generarCodigo() {
+        if(!ladoIzquierdo || nodoEncadenado!=null){
+            TablaDeSimbolos.codigoMaquina.add("LOADREF "+atributo.getOffset());
+        }
+        else{
+            TablaDeSimbolos.codigoMaquina.add("SWAP");
+            TablaDeSimbolos.codigoMaquina.add("STOREREF "+atributo.getOffset());
+        }
+
+        if(nodoEncadenado != null){
+            if (ladoIzquierdo)
+                nodoEncadenado.setLadoIzquierdo();
+            nodoEncadenado.generarCodigo();
+
         }
     }
 }

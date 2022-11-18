@@ -89,4 +89,24 @@ public class NodoExpresionBinaria extends NodoExpresion{
         }
     }
 
+    @Override
+    public void generarCodigo() {
+        expresionIzq.generarCodigo();
+        expresionDer.generarCodigo();
+        switch (tokenOp.getLexeme()) {
+            case "+" : {TablaDeSimbolos.codigoMaquina.add("ADD");break;}
+            case "-" : {TablaDeSimbolos.codigoMaquina.add("SUB");break;}
+            case "*" : {TablaDeSimbolos.codigoMaquina.add("MUL");break;}
+            case "==" : {TablaDeSimbolos.codigoMaquina.add("EQ");break;}
+            case "/" : {TablaDeSimbolos.codigoMaquina.add("DIV");break;}
+            case "%" : {TablaDeSimbolos.codigoMaquina.add("MOD");break;}
+            case "&&" : {TablaDeSimbolos.codigoMaquina.add("AND");break;}
+            case "||" : {TablaDeSimbolos.codigoMaquina.add("OR");break;}
+            case "!=" : {TablaDeSimbolos.codigoMaquina.add("NE");break;}
+            case "<" : {TablaDeSimbolos.codigoMaquina.add("LT");break;}
+            case ">" : {TablaDeSimbolos.codigoMaquina.add("GT");break;}
+            case "<=" : {TablaDeSimbolos.codigoMaquina.add("LE");break;}
+            case ">=" : {TablaDeSimbolos.codigoMaquina.add("GE");break;}
+        }
+    }
 }

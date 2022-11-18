@@ -10,4 +10,8 @@ public class NodoElse{
     public void chequear() {
         sentencia.chequear();
     }
+
+    public void generarCodigo() {
+        sentencia.generarCodigo();
+    }
 }

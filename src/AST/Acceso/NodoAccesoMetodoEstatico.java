@@ -4,11 +4,17 @@ import AST.Expresion.NodoExpresion;
 import AnalizadorLexico.Token;
 import AnalizadorSemantico.*;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class NodoAccesoMetodoEstatico extends NodoAcceso {
     Token tokenClase;
     LinkedList<NodoExpresion> parametros;
+
+    protected Clase claseActual;
+    protected MetodoConstructor metodoActual;
+
+    protected Metodo metodoLLamado;
     public NodoAccesoMetodoEstatico(Token token,Token tokenClase) {
         super(token);
         this.tokenClase=tokenClase;
@@ -27,8 +33,10 @@ public class NodoAccesoMetodoEstatico extends NodoAcceso {
     public Tipo chequear() {
         Clase clase = TablaDeSimbolos.tablaSimbolos.getClaseByName(tokenClase.getLexeme());
         if (clase !=null){
+            claseActual=clase;
             Metodo met = clase.tieneMetodoExacto(accesoToken.getLexeme(), parametros, true);
             if (met != null) {
+                metodoLLamado=met;
                 if (nodoEncadenado != null) {
                     Tipo tipoEncadenado = nodoEncadenado.chequear(met.getTipo());
                     if (tipoEncadenado != null) {
@@ -53,6 +61,26 @@ public class NodoAccesoMetodoEstatico extends NodoAcceso {
                     + tokenClase.getNumberline() + ": No existe una Clase " + tokenClase.getLexeme()));
 
             return new Tipo(new Token("pr_void", "void", 0)); //Devuelvo esto para que no termine la ejecucion
+        }
+    }
+
+    @Override
+    public void generarCodigo() {
+            if (!metodoLLamado.getTipo().compareTipo(new Tipo(new Token("pr_void","void",0)))){
+                TablaDeSimbolos.codigoMaquina.add("RMEM 1");
+            }
+            Collections.reverse(parametros);
+            for (NodoExpresion expresion:parametros) {
+                expresion.generarCodigo();
+            }
+            Collections.reverse(parametros);
+            TablaDeSimbolos.codigoMaquina.add("PUSH "+metodoLLamado.generarEtiqueta());
+            TablaDeSimbolos.codigoMaquina.add("CALL");
+
+        if(nodoEncadenado != null){
+            if (ladoIzquierdo)
+                nodoEncadenado.setLadoIzquierdo();
+            nodoEncadenado.generarCodigo();
         }
     }
 }

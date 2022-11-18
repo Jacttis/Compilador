@@ -3,8 +3,6 @@ package AST.Acceso;
 import AnalizadorLexico.Token;
 import AnalizadorSemantico.Tipo;
 
-import java.util.Map;
-
 public class NodoAcceso {
 
     Token accesoToken;
@@ -54,7 +52,7 @@ public class NodoAcceso {
         }
     }
 
-    public void genererarCodigo() {
+    public void generarCodigo() {
     }
 
     public void setLadoIzquierdo(){

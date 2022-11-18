@@ -23,4 +23,8 @@ public class NodoOperando {
     public Tipo chequear() {
         return null;
     }
+
+    public void generarCodigo() {
+
+    }
 }

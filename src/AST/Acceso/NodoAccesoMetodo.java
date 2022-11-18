@@ -4,6 +4,8 @@ import AST.Expresion.NodoExpresion;
 import AnalizadorLexico.Token;
 import AnalizadorSemantico.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class NodoAccesoMetodo extends NodoAcceso{
@@ -11,12 +13,14 @@ public class NodoAccesoMetodo extends NodoAcceso{
 
     protected LinkedList<NodoExpresion> parametros;
     protected Clase clase;
-    protected MetodoConstructor metodo;
+    protected MetodoConstructor metodoActual;
+
+    protected Metodo metodoLLamado;
     public NodoAccesoMetodo(Token token,Clase clase,MetodoConstructor metodo) {
         super(token);
         esLlamable=true;
         this.clase=clase;
-        this.metodo=metodo;
+        this.metodoActual =metodo;
     }
 
     public LinkedList<NodoExpresion> getParametros() {
@@ -32,7 +36,8 @@ public class NodoAccesoMetodo extends NodoAcceso{
     public Tipo chequear() {
         Metodo met=clase.tieneMetodoExacto(accesoToken.getLexeme(),parametros);
         if(met!=null){
-            if(metodo.isEstatico() && !met.isEstatico()){
+            metodoLLamado=met;
+            if(metodoActual.isEstatico() && !met.isEstatico()){
                 TablaDeSimbolos.listaExcepciones.add(new SemanticException(accesoToken, "Error Semantico en linea "
                         + accesoToken.getNumberline() + ": No se puede llamar a metodos no estaticos " + accesoToken.getLexeme()));
                 return new Tipo(new Token("pr_void","void",0));
@@ -60,6 +65,44 @@ public class NodoAccesoMetodo extends NodoAcceso{
                     + accesoToken.getNumberline() + ": No existe un metodo con ese nombre o incorrectos parametros" + accesoToken.getLexeme()));
 
             return new Tipo(new Token("pr_void","void",0)); //Devuelvo esto para que no termine la ejecucion
+        }
+    }
+
+    @Override
+    public void generarCodigo() {
+        if (metodoLLamado.isEstatico()){
+            if (!metodoLLamado.getTipo().compareTipo(new Tipo(new Token("pr_void","void",0)))){
+                TablaDeSimbolos.codigoMaquina.add("RMEM 1");
+            }
+            Collections.reverse(parametros);
+            for (NodoExpresion expresion:parametros) {
+                expresion.generarCodigo();
+            }
+            Collections.reverse(parametros);
+            TablaDeSimbolos.codigoMaquina.add("PUSH "+metodoLLamado.generarEtiqueta());
+            TablaDeSimbolos.codigoMaquina.add("CALL");
+        }
+        else{
+            TablaDeSimbolos.codigoMaquina.add("LOAD 3 ;Se apila this");
+            if (!metodoLLamado.getTipo().compareTipo(new Tipo(new Token("pr_void","void",0)))){
+                TablaDeSimbolos.codigoMaquina.add("RMEM 1");
+                TablaDeSimbolos.codigoMaquina.add("SWAP");
+            }
+            Collections.reverse(parametros);
+            for (NodoExpresion expresion: parametros) {
+                expresion.generarCodigo();
+                TablaDeSimbolos.codigoMaquina.add("SWAP");
+            }
+            Collections.reverse(parametros);
+            TablaDeSimbolos.codigoMaquina.add("DUP ");
+            TablaDeSimbolos.codigoMaquina.add("LOADREF 0");
+            TablaDeSimbolos.codigoMaquina.add("LOADREF "+metodoLLamado.getOffset());
+            TablaDeSimbolos.codigoMaquina.add("CALL");
+        }
+        if(nodoEncadenado != null){
+            if (ladoIzquierdo)
+                nodoEncadenado.setLadoIzquierdo();
+            nodoEncadenado.generarCodigo();
         }
     }
 }

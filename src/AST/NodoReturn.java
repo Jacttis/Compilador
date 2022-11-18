@@ -9,11 +9,13 @@ public class NodoReturn extends NodoSentencia{
     protected NodoExpresion expresion;
     protected Metodo metodoActual;
     protected Token token;
+    protected NodoBloque bloque;
 
-    public NodoReturn(Token token, NodoExpresion expresion, Metodo metodo){
+    public NodoReturn(Token token, NodoExpresion expresion, Metodo metodo,NodoBloque bloqueActual){
         this.expresion=expresion;
         metodoActual=metodo;
         this.token=token;
+        bloque=bloqueActual;
     }
 
     @Override
@@ -53,6 +55,31 @@ public class NodoReturn extends NodoSentencia{
 
     }
 
+    @Override
+    public void generarCodigo() {
 
+        TablaDeSimbolos.codigoMaquina.add("FMEM "+bloque.obtenerSizeVarLocal() + " ; Se libera memoria de variables locales ");
+        if(metodoActual.getTipo().compareTipo(new Tipo(new Token("pr_void","void",0)))){
+            TablaDeSimbolos.codigoMaquina.add("STOREFP ; actualizo el FP para que apunte al RA llamador");
+            if (metodoActual.isEstatico()){
+                TablaDeSimbolos.codigoMaquina.add("RET "+metodoActual.getListaArgumentos().size());
+            }
+            else {
+                TablaDeSimbolos.codigoMaquina.add("RET "+(metodoActual.getListaArgumentos().size()+1));
+            }
+        } else{
+            expresion.generarCodigo();
+            if (metodoActual.isEstatico()){
+                TablaDeSimbolos.codigoMaquina.add("STORE "+ (metodoActual.getListaArgumentos().size()+3));
+                TablaDeSimbolos.codigoMaquina.add("STOREFP ; actualizo el FP para que apunte al RA llamador");
+                TablaDeSimbolos.codigoMaquina.add("RET "+ metodoActual.getListaArgumentos().size()+ " ; Se liberan " + metodoActual.getListaArgumentos().size() + " lugares de la pila");
+            }
+            else {
+                TablaDeSimbolos.codigoMaquina.add("STORE "+ (metodoActual.getListaArgumentos().size()+4));//this
+                TablaDeSimbolos.codigoMaquina.add("STOREFP");
+                TablaDeSimbolos.codigoMaquina.add("RET "+ (metodoActual.getListaArgumentos().size()+1)+ " ; Se liberan " + (metodoActual.getListaArgumentos().size()+1) + " lugares de la pila");
+            }
 
+        }
+    }
 }

@@ -1,19 +1,22 @@
 // Prueba un lado izquierdo simple
 
-class A {
-
-    public int a2;
-
-    void m2(){
-        a2=2+2;
+class A{
+    static int m1(){
+        return 3;
     }
 }
-
-
-
 class Init{
-    static void main()
-    { }
+    static int m1(){
+        return 1;
+    }
+    static void main() {
+        var x=2;
+        while (x<=5){
+            debugPrint(1);
+            x=x+1;
+        }
+
+    }
 }
 
 

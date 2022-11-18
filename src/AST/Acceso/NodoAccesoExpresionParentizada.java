@@ -32,4 +32,15 @@ public class NodoAccesoExpresionParentizada extends NodoAcceso {
             }
         }
     }
+
+    @Override
+    public void generarCodigo() {
+        nodoExpresion.generarCodigo();
+        if(nodoEncadenado != null){
+            if (ladoIzquierdo)
+                nodoEncadenado.setLadoIzquierdo();
+            nodoEncadenado.generarCodigo();
+
+        }
+    }
 }

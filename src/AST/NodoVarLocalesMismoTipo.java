@@ -20,5 +20,10 @@ public class NodoVarLocalesMismoTipo extends NodoSentencia{
         return true;
     }
 
-
+    @Override
+    public void generarCodigo() {
+        for (NodoVarLocal var :varLocals) {
+            var.generarCodigo();
+        }
+    }
 }

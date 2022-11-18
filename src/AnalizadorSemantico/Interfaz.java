@@ -1,5 +1,6 @@
 package AnalizadorSemantico;
 
+import AST.Expresion.NodoExpresion;
 import AnalizadorLexico.Token;
 
 import java.util.Hashtable;
@@ -211,5 +212,32 @@ public class Interfaz implements IClaseInterfaz{
             }
         }
         return esSubtipo;
+    }
+
+    public Metodo tieneMetodoExacto(String nombreMetodo,LinkedList<NodoExpresion> parametros){
+        if(metodos.containsKey(nombreMetodo)) {
+            for (Metodo met : metodos.get(nombreMetodo)) {
+                LinkedList<Parametro> parametrosMet = met.getListaArgumentos();
+                int i = 0;
+                boolean iguales = true;
+                if (parametros.size() == parametrosMet.size()) {
+                    while (iguales && i < parametros.size()) {
+                        if (!parametros.get(i).chequear().esSubtipo(parametrosMet.get(i).getTipo())) {
+
+                            iguales = false;
+                        }
+                        i++;
+                    }
+                    if (iguales) {
+                        return met;
+                    }
+                }
+            }
+            return null;
+        }
+        else {
+            return null;
+        }
+
     }
 }
